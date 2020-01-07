@@ -49,15 +49,23 @@
 
         private static ConcurrentDictionary<string, Type> GetControllerTypes()
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var types = assemblies
-                            .SelectMany(a => a
-                                .GetTypes().Where(t =>
-                                    !t.IsAbstract &&
-                                    t.Name.EndsWith(ControllerSuffix, StringComparison.OrdinalIgnoreCase) &&
-                                    typeof(IHttpController).IsAssignableFrom(t)))
-                            .ToDictionary(t => t.FullName, t => t);
-            return new ConcurrentDictionary<string, Type>(types);
+            try
+            {
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                var types = assemblies
+                                .SelectMany(a => a
+                                    .GetTypes().Where(t =>
+                                        !t.IsAbstract &&
+                                        t.Name.EndsWith(ControllerSuffix, StringComparison.OrdinalIgnoreCase) &&
+                                        typeof(IHttpController).IsAssignableFrom(t)))
+                                .ToDictionary(t => t.FullName, t => t);
+                return new ConcurrentDictionary<string, Type>(types);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
         }
 
         private HttpControllerDescriptor GetApiController(HttpRequestMessage request)

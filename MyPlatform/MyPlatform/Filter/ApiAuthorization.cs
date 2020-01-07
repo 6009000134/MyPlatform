@@ -22,7 +22,7 @@ namespace MyPlatform.Filter
             string token = "";
             IEnumerable<string> iToken;
             if (actionContext.Request.Headers.TryGetValues("Token", out iToken))
-            {
+            {                
                 token = iToken.First();
                 //TODO:校验token，获取token
                 bool TokenIsEffection = true;
@@ -32,6 +32,7 @@ namespace MyPlatform.Filter
                     bool IsAuthorized = true;
                     if (IsAuthorized)
                     {
+                        //actionContext.ControllerContext.Request.Properties
                         base.OnAuthorization(actionContext);
                     }
                     else

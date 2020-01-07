@@ -37,5 +37,7 @@ namespace MyPlatform.Areas.Basic.Controllers
             result.D = li;
             return MyPlatform.Utils.MyResponseMessage.SuccessJson<ReturnData>(result);
         }
+
+
     }
 }

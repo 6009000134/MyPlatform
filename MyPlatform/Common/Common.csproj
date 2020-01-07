@@ -53,8 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\DataCache.cs" />
+    <Compile Include="Cache\ICache.cs" />
     <Compile Include="ConfigHelper.cs" />
-    <Compile Include="DataCache.cs" />
     <Compile Include="DEncrypt\DEncrypt.cs" />
     <Compile Include="DEncrypt\DESEncrypt.cs" />
     <Compile Include="DEncrypt\HashEncode.cs" />

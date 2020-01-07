@@ -17,7 +17,8 @@ namespace MyPlatform.Common
 		public static string GetConfigString(string key)
 		{
             string CacheKey = "AppSettings-" + key;
-            object objModel = DataCache.GetCache(CacheKey);
+            MyPlatform.Common.Cache.DataCache d = new Cache.DataCache();
+            object objModel = d.GetCache(CacheKey);
             if (objModel == null)
             {
                 try
@@ -25,7 +26,7 @@ namespace MyPlatform.Common
                     objModel = ConfigurationManager.AppSettings[key]; 
                     if (objModel != null)
                     {                        
-                        DataCache.SetCache(CacheKey, objModel, DateTime.Now.AddMinutes(180), TimeSpan.Zero);
+                        d.SetCache(CacheKey, objModel, DateTime.Now.AddMinutes(180), TimeSpan.Zero);
                     }
                 }
                 catch

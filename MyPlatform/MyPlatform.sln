@@ -18,6 +18,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{A17B7BC5-6F6E-4812-9814-D92ADAB14F30}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DALFactory", "DALFactory\DALFactory.csproj", "{488C36D8-16AF-42B5-8E06-164A8BE8CAA8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B3FD44FD-7DC7-40BF-B507-94B8A0B53D5A} = {B3FD44FD-7DC7-40BF-B507-94B8A0B53D5A}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{61DCC9D9-044A-4024-9EEB-4D2963669DBE}"
 EndProject

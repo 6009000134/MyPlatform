@@ -20,9 +20,22 @@ namespace MyPlatform.Areas.Basic.Controllers
         public HttpResponseMessage Add(Sys_Tables model)
         {
             //校验是否存在同名表
+            //if (tableBLL.Exists(model.TableName))
+            //{
 
+            //}
             //创建表
+            // tableBLL.Add(model);
             ReturnData result = new ReturnData();
+            return MyResponseMessage.SuccessJson<ReturnData>(result);
+        }
+
+        [HttpPost]
+        public HttpResponseMessage List(string DBName)
+        {
+            ReturnData result = new ReturnData();            
+            result.D=tableBLL.GetListByDBName(DBName);
+            result.S = true;
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
     }
