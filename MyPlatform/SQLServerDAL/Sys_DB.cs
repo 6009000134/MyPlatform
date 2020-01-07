@@ -10,9 +10,7 @@ namespace MyPlatform.SQLServerDAL
     //Sys_DB
     public partial class Sys_DB : ISys_DB
     {
-
-
-
+                
     }
 }
 

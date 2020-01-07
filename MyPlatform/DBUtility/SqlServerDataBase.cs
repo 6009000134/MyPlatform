@@ -1,16 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Collections;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace MyPlatform.DBUtility
 {
-    /// <summary>
-    /// 数据库操作类
-    /// </summary>
-    public class SqlHelper : DBHelperBase, IDataBase
+    public class SqlServerDataBase : IDataBase
     {
+        public string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        public SqlServerDataBase()
+        {
+        }
+        public SqlServerDataBase(string dbname)
+        {
+            connectionString= ConfigurationManager.ConnectionStrings[dbname].ConnectionString;
+        }
+
         public DataSet ExecuteSql(string sql)
         {
             throw new NotImplementedException();

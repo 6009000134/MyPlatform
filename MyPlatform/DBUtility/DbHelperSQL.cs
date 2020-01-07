@@ -12,7 +12,7 @@ namespace MyPlatform.DBUtility
     /// 数据访问抽象基础类
     /// Copyright (C) MyPlatform
     /// </summary>
-    public class DbHelperSQL:IDataBase
+    public class DbHelperSQL
     {
         //数据库连接字符串(web.config来配置)，多数据库可使用DbHelperSQLP来实现.
         public  string connectionString = PubConstant.ConnectionString;     		
@@ -1020,6 +1020,11 @@ namespace MyPlatform.DBUtility
                 false, 0, 0, string.Empty, DataRowVersion.Default, null));
             return command;
         }
+
+        //DataSet IDataBase.ExecuteSql(string sql)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         #endregion
 

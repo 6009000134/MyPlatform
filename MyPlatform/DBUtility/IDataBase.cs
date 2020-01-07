@@ -12,6 +12,8 @@ namespace MyPlatform.DBUtility
         bool Exists(string strSql,IDataParameter[] pars);
         DataSet Query(string sql);
         DataSet Query(string sql,IDataParameter[] pars);
+        DataSet ExecuteSql(string sql);
         object GetSingle(string strSql,IDataParameter[] pars);
+
     }
 }
