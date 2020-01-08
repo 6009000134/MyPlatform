@@ -20,27 +20,27 @@ namespace MyPlatform.DBUtility
             connectionString= ConfigurationManager.ConnectionStrings[dbname].ConnectionString;
         }
 
-        public DataSet ExecuteSql(string sql)
+        public int ExecuteNonQuert(string sql, IDataParameter[] paras)
         {
             throw new NotImplementedException();
         }
 
-        public bool Exists(string strSql, IDataParameter[] pars)
+        public int ExecuteNonQuery(string sql)
         {
             throw new NotImplementedException();
         }
 
-        public object GetSingle(string strSql, IDataParameter[] pars)
+        public SqlDataReader ExecuteReader(string sql)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object ExecuteScalar(string sql)
         {
             throw new NotImplementedException();
         }
 
         public DataSet Query(string sql)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DataSet Query(string sql, IDataParameter[] pars)
         {
             throw new NotImplementedException();
         }

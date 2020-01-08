@@ -31,7 +31,7 @@ namespace MyPlatform.SQLServerDAL
             strSql.Append("select * from Sys_Tables where 1=1 ");
             strSql.Append(" and DBName=@DBName");
             SqlParameter[] parameters = { new SqlParameter("@DBName", SqlDbType.VarChar, 30) };
-            IDataBase db = new DbHelperSQL();
+            DbHelperSQL db = new DbHelperSQL();
             return db.Query(strSql.ToString(), parameters).Tables[0];
         }
         #endregion      

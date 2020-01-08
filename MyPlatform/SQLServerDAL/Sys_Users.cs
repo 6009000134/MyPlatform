@@ -19,7 +19,7 @@ namespace MyPlatform.SQLServerDAL
             strSql.Append(" select * from Sys_Users where deleted=0 and Account=@Account");
             SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30) };
             parameters[0].Value = account;
-            IDataBase db = new DbHelperSQL();
+            DbHelperSQL db = new DbHelperSQL();
             DataTable dt = db.Query(strSql.ToString(), parameters).Tables[0];
             //DbHelperSQL.Query(strSql, parameters);
             user = ModelConverter<MyPlatform.Model.Sys_Users>.ConvertToModelEntity(dt);
@@ -37,7 +37,7 @@ namespace MyPlatform.SQLServerDAL
             SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30), new SqlParameter("@Password", SqlDbType.VarChar, 30) };
             parameters[0].Value = model.Account;
             parameters[1].Value = model.Password;
-            IDataBase db = new DbHelperSQL();
+            DbHelperSQL db = new DbHelperSQL();
             return db.Exists(strSql.ToString(), parameters);
         }
         /// <summary>
@@ -53,7 +53,7 @@ namespace MyPlatform.SQLServerDAL
             strSql.Append(" deleted=0 and Account=@Account ");
             SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30) };
             parameters[0].Value = Account;
-            IDataBase db = new DbHelperSQL();
+            DbHelperSQL db = new DbHelperSQL();
             return db.Exists(strSql.ToString(), parameters);
 
         }
@@ -68,7 +68,7 @@ namespace MyPlatform.SQLServerDAL
                     new SqlParameter("@ID", SqlDbType.Int,4)
             };
             parameters[0].Value = ID;
-            IDataBase db = new DbHelperSQL();
+            DbHelperSQL db = new DbHelperSQL();
             return db.Exists(strSql.ToString(), parameters);
         }
 
@@ -107,7 +107,7 @@ namespace MyPlatform.SQLServerDAL
             parameters[6].Value = model.Password;
             parameters[7].Value = model.UserName;
 
-            IDataBase db = new DbHelperSQL();
+            DbHelperSQL db = new DbHelperSQL();
             object obj = db.GetSingle(strSql.ToString(), parameters);
             if (obj == null)
             {
