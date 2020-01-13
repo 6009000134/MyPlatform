@@ -20,7 +20,18 @@ namespace MyPlatform.BLL {
         public DataTable GetListByDBName(string DBName)
         {
             return dal.GetListByDBName(DBName);
-        }        
+        }
+        /// <summary>
+        /// 判断数据库中是否存在同名表
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <param name="dbName">数据库名</param>
+        /// <param name="dbType">数据库类型</param>
+        /// <returns></returns>
+        public bool Exists(string tableName,string dbName,string dbType)
+        {
+            return dal.Exists(tableName,dbName,dbType);
+        }
         #endregion
 	}
 }

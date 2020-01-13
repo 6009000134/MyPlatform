@@ -9,7 +9,7 @@ namespace MyPlatform.DBUtility
     /// <summary>
     /// 数据库操作类
     /// </summary>
-    public class SqlHelper : DBHelperBase, IDataBase
+    public class SqlHelper : DBHelperBase
     {
         public DataSet ExecuteSql(string sql)
         {

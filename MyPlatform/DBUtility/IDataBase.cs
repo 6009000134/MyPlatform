@@ -43,13 +43,30 @@ namespace MyPlatform.DBUtility
         /// <param name="sql">sql语句</param>
         /// <param name="paras">参数</param>
         /// <returns></returns>
-        int ExecuteNonQuert(string sql, IDataParameter[] paras);
+        int ExecuteNonQuery(string sql, IDataParameter[] paras);
+        /// <summary>
+        /// 执行查询语句，返回第一行第一列查询结果
+        /// </summary>
+        /// <param name="sql">sql</param>
+        /// <param name="paras">参数</param>
+        /// <returns></returns>
+        object ExecuteScalar(string sql,IDataParameter[] paras);
+        /// <summary>
+        /// 执行sql并返回查询结果集
+        /// </summary>
+        /// <param name="sql">sql</param>
+        /// <param name="paras">参数</param>
+        /// <returns></returns>
+        DataSet Query(string sql,IDataParameter[] paras);
         #endregion
         #region 执行存储过程
 
         #endregion
-        #region 执行事务
+        #region 执行简单sql事务
+        bool ExecuteTran(List<string> liSql);
 
+        #endregion
+        #region 执行带参数事务
         #endregion
 
 

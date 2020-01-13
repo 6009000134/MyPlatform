@@ -14,16 +14,23 @@ namespace MyPlatform.SQLServerDAL
     {
         public MyPlatform.Model.Sys_Users GetModelByAccount(string account)
         {
-            MyPlatform.Model.Sys_Users user = new Model.Sys_Users();
-            StringBuilder strSql = new StringBuilder();
-            strSql.Append(" select * from Sys_Users where deleted=0 and Account=@Account");
-            SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30) };
-            parameters[0].Value = account;
-            DbHelperSQL db = new DbHelperSQL();
-            DataTable dt = db.Query(strSql.ToString(), parameters).Tables[0];
-            //DbHelperSQL.Query(strSql, parameters);
-            user = ModelConverter<MyPlatform.Model.Sys_Users>.ConvertToModelEntity(dt);
-            return user;
+            try
+            {
+                IDataBase db = new SqlServerDataBase();
+                MyPlatform.Model.Sys_Users user = new Model.Sys_Users();
+                StringBuilder strSql = new StringBuilder();
+                strSql.Append(" select * from Sys_Users where deleted=0 and Account=@Account");
+                SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30) };
+                parameters[0].Value = account;
+                DataTable dt = db.Query(strSql.ToString(), parameters).Tables[0];
+                //DbHelperSQL.Query(strSql, parameters);
+                user = ModelConverter<MyPlatform.Model.Sys_Users>.ConvertToModelEntity(dt);
+                return user;
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
         }
         /// <summary>
         /// 登录验证账号密码
@@ -107,17 +114,8 @@ namespace MyPlatform.SQLServerDAL
             parameters[6].Value = model.Password;
             parameters[7].Value = model.UserName;
 
-            DbHelperSQL db = new DbHelperSQL();
-            object obj = db.GetSingle(strSql.ToString(), parameters);
-            if (obj == null)
-            {
-                return 0;
-            }
-            else
-            {
-                return Convert.ToInt32(obj);
-            }
-
+            IDataBase db = new SqlServerDataBase();
+            return db.ExecuteNonQuery(strSql.ToString(), parameters);
         }
     }
 }

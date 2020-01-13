@@ -125,8 +125,48 @@ namespace MyPlatform.Model{
         {   
             get{ return _remark; }
             set{ _remark =value; }
-        } 
-		       
-		   
-	}
+        }
+
+        private string _dbType;
+        public string DBType
+        {
+            get
+            {
+                return _dbType;
+            }
+
+            set
+            {
+                _dbType = value;
+            }
+        }
+
+        private string _dbName;
+        public string DBName
+        {
+            get
+            {
+                return _dbName;
+            }
+
+            set
+            {
+                _dbName = value;
+            }
+        }
+        private string _dbTypeCode;
+        public string DBTypeCode
+        {
+            get
+            {
+                return _dbTypeCode;
+            }
+
+            set
+            {
+                _dbTypeCode = value;
+            }
+        }
+
+    }
 }

@@ -340,7 +340,7 @@ namespace MyPlatform.DBUtility
                 SqlCommand cmd = new SqlCommand(SQLString, connection);
                 System.Data.SqlClient.SqlParameter myParameter = new System.Data.SqlClient.SqlParameter("@content", SqlDbType.NText);
                 myParameter.Value = content;
-                cmd.Parameters.Add(myParameter);
+                cmd.Parameters.Add(myParameter);                
                 try
                 {
                     connection.Open();

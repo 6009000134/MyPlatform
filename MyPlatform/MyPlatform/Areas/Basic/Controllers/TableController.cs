@@ -19,14 +19,18 @@ namespace MyPlatform.Areas.Basic.Controllers
         [HttpPost]
         public HttpResponseMessage Add(Sys_Tables model)
         {
-            //校验是否存在同名表
-            //if (tableBLL.Exists(model.TableName))
-            //{
 
-            //}
-            //创建表
-            // tableBLL.Add(model);
             ReturnData result = new ReturnData();
+            //校验是否存在同名表
+            if (tableBLL.Exists(model.TableName, model.DBName, model.DBType))
+            {
+                result.SetErrorMsg("数据库已经存在同名表！！");
+            }
+            else
+            {
+                //创建表
+                //tableBLL.Add(model);
+            }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
 

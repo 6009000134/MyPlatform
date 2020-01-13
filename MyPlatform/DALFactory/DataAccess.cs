@@ -61,5 +61,11 @@ namespace MyPlatform.DALFactory
             return (T)objType;
         }
         #endregion
+        #region 创建实例
+        public static SQLServerDAL.Sys_Users CreateSysUsers(string className,string DBName)
+        {            
+            return new SQLServerDAL.Sys_Users();
+        }
+        #endregion
     }
 }
