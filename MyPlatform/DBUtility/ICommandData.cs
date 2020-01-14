@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -11,12 +12,9 @@ namespace MyPlatform.DBUtility
     {
 
         string CommandText { get; set; }
-        SqlConnection connection { get; set; }
-        SqlCommand cmd { get; set; }
-
-    }
-    public enum CommandType
-    {
+        IDbConnection connection { get; set; }
+        IDbCommand cmd { get; set; }
+        IDataParameter[] Paras{ get; set; }
         
     }
 }

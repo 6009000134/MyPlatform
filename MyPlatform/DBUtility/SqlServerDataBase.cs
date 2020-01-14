@@ -238,14 +238,57 @@ namespace MyPlatform.DBUtility
         }
         #endregion
         #region 执行带参数事务
-        public bool ExecuteTran()
+        public bool ExecuteTran(List<SqlCommandData> tranSqls)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = con;
+                con.Open();
+                try
+                {
+                    foreach (SqlCommandData item in tranSqls)
+                    {
+                        cmd.CommandText = item.CommandText;
+                        cmd.CommandType = item.CommandType;
+                        cmd.Parameters.AddRange(item.Paras);
+                        if (item.CommandTimeout > 0)
+                        {
+                            cmd.CommandTimeout = item.CommandTimeout;
+                        }
+                        switch (item.CommandBehavior)
+                        {
+                            case SqlServerCommandBehavior.ExecuteNonQuery:
+                                cmd.ExecuteNonQuery();
+                                break;
+                            case SqlServerCommandBehavior.ExecuteSclar:
+                                cmd.ExecuteScalar();
+                                break;
+                            case SqlServerCommandBehavior.ExecuteReader:
+                                cmd.ExecuteReader();
+                                break;
+                            default:
+                                cmd.ExecuteNonQuery();
+                                break;
+                        }
+                        cmd.Parameters.Clear();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    throw ex;
+                }
+                con.Close();
             }
             return true;
         }
         #endregion
+    }
+    public enum SqlServerCommandBehavior
+    {
+        ExecuteNonQuery,
+        ExecuteSclar,
+        ExecuteReader
+
     }
 }
