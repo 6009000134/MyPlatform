@@ -57,18 +57,36 @@ namespace MyPlatform.SQLServerDAL
                 throw new NotImplementedException();
             }
         }
-        public int Add(MyPlatform.Model.Sys_Tables model)
+
+
+
+        /// <summary>
+        /// 创建表以及默认字段CreatedBy、CreatedDate、UpdatedDate、CreatedDate、Deleted
+        /// </summary>
+        /// <param name="model">表信息</param>
+        /// <returns></returns>
+        public bool Add(MyPlatform.Model.Sys_Tables model)
         {
+            List<SqlCommandData> sqlCommmands = new List<SqlCommandData>();//事务参数
+            
             StringBuilder sql = new StringBuilder();
-            sql.Append("Create table @tableName (");
+            sql.Append("Create table Sys_Users2 (");
             sql.Append(" ID int primary key identity(1,1),");
             sql.Append(" CreatedBy nvarchar(20),");
             sql.Append(" CreatedDate DATETIME DEFAULT(GETDATE()),");
             sql.Append(" UpdatedBy nvarchar(20) default(''),");
-            sql.Append(" UpdatedBy nvarchar(20) default(''),");
+            sql.Append(" UpdatedDate datetime default(getdate()),");
             sql.Append(" Deleted int DEFAULT(0)");
             sql.Append(" )");
-            return 1;
+            SqlParameter[] paras = { new SqlParameter("@tableName",model.TableName)};
+            SqlCommandData sc = new SqlCommandData();
+            sc.CommandText = sql.ToString();
+            //sc.Paras = paras;
+            sqlCommmands.Add(sc);
+            SqlCommandData sc2 = SqlFactory.CreateInsertSqlByRef<MyPlatform.Model.Sys_Tables>(model);
+            sqlCommmands.Add(sc2);
+            IDataBase db = new SqlServerDataBase();
+            return db.ExecuteTran(sqlCommmands); 
         }
 
         #endregion

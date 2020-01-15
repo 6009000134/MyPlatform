@@ -60,6 +60,19 @@ namespace MyPlatform.DBUtility
         DataSet Query(string sql,IDataParameter[] paras);
         #endregion
         #region 执行存储过程
+        /// <summary>
+        /// 执行存储过程
+        /// </summary>
+        /// <param name="procedureName">存储过程名</param>
+        /// <returns></returns>
+        DataSet ExecProcedure(string procedureName);
+        /// <summary>
+        /// 执行存储过程
+        /// </summary>
+        /// <param name="procedureName">存储过程名</param>
+        /// <param name="paras">存储过程参数</param>
+        /// <returns></returns>
+        DataSet ExecProcedure(string procedureName, IDataParameter[] paras);
 
         #endregion
         #region 执行简单sql事务
@@ -67,6 +80,7 @@ namespace MyPlatform.DBUtility
 
         #endregion
         #region 执行带参数事务
+        bool ExecuteTran(List<SqlCommandData> tranSqls);
         #endregion
 
 

@@ -11,6 +11,7 @@ namespace MyPlatform.DBUtility
 {
     public class SqlServerDataBase : IDataBase
     {
+        //TODO:Timeout设置
         public string connectionString;//连接字符串
         #region 构造函数
         /// <summary>
@@ -166,9 +167,9 @@ namespace MyPlatform.DBUtility
         {
             try
             {
-                using (SqlConnection con=new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = CreateCommand(sql,paras);
+                    SqlCommand cmd = CreateCommand(sql, paras);
                     return cmd.ExecuteScalar();
                 }
             }
@@ -204,6 +205,62 @@ namespace MyPlatform.DBUtility
             return ds;
         }
         #endregion
+        #region 执行存储过程
+        public DataSet ExecProcedure(string procedureName)
+        {
+            DataSet ds = new DataSet();
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(procedureName, con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                    sda.Fill(ds);
+                }
+                catch (SqlException ex)
+                {
+                    throw ex;
+                }
+                //cmd.ExecuteNonQuery();
+            }
+            return ds;
+        }
+        /// <summary>
+        /// 执行存储过程
+        /// </summary>
+        /// <param name="procedureName">存储过程名</param>
+        /// <param name="paras">参数</param>
+        /// <returns></returns>
+        public DataSet ExecProcedure(string procedureName, IDataParameter[] paras)
+        {
+            DataSet ds = new DataSet();
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(procedureName, con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    foreach (SqlParameter para in paras)
+                    {
+                        if ((para.Direction == ParameterDirection.Input || para.Direction == ParameterDirection.InputOutput) && para.Value == null)
+                        {
+                            para.Value = DBNull.Value;
+                        }
+                        cmd.Parameters.Add(para);
+                    }
+                    SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                    sda.Fill(ds);
+                }
+                catch (SqlException ex)
+                {
+                    throw ex;
+                }
+                //cmd.ExecuteNonQuery();
+            }
+            return ds;
+        }
+        #endregion
         #region 执行简单语句事务
         public bool ExecuteTran(List<string> liSql)
         {
@@ -211,9 +268,11 @@ namespace MyPlatform.DBUtility
             {
                 bool flag = true;
                 con.Open();
-                using (SqlTransaction tran=con.BeginTransaction())
-                {                    
+                using (SqlTransaction tran = con.BeginTransaction())
+                {
                     SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = con;
+                    cmd.Transaction = tran;
                     try
                     {
                         int index = 0;
@@ -221,7 +280,7 @@ namespace MyPlatform.DBUtility
                         {
                             cmd.CommandText = sql;
                             cmd.ExecuteNonQuery();
-                            index += 1;                            
+                            index += 1;
                         }
                         tran.Commit();
                         flag = true;
@@ -231,56 +290,81 @@ namespace MyPlatform.DBUtility
                         tran.Rollback();
                         flag = false;
                         throw ex;
-                    }                    
+                    }
                 }
-                 return flag;
+                return flag;
             }
         }
         #endregion
         #region 执行带参数事务
+        /// <summary>
+        /// 执行事务
+        /// </summary>
+        /// <param name="tranSqls">事务参数</param>
+        /// <returns></returns>
         public bool ExecuteTran(List<SqlCommandData> tranSqls)
         {
+            bool flag = true;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = con;
                 con.Open();
-                try
+                using (SqlTransaction ts = con.BeginTransaction())
                 {
-                    foreach (SqlCommandData item in tranSqls)
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = con;
+                    cmd.Transaction = ts;
+                    try
                     {
-                        cmd.CommandText = item.CommandText;
-                        cmd.CommandType = item.CommandType;
-                        cmd.Parameters.AddRange(item.Paras);
-                        if (item.CommandTimeout > 0)
+                        foreach (SqlCommandData item in tranSqls)
                         {
-                            cmd.CommandTimeout = item.CommandTimeout;
+                            cmd.CommandText = item.CommandText;
+                            cmd.CommandType = item.CommandType;
+                            if (item.Paras != null)
+                            {
+                                //SqlCommand参数赋值
+                                foreach (SqlParameter para in item.Paras)
+                                {
+                                    if ((para.Direction == ParameterDirection.Input || para.Direction == ParameterDirection.InputOutput) && para.Value == null)
+                                    {
+                                        para.Value = DBNull.Value;
+                                    }
+                                    cmd.Parameters.Add(para);
+                                }
+                            }
+                            if (item.CommandTimeout > 0)
+                            {
+                                cmd.CommandTimeout = item.CommandTimeout;
+                            }
+                            switch (item.CommandBehavior)
+                            {
+                                case SqlServerCommandBehavior.ExecuteNonQuery:
+                                    cmd.ExecuteNonQuery();
+                                    break;
+                                case SqlServerCommandBehavior.ExecuteSclar:
+                                    cmd.ExecuteScalar();
+                                    break;
+                                case SqlServerCommandBehavior.ExecuteReader:
+                                    cmd.ExecuteReader();
+                                    break;
+                                default:
+                                    cmd.ExecuteNonQuery();
+                                    break;
+                            }
+                            cmd.Parameters.Clear();
                         }
-                        switch (item.CommandBehavior)
-                        {
-                            case SqlServerCommandBehavior.ExecuteNonQuery:
-                                cmd.ExecuteNonQuery();
-                                break;
-                            case SqlServerCommandBehavior.ExecuteSclar:
-                                cmd.ExecuteScalar();
-                                break;
-                            case SqlServerCommandBehavior.ExecuteReader:
-                                cmd.ExecuteReader();
-                                break;
-                            default:
-                                cmd.ExecuteNonQuery();
-                                break;
-                        }
-                        cmd.Parameters.Clear();
+                        ts.Commit();
+                        flag = true;
                     }
-                }
-                catch (SqlException ex)
-                {
-                    throw ex;
+                    catch (SqlException ex)
+                    {
+                        ts.Rollback();
+                        flag = false;
+                        throw ex;
+                    }
                 }
                 con.Close();
             }
-            return true;
+            return flag;
         }
         #endregion
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Data;
 
 namespace MyPlatform.Common
 {
@@ -20,6 +21,16 @@ namespace MyPlatform.Common
         }
 
         public static string GetJson<T>(T obj)
+        {
+            IsoDateTimeConverter isoDateTimeConverter = new IsoDateTimeConverter();
+            isoDateTimeConverter.DateTimeFormat = "yyyy'-'MM'-'dd' 'HH':'mm':'ss";
+            return JsonConvert.SerializeObject(obj, Formatting.None, new JsonConverter[]
+            {
+                isoDateTimeConverter
+            });
+        }
+
+        public static string GetJson(DataTable obj)
         {
             IsoDateTimeConverter isoDateTimeConverter = new IsoDateTimeConverter();
             isoDateTimeConverter.DateTimeFormat = "yyyy'-'MM'-'dd' 'HH':'mm':'ss";

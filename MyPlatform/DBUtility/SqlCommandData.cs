@@ -28,19 +28,39 @@ namespace MyPlatform.DBUtility
         /// <summary>
         /// 操作类型 ExecuteNonQuery\ExecuteSclar\ExecuteReader
         /// </summary>
-        public SqlServerCommandBehavior CommandBehavior { get; set; }
+        private SqlServerCommandBehavior _commandBehavior;
+        public SqlServerCommandBehavior CommandBehavior
+        {
+            get
+            {
+                return _commandBehavior;
+            }
+            set
+            {
+                if (value == 0)
+                {
+                    _commandBehavior = SqlServerCommandBehavior.ExecuteNonQuery;
+                }
+                else { _commandBehavior = value; }
+            }
+
+        }
+
         private CommandType _commandType;
         /// <summary>
         /// sql命令类型 Text\Procedure\TableDirect
         /// </summary>
         public CommandType CommandType
         {
-            get { return _commandType; }
+            get
+            {
+                return _commandType;
+            }
             set
             {
                 if (value == 0)
                 {
-                    value = CommandType.Text;
+                    _commandType = CommandType.Text;
                 }
                 else
                 {
