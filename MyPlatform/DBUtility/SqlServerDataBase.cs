@@ -32,6 +32,17 @@ namespace MyPlatform.DBUtility
         #endregion
 
         #region 辅助方法
+        /// <summary>
+        /// 打开数据库连接
+        /// </summary>
+        /// <param name="con"></param>
+        public void Open(SqlConnection con)
+        {
+            if (con.State!=ConnectionState.Open)
+            {
+                con.Open();
+            }
+        }
         public SqlCommand CreateCommand(string sql, IDataParameter[] paras)
         {
             SqlCommand cmd = new SqlCommand(sql);
@@ -125,7 +136,8 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand(sql);
+                    SqlCommand cmd = new SqlCommand(sql,con);
+                    Open(con);
                     using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                     {
                         sda.Fill(ds);
@@ -192,6 +204,8 @@ namespace MyPlatform.DBUtility
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlCommand cmd = CreateCommand(sql, paras);
+                    cmd.Connection = con;
+                    Open(con);
                     using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                     {
                         sda.Fill(ds);

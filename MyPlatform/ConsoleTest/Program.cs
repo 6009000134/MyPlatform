@@ -16,7 +16,15 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            Add();
+            double amount = 50.0000;
+            for (int i = 0; i < 15; i++)
+            {
+                amount = (amount + 6) + (amount) * 0.08;
+            }
+            Console.WriteLine(amount.ToString());
+            Console.ReadLine();
+
+            //Add();
             //Sys_Tables dal = new Sys_Tables();
             //MyPlatform.Model.Sys_Tables model = new MyPlatform.Model.Sys_Tables();
             //model.CreatedBy = "1";
@@ -72,7 +80,7 @@ namespace ConsoleTest
             par[0].Value = 3;
             par[1].Direction = ParameterDirection.Output;
             DataSet ds = db.ExecProcedure("sp_Test", par);
-            int count = Convert.ToInt32(par[1].Value); ;
+            int count = Convert.ToInt32(par[1].Value); 
             List<string> li = new List<string>();
             li.Add(@"select * from sys_users");
             li.Add(@"select * from sys_users");

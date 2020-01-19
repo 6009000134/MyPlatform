@@ -35,7 +35,7 @@ namespace MyPlatform.Areas.Basic.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage List(string DBName)
+        public HttpResponseMessage List([FromBody]string DBName)
         {
             ReturnData result = new ReturnData();            
             result.D=tableBLL.GetListByDBName(DBName);
