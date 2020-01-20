@@ -29,10 +29,17 @@ namespace MyPlatform.SQLServerDAL
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select * from Sys_Tables where 1=1 ");
-            strSql.Append(" and DBName=@DBName");
-            SqlParameter[] parameters = { new SqlParameter("@DBName", SqlDbType.VarChar, 30) };
             DbHelperSQL db = new DbHelperSQL();
-            return db.Query(strSql.ToString(), parameters).Tables[0];
+            if (string.IsNullOrEmpty(DBName))
+            {
+                strSql.Append(" and DBName=@DBName");
+                SqlParameter[] parameters = { new SqlParameter("@DBName", SqlDbType.VarChar, 30) };
+                return db.Query(strSql.ToString(), parameters).Tables[0];
+            }
+            else
+            {
+                return db.Query(strSql.ToString()).Tables[0];
+            }
         }
         /// <summary>
         /// 是否存在表,0-不存在，1-存在
@@ -41,16 +48,16 @@ namespace MyPlatform.SQLServerDAL
         /// <param name="dbName">数据库名</param>
         /// <param name="dbType">数据库类型</param>
         /// <returns></returns>
-        public bool Exists(string tableName,string dbName,string dbType)
+        public bool Exists(string tableName, string dbName, string dbType)
         {
-            IDataBase db = CreateDBInstance(dbName,dbType);
-            string sql ="";
+            IDataBase db = CreateDBInstance(dbName, dbType);
+            string sql = "";
             if (dbName.ToLower() == "sqlserver")
             {
                 sql = " SELECT  1 FROM dbo.SysObjects WHERE ID = object_id(N'@tableName') AND OBJECTPROPERTY(ID, 'IsTable') = 1 ";
-                SqlParameter[] paras = {new SqlParameter("@tableName",SqlDbType.VarChar,30) };
+                SqlParameter[] paras = { new SqlParameter("@tableName", SqlDbType.VarChar, 30) };
                 paras[0].Value = tableName;
-                return Convert.ToInt32(db.ExecuteScalar(sql,paras)) > 0 ? true : false;
+                return Convert.ToInt32(db.ExecuteScalar(sql, paras)) > 0 ? true : false;
             }
             else
             {
@@ -68,7 +75,7 @@ namespace MyPlatform.SQLServerDAL
         public bool Add(MyPlatform.Model.Sys_Tables model)
         {
             List<SqlCommandData> sqlCommmands = new List<SqlCommandData>();//事务参数
-            
+
             StringBuilder sql = new StringBuilder();
             sql.Append("Create table Sys_Users2 (");
             sql.Append(" ID int primary key identity(1,1),");
@@ -78,7 +85,7 @@ namespace MyPlatform.SQLServerDAL
             sql.Append(" UpdatedDate datetime default(getdate()),");
             sql.Append(" Deleted int DEFAULT(0)");
             sql.Append(" )");
-            SqlParameter[] paras = { new SqlParameter("@tableName",model.TableName)};
+            SqlParameter[] paras = { new SqlParameter("@tableName", model.TableName) };
             SqlCommandData sc = new SqlCommandData();
             sc.CommandText = sql.ToString();
             //sc.Paras = paras;
@@ -86,7 +93,7 @@ namespace MyPlatform.SQLServerDAL
             SqlCommandData sc2 = SqlFactory.CreateInsertSqlByRef<MyPlatform.Model.Sys_Tables>(model);
             sqlCommmands.Add(sc2);
             IDataBase db = new SqlServerDataBase();
-            return db.ExecuteTran(sqlCommmands); 
+            return db.ExecuteTran(sqlCommmands);
         }
 
         #endregion
