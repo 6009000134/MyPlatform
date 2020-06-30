@@ -1,4 +1,5 @@
-﻿using MyPlatform.Model;
+﻿using MyPlatform.Common;
+using MyPlatform.Model;
 using MyPlatform.Utils;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Web.Http;
 
 namespace MyPlatform.Areas.Basic.Controllers
 {
+    [AllowAnonymous]
     public class TableController : ApiController
     {
         MyPlatform.BLL.Sys_Tables tableBLL = new MyPlatform.BLL.Sys_Tables();
@@ -19,27 +21,84 @@ namespace MyPlatform.Areas.Basic.Controllers
         [HttpPost]
         public HttpResponseMessage Add(Sys_Tables model)
         {
-
             ReturnData result = new ReturnData();
-            //校验是否存在同名表
-            if (tableBLL.Exists(model.TableName, model.DBName, model.DBType))
+            try
             {
-                result.SetErrorMsg("数据库已经存在同名表！！");
+                //校验是否存在同名表
+                if (tableBLL.ExistsTable(model.TableName, model.DBName))
+                {
+                    result.SetErrorMsg("数据库已经存在同名表！！");
+                }
+                else
+                {
+                    //创建表
+                    tableBLL.Add(model);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                //创建表
-                //tableBLL.Add(model);
+
+                throw;
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
-
+        /// <summary>
+        /// 编辑表信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpResponseMessage Edit(Sys_Tables model)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                if (tableBLL.Edit(model))
+                {
+                    result.SetErrorMsg("修改失败！");
+                }
+                else
+                {
+                    result.SetSuccessMsg("修改成功！");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Default.WriteError("修改表信息失败：" + ex.Message);
+                result.SetErrorMsg("修改表信息失败：" + ex.Message);
+            }
+            return MyResponseMessage.SuccessJson<ReturnData>(result);
+        }
+        /// <summary>
+        /// 删除表信息数据，但是不删除数据库中具体表，需要手动去数据库删
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpResponseMessage Delete(Sys_Tables model)
+        {
+            return null;
+        }
+        /// <summary>
+        /// 获取表列表
+        /// </summary>
+        /// <param name="DBName"></param>
+        /// <returns></returns>
         [HttpPost]
         public HttpResponseMessage List([FromBody]string DBName)
         {
-            ReturnData result = new ReturnData();            
-            result.D=tableBLL.GetListByDBName(DBName);
-            result.S = true;
+            ReturnData result = new ReturnData();
+            try
+            {
+                result.D = tableBLL.GetListByDBName(DBName);
+                result.S = true;
+            }
+            catch (Exception ex)
+            {
+                result.S = false;
+                result.SetErrorMsg("获取数据失败：" + ex.Message);
+                LogHelper.Default.WriteError("获取数据失败：" + ex.Message);
+            }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
     }

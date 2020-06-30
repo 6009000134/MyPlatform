@@ -11,7 +11,6 @@ namespace MyPlatform.Controllers
         MyPlatform.BLL.Sys_Tables bll = new BLL.Sys_Tables();
         public ActionResult Index()
         {
-            bll.Test();
             return View();
         }
 

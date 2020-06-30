@@ -86,7 +86,6 @@ namespace MyPlatform.SQLServerDAL
             }
             sql.Remove(sql.Length - 1, 1);
             sql.Append(" )");
-            //SqlParameter[] paras = new SqlParameter[pis.Length];
             List<SqlParameter> paras = new List<SqlParameter>();
             foreach (PropertyInfo pi in pis)
             {

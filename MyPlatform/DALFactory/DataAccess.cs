@@ -9,7 +9,9 @@ namespace MyPlatform.DALFactory
     /// </summary>
     public sealed class DataAccess
     {
-        private static readonly string AssemblyPath = ConfigurationManager.AppSettings["DAL"];
+        private static readonly string SqlServerAssemblyPath = ConfigurationManager.AppSettings["SQLServerDAL"];
+        private static readonly string OracleAssemblyPath = ConfigurationManager.AppSettings["OracleDAL"];
+        private static readonly string MySqlAssemblyPath = ConfigurationManager.AppSettings["MySqlDAL"];
         public DataAccess()
         { }
 
@@ -41,9 +43,9 @@ namespace MyPlatform.DALFactory
                     objType = Assembly.Load(AssemblyPath).CreateInstance(classNamespace);
                     DataCache.SetCache(classNamespace, objType);// 写入缓存
                 }
-                catch(System.Exception ex)
+                catch (System.Exception ex)
                 {
-                    string str=ex.Message;// 记录错误日志                    
+                    string str = ex.Message;// 记录错误日志                    
                 }
             }
             return objType;
@@ -56,14 +58,50 @@ namespace MyPlatform.DALFactory
         /// </summary>
         public static T CreateInstance<T>(string ClassName)
         {
-            string ClassNamespace = "MyPlatform."+AssemblyPath + "." + ClassName;
+
+            string ClassNamespace = "";
+            string AssemblyPath = "";
+            ClassNamespace = "MyPlatform." + SqlServerAssemblyPath + "." + ClassName;
+            AssemblyPath = SqlServerAssemblyPath;
+            object objType = CreateObject(AssemblyPath, ClassNamespace);
+            return (T)objType;
+        }
+        /// <summary>
+        /// 创建数据层接口
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="ClassName">命名空间</param>
+        /// <param name="dbName">数据库类型</param>
+        /// <returns></returns>
+        public static T CreateInstance<T>(string ClassName, string dbName)
+        {
+
+            string ClassNamespace = "";
+            string AssemblyPath = "";
+            switch (dbName.ToLower())
+            {
+                case "sqlserver":
+                    ClassNamespace = "MyPlatform." + SqlServerAssemblyPath + "." + ClassName;
+                    AssemblyPath = SqlServerAssemblyPath;
+                    break;
+                case "oracle":
+                    ClassNamespace = "MyPlatform." + OracleAssemblyPath + "." + ClassName;
+                    AssemblyPath = OracleAssemblyPath;
+                    break;
+                case "mysql":
+                    ClassNamespace = "MyPlatform." + MySqlAssemblyPath + "." + ClassName;
+                    AssemblyPath = MySqlAssemblyPath;
+                    break;
+                default:
+                    break;
+            }
             object objType = CreateObject(AssemblyPath, ClassNamespace);
             return (T)objType;
         }
         #endregion
         #region 创建实例
-        public static SQLServerDAL.Sys_Users CreateSysUsers(string className,string DBName)
-        {            
+        public static SQLServerDAL.Sys_Users CreateSysUsers(string className, string DBName)
+        {
             return new SQLServerDAL.Sys_Users();
         }
         #endregion

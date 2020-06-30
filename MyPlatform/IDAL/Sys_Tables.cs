@@ -8,9 +8,10 @@ namespace MyPlatform.IDAL {
 	{
         #region Extend By liufei
         DataTable GetListByDBName(string DBName);
-        string Test();
-        bool Exists(string tableName,string dbName,string dbType);
+        bool Exists(string dbName);
+        bool ExistsTable(string tableName,string dbName);
         bool Add(MyPlatform.Model.Sys_Tables model);
+        bool Edit(MyPlatform.Model.Sys_Tables model);
         #endregion
 	} 
 }

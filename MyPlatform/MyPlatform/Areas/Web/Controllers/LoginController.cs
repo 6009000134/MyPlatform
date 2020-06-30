@@ -1,4 +1,5 @@
-﻿using MyPlatform.Model;
+﻿using Common;
+using MyPlatform.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,10 @@ namespace MyPlatform.Areas.Web.Controllers
         public HttpResponseMessage Login(Sys_Users model)
         {
             ReturnData result = new ReturnData();
-            
             if (userBLL.Exists(model))
-            {       
+            {
                 //TODO:1、生成Token         2、获取用户权限，将token和权限键值对缓存 3、将菜单目录、权限返回前端
+                string token=JWTTokenHelper.GenerateToken(model.Account, model.UserName);
                 result.S = true;
                 result.D = userBLL.GetModelByAccount(model.Account);                
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyPlatform.Common;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -38,14 +39,14 @@ namespace MyPlatform.DBUtility
         /// <param name="con"></param>
         public void Open(SqlConnection con)
         {
-            if (con.State!=ConnectionState.Open)
+            if (con.State != ConnectionState.Open)
             {
                 con.Open();
             }
         }
-        public SqlCommand CreateCommand(string sql, IDataParameter[] paras)
+        public SqlCommand CreateCommand(string sql, IDataParameter[] paras,SqlConnection con)
         {
-            SqlCommand cmd = new SqlCommand(sql);
+            SqlCommand cmd = new SqlCommand(sql,con);
             foreach (SqlParameter item in paras)
             {
                 if ((item.Direction == ParameterDirection.Input || item.Direction == ParameterDirection.InputOutput) && (item.Value == null))
@@ -71,7 +72,8 @@ namespace MyPlatform.DBUtility
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlCommand cmd = new SqlCommand(sql);
-                    return cmd.ExecuteNonQuery();
+                    int rows = cmd.ExecuteNonQuery();
+                    return rows;
                 }
             }
             catch (Exception ex)
@@ -99,7 +101,6 @@ namespace MyPlatform.DBUtility
             {
                 throw ex;
             }
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -136,7 +137,7 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand(sql,con);
+                    SqlCommand cmd = new SqlCommand(sql, con);
                     Open(con);
                     using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                     {
@@ -166,8 +167,11 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = CreateCommand(sql, paras);
-                    return cmd.ExecuteNonQuery();
+                    SqlCommand cmd = CreateCommand(sql, paras,con);
+                    Open(con);
+                    int rows= cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+                    return rows;
                 }
             }
             catch (SqlException ex)
@@ -181,8 +185,11 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = CreateCommand(sql, paras);
-                    return cmd.ExecuteScalar();
+                    SqlCommand cmd = CreateCommand(sql, paras,con);
+                    Open(con);
+                    object o = cmd.ExecuteScalar();
+                    cmd.Parameters.Clear();
+                    return o;
                 }
             }
             catch (SqlException ex)
@@ -203,13 +210,13 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = CreateCommand(sql, paras);
-                    cmd.Connection = con;
+                    SqlCommand cmd = CreateCommand(sql, paras,con);
                     Open(con);
                     using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                     {
                         sda.Fill(ds);
                     }
+                    cmd.Parameters.Clear();
                 }
             }
             catch (SqlException ex)
@@ -231,6 +238,7 @@ namespace MyPlatform.DBUtility
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataAdapter sda = new SqlDataAdapter(cmd);
                     sda.Fill(ds);
+                    cmd.Parameters.Clear();
                 }
                 catch (SqlException ex)
                 {
@@ -265,6 +273,7 @@ namespace MyPlatform.DBUtility
                     }
                     SqlDataAdapter sda = new SqlDataAdapter(cmd);
                     sda.Fill(ds);
+                    cmd.Parameters.Clear();
                 }
                 catch (SqlException ex)
                 {

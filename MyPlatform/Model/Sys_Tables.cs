@@ -12,6 +12,9 @@ namespace MyPlatform.Model
         /// ID
         /// </summary>		
         private int _id;
+        /// <summary>
+        /// 表ID
+        /// </summary>        
         public int ID
         {
             get { return _id; }
@@ -22,6 +25,9 @@ namespace MyPlatform.Model
         /// CreatedBy
         /// </summary>		
         private string _createdby;
+        /// <summary>
+        /// 创建人
+        /// </summary>
         public string CreatedBy
         {
             get { return _createdby; }
@@ -32,6 +38,9 @@ namespace MyPlatform.Model
         /// CreatedDate
         /// </summary>		
         private DateTime _createddate;
+        /// <summary>
+        /// 创建日期
+        /// </summary>
         public DateTime CreatedDate
         {
             get
@@ -55,6 +64,9 @@ namespace MyPlatform.Model
         /// UpdatedBy
         /// </summary>		
         private string _updatedby;
+        /// <summary>
+        /// 修改人
+        /// </summary>
         public string UpdatedBy
         {
             get { return _updatedby; }
@@ -65,6 +77,9 @@ namespace MyPlatform.Model
         /// UpdatedDate
         /// </summary>		
         private DateTime _updateddate;
+        /// <summary>
+        /// 修改日期
+        /// </summary>
         public DateTime UpdatedDate
         {
             get
@@ -85,6 +100,9 @@ namespace MyPlatform.Model
         /// Deleted
         /// </summary>		
         private int _deleted;
+        /// <summary>
+        /// 是否已删除（0/1-否/是）
+        /// </summary>
         public int Deleted
         {
             get { return _deleted; }
@@ -95,6 +113,9 @@ namespace MyPlatform.Model
         /// TableName
         /// </summary>		
         private string _tablename;
+        /// <summary>
+        /// 表名
+        /// </summary>
         public string TableName
         {
             get { return _tablename; }
@@ -105,6 +126,9 @@ namespace MyPlatform.Model
         /// TableName_EN
         /// </summary>		
         private string _tablename_en;
+        /// <summary>
+        /// 表中文名称
+        /// </summary>
         public string TableName_EN
         {
             get { return _tablename_en; }
@@ -115,6 +139,9 @@ namespace MyPlatform.Model
         /// TableName_CN
         /// </summary>		
         private string _tablename_cn;
+        /// <summary>
+        /// 表英文名
+        /// </summary>
         public string TableName_CN
         {
             get { return _tablename_cn; }
@@ -125,6 +152,9 @@ namespace MyPlatform.Model
         /// Remark
         /// </summary>		
         private string _remark;
+        /// <summary>
+        /// 备注
+        /// </summary>
         public string Remark
         {
             get { return _remark; }
@@ -132,6 +162,9 @@ namespace MyPlatform.Model
         }
 
         private string _dbType;
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
         public string DBType
         {
             get
@@ -146,6 +179,9 @@ namespace MyPlatform.Model
         }
 
         private string _dbName;
+        /// <summary>
+        /// 数据库连接字符串Name
+        /// </summary>
         public string DBName
         {
             get
@@ -159,6 +195,9 @@ namespace MyPlatform.Model
             }
         }
         private string _dbTypeCode;
+        /// <summary>
+        /// 数据库类型（SqlServer/MySql/Oracle）
+        /// </summary>
         public string DBTypeCode
         {
             get

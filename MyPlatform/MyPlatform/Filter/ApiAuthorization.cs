@@ -13,6 +13,8 @@ namespace MyPlatform.Filter
     {
         public override void OnAuthorization(HttpActionContext actionContext)
         {
+            base.OnAuthorization(actionContext);
+            return;
             // 对AllowAnonymousAttribute的Action不进行校验
             if (actionContext.ActionDescriptor.GetCustomAttributes<AllowAnonymousAttribute>().Any())
             {
