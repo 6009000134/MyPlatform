@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace MyPlatform.Model
 {
-    [Serializable]
     public class ReturnData
     {
         /// <summary>

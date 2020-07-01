@@ -24,53 +24,13 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(DateTimeOffset.Now.ToUniversalTime());
-            string token=GetToken();
-            Console.WriteLine(token);
-            string t = Console.ReadLine();
-
-            ValidateTOken(token);
+            
             Console.ReadLine();
             //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTM1MDgyODAsImFjY291bnQiOiJsaXVmZWkifQ.pP6PZ4l_X7YcIY0ILOHg5g2I-ZHEuPskSmC6dSywUwk
 
         }
-        private static string GetToken()
-        {
-            JWT.Builder.JwtBuilder b = new JWT.Builder.JwtBuilder();
-            const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-            var token = new JwtBuilder()
-        .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
-        .WithSecret(secret)
-        .AddClaim("exp", DateTimeOffset.UtcNow.AddSeconds(5).ToUnixTimeSeconds())
-        .AddClaim("account", "liufei")
-        .Encode();
-            return token;
-        }
-        private static void ValidateTOken(string t)
-        {
-            const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-            string token = t; //"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjMsImFjY291bnQiOiJsaXVmZWkifQ.6pJoSEsRUMxwMXWUkW4ID7Y8pEbefa-LgoajvvMheds";
-            try
-            {
-                IJsonSerializer serializer = new JsonNetSerializer();
-                var provider = new UtcDateTimeProvider();
-                IJwtValidator validator = new JwtValidator(serializer, provider);
-                IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-                IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
-                IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
 
-                var json = decoder.Decode(token, secret, verify: true);
-                Console.WriteLine(json);
-            }
-            catch (TokenExpiredException)
-            {
-                Console.WriteLine("Token has expired");
-            }
-            catch (SignatureVerificationException)
-            {
-                Console.WriteLine("Token has invalid signature");
-            }
-        }
+    
 
         private void GetHolidays()
         {
@@ -134,20 +94,20 @@ namespace ConsoleTest
         private static Dictionary<string, string> GenPostData()
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("api_name","dividend");
+            dic.Add("api_name", "dividend");
             dic.Add("token", "8637e17fe4cbc18f2c412229ad41f8628d0849598c73e4fd3332d8fa");
-            dic.Add("params",GenParams());
+            dic.Add("params", GenParams());
             dic.Add("fields", "ts_code,end_date,ann_date,div_proc,stk_div,stk_bo_rate,stk_co_rate,cash_div,cash_div_tax,record_date,ex_date,pay_date,div_listdate,imp_ann_date,base_date,base_share");
             return dic;
         }
         private static string GenParams()
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("ts_code","600900.sh");
+            dic.Add("ts_code", "600900.sh");
             return Newtonsoft.Json.JsonConvert.SerializeObject(dic);
         }
 
-        private static Dictionary<string,string> GenParams2()
+        private static Dictionary<string, string> GenParams2()
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("ts_code", "600900.sh");
@@ -229,18 +189,21 @@ namespace ConsoleTest
         #endregion
 
     }
-    class data1 {
+    class data1
+    {
         public string code { get; set; }
         public string msg { get; set; }
         public List<data2> data { get; set; }
     }
-    class data2 {
+    class data2
+    {
         public string month { get; set; }
 
         public string year { get; set; }
         public List<data3> days { get; set; }
     }
-    class data3 {
+    class data3
+    {
         public string date { get; set; }
         public int type { get; set; }
 
@@ -255,7 +218,7 @@ namespace ConsoleTest
     }
     public class Lines
     {
-        public int LineNum { get; set;  }
+        public int LineNum { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
     }

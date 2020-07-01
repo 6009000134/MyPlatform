@@ -7,7 +7,7 @@ namespace MyPlatform.Common
 	/// web.config操作类
     /// Copyright (C) Maticsoft
 	/// </summary>
-	public sealed class ConfigHelper
+	public static class ConfigHelper
 	{
 		/// <summary>
 		/// 得到AppSettings中的配置字符串信息

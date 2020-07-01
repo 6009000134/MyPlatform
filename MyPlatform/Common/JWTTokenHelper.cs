@@ -1,39 +1,82 @@
 ﻿using JWT;
 using JWT.Algorithms;
+using JWT.Builder;
+using JWT.Exceptions;
 using JWT.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Common
+namespace MyPlatform.Common
 {
     public static class JWTTokenHelper
     {
-        public static string GenerateToken(string account, string name)
-        {
-            var payload = new Dictionary<string, object>
+        /// <summary>
+        /// 创建token
+        /// </summary>
+        /// <param name="dic">用户信息</param>
+        /// <returns></returns>
+        public static string GenerateToken(Dictionary<string,object> dic)
+        {            
+            JWT.Builder.JwtBuilder b = new JWT.Builder.JwtBuilder();
+            int timeout = ConfigHelper.GetConfigInt("TokenTimeOut");//过期时间：分钟
+            string secret = ConfigHelper.GetConfigString("JWTSecret");
+            if (string.IsNullOrEmpty(secret))
             {
-                 { "Account", account },
-                 { "Name", name}
-            };
-            const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-
-            IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
+                throw new Exception("Token密钥未设置！");
+            }
+            if (timeout==0)
+            {
+                timeout = 60;
+            }
+            //用户信息
+            var payload = dic;
+            //过期时间
+            dic.Add("exp",UnixTimeStampUTC(DateTime.UtcNow.AddMinutes(timeout)));            
+            IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
             IJsonSerializer serializer = new JsonNetSerializer();
             IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
             IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
-            JWT.Builder.JwtBuilder s = new JWT.Builder.JwtBuilder();
-            //s.AddClaim("exp",30*1000);
-            //s.AddClaim
-
-            var token = encoder.Encode(payload, secret);
-            return token.ToString();
+            string token = encoder.Encode(payload, secret);
+            return token;
         }
-
-        public static bool ValidateToken(string token)
+        public static void ValidateToken(string token)
         {
-            return true;
+            string secret = "";
+            try
+            {
+                IJsonSerializer serializer = new JsonNetSerializer();
+                var provider = new UtcDateTimeProvider();
+                IJwtValidator validator = new JwtValidator(serializer, provider);
+                IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+                IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
+                IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
+                var json = decoder.Decode(token, secret, verify: true);
+            }
+            catch (TokenExpiredException)
+            {
+                //TODO:Token验证返回信息
+                Console.WriteLine("Token has expired");
+            }
+            catch (SignatureVerificationException)
+            {
+                //TODO:Token验证返回信息
+                Console.WriteLine("Token has invalid signature");
+            }
+        }
+        /// <summary>
+        /// 日期转换成秒
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static long UnixTimeStampUTC(DateTime dateTime)
+        {
+            Int32 unixTimeStamp;
+            DateTime zuluTime = dateTime.ToUniversalTime();
+            DateTime unixEpoch = new DateTime(1970, 1, 1);
+            unixTimeStamp = (Int32)(zuluTime.Subtract(unixEpoch)).TotalSeconds;
+            return unixTimeStamp;
         }
     }
 }
