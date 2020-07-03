@@ -14,9 +14,11 @@ namespace MyPlatform.Areas.Basic.Controllers
     public class TableController : ApiController
     {
         MyPlatform.BLL.Sys_Tables tableBLL = new MyPlatform.BLL.Sys_Tables();
+
         /// <summary>
         /// 创建系统表，默认创建ID、Deleted、CreateBy、CreateDate、UpdateBy、UpdateDate字段
         /// </summary>
+        /// <param name="model">表信息</param>
         /// <returns></returns>
         [HttpPost]
         public HttpResponseMessage Add(Sys_Tables model)
@@ -31,13 +33,16 @@ namespace MyPlatform.Areas.Basic.Controllers
                 }
                 else
                 {
+                    if (model.CreatedDate==null)
+                    {
+                        model.CreatedDate = DateTime.Now;
+                    }
                     //创建表
                     tableBLL.Add(model);
                 }
             }
             catch (Exception ex)
             {
-
                 throw;
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
@@ -45,7 +50,7 @@ namespace MyPlatform.Areas.Basic.Controllers
         /// <summary>
         /// 编辑表信息
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="model">表信息</param>
         /// <returns></returns>
         [HttpPost]
         public HttpResponseMessage Edit(Sys_Tables model)
@@ -53,6 +58,10 @@ namespace MyPlatform.Areas.Basic.Controllers
             ReturnData result = new ReturnData();
             try
             {
+                if (model.UpdatedDate==null)
+                {
+                    model.UpdatedDate = DateTime.Now;
+                }
                 if (tableBLL.Edit(model))
                 {
                     result.SetErrorMsg("修改失败！");

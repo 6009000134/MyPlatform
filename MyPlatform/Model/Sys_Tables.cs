@@ -37,26 +37,20 @@ namespace MyPlatform.Model
         /// <summary>
         /// CreatedDate
         /// </summary>		
-        private DateTime _createddate;
+        private DateTime? _createddate;
         /// <summary>
         /// 创建日期
         /// </summary>
-        public DateTime CreatedDate
+        public DateTime? CreatedDate
         {
             get
             {
-                if (_createddate == DateTime.MinValue)
-                {
-                    return System.Data.SqlTypes.SqlDateTime.MinValue.Value;
-                }
-                else
-                {
-                    return _createddate;
-                }
+                return _createddate;
             }
             set
             {
                 _createddate = value;
+
             }
         }
 
@@ -76,22 +70,15 @@ namespace MyPlatform.Model
         /// <summary>
         /// UpdatedDate
         /// </summary>		
-        private DateTime _updateddate;
+        private DateTime? _updateddate;
         /// <summary>
         /// 修改日期
         /// </summary>
-        public DateTime UpdatedDate
+        public DateTime? UpdatedDate
         {
             get
             {
-                if (_updateddate == DateTime.MinValue || _updateddate == null)
-                {
-                    return System.Data.SqlTypes.SqlDateTime.MinValue.Value;
-                }
-                else
-                {
-                    return _updateddate;
-                }
+                return _updateddate;
             }
             set { _updateddate = value; }
         }

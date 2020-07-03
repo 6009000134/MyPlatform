@@ -20,11 +20,19 @@ using UFIDA.U9.CBO.PubBE.YYC;
 
 namespace ConsoleTest
 {
+
     class Program
     {
         static void Main(string[] args)
         {
-            
+            double amount = 50;
+            double rate = 0.1;
+            Console.WriteLine(1+rate);
+            for (int i = 0; i < 15; i++)
+            {
+                amount = amount * (1 + rate) + 6;
+            }
+            Console.WriteLine(amount);
             Console.ReadLine();
             //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTM1MDgyODAsImFjY291bnQiOiJsaXVmZWkifQ.pP6PZ4l_X7YcIY0ILOHg5g2I-ZHEuPskSmC6dSywUwk
 

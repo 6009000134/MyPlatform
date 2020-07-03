@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enum\Control.cs" />
+    <Compile Include="Enum\DBEnum.cs" />
     <Compile Include="KeyValueData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReturnData.cs" />
