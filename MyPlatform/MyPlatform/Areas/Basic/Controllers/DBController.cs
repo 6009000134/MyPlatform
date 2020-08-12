@@ -1,4 +1,5 @@
-﻿using MyPlatform.Common.Cache;
+﻿using Model.Enum;
+using MyPlatform.Common.Cache;
 using MyPlatform.Model;
 using System;
 using System.Collections;
@@ -36,7 +37,7 @@ namespace MyPlatform.Areas.Basic.Controllers
                         {
                             KeyValueData kv = new KeyValueData();
                             kv.Key = ConfigurationManager.ConnectionStrings[i].Name;
-                            kv.Value = ((MyPlatform.Utils.DBEnum)Convert.ToInt32(dbType)).ToString();
+                            kv.Value = ((DBEnum)Convert.ToInt32(dbType)).ToString();
                             li.Add(kv);
                         }
                     }
