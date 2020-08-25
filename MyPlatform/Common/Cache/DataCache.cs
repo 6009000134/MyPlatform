@@ -26,16 +26,26 @@ namespace MyPlatform.Common.Cache
             c.Insert(key, value);
         }
         /// <summary>
-        /// 
+        /// 设置缓存（绝对过期时间）
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="absoluteExpiration"></param>
-        /// <param name="slidingExpiration"></param>
-        public void SetCache(string key, object value, DateTime absoluteExpiration,TimeSpan slidingExpiration)
+        public void SetCache(string key, object value, DateTime absoluteExpiration)
         {
             System.Web.Caching.Cache c = HttpRuntime.Cache;
-            c.Insert(key, value, null, absoluteExpiration, slidingExpiration);
+            c.Insert(key, value, null, absoluteExpiration, TimeSpan.Zero);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="timeSpan"></param>
+        public void SetCache(string key, object value, long timeSpan)
+        {
+            System.Web.Caching.Cache c = HttpRuntime.Cache;
+            c.Insert(key, value, null, DateTime.MaxValue, TimeSpan.FromSeconds(timeSpan));
         }
     }
 }

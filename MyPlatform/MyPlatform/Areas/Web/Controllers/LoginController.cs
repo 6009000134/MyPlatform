@@ -34,6 +34,7 @@ namespace MyPlatform.Areas.Web.Controllers
                 dicPayload.Add("UserName", model.UserName);
                 //生成Token
                 token = Common.JWTTokenHelper.GenerateToken(dicPayload);
+                
                 result.D = u;
             }
             else

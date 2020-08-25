@@ -26,11 +26,13 @@ namespace MyPlatform.Common
                     objModel = ConfigurationManager.AppSettings[key]; 
                     if (objModel != null)
                     {                        
-                        d.SetCache(CacheKey, objModel, DateTime.Now.AddMinutes(180), TimeSpan.Zero);
+                        d.SetCache(CacheKey, objModel, DateTime.Now.AddMinutes(180));
                     }
                 }
                 catch
-                { }
+                {
+                    return "请检查"+key+"的配置信息！";
+                }
             }
             return objModel.ToString();
 		}

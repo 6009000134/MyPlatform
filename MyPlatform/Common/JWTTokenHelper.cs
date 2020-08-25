@@ -12,15 +12,20 @@ namespace MyPlatform.Common
 {
     public static class JWTTokenHelper
     {
+
+        public static int SetTimeOut()
+        {
+            int timeout = ConfigHelper.GetConfigInt("TokenTimeOut");//过期时间：分钟
+            return timeout;
+        }
         /// <summary>
         /// 创建token
         /// </summary>
         /// <param name="dic">用户信息</param>
         /// <returns></returns>
-        public static string GenerateToken(Dictionary<string,object> dic)
+        public static string GenerateToken(Dictionary<string,object> dic,int timeout)
         {            
             JWT.Builder.JwtBuilder b = new JWT.Builder.JwtBuilder();
-            int timeout = ConfigHelper.GetConfigInt("TokenTimeOut");//过期时间：分钟
             string secret = ConfigHelper.GetConfigString("JWTSecret");
             if (string.IsNullOrEmpty(secret))
             {
@@ -41,6 +46,10 @@ namespace MyPlatform.Common
             string token = encoder.Encode(payload, secret);
             return token;
         }
+        /// <summary>
+        /// 验证token是否有效
+        /// </summary>
+        /// <param name="token">token</param>
         public static void ValidateToken(string token)
         {
             string secret = "";
@@ -58,6 +67,7 @@ namespace MyPlatform.Common
             {
                 //TODO:Token验证返回信息
                 Console.WriteLine("Token has expired");
+
             }
             catch (SignatureVerificationException)
             {

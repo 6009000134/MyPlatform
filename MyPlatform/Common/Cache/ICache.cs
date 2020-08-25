@@ -21,13 +21,18 @@ namespace MyPlatform.Common.Cache
         /// <returns></returns>
         void SetCache(string key, object value);
         /// <summary>
-        /// 
+        /// 设置缓存（绝对过期时间）
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="absoluteExpiration"></param>
-        /// <param name="slidingExpiration"></param>
-        void SetCache(string key, object value, DateTime absoluteExpiration, TimeSpan slidingExpiration);
-
+        void SetCache(string key, object value, DateTime absoluteExpiration);
+        /// <summary>
+        /// 设置缓存（相对过期时间）
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="timeSpan">秒</param>
+        void SetCache(string key, object value, long timeSpan);
     }
 }
