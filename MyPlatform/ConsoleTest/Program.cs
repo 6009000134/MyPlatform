@@ -17,6 +17,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UFIDA.U9.CBO.PubBE.YYC;
+using MySql.Data.MySqlClient;
+
 
 namespace ConsoleTest
 {
@@ -25,209 +27,109 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            double amount = 50;
-            double rate = 0.1;
-            Console.WriteLine(1+rate);
-            for (int i = 0; i < 15; i++)
-            {
-                amount = amount * (1 + rate) + 6;
-            }
-            Console.WriteLine(amount);
-            Console.ReadLine();
-            //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTM1MDgyODAsImFjY291bnQiOiJsaXVmZWkifQ.pP6PZ4l_X7YcIY0ILOHg5g2I-ZHEuPskSmC6dSywUwk
-
-        }
-
-    
-
-        private void GetHolidays()
-        {
-            string data = HttpMethod.PostMethod("https://www.mxnzp.com/api/holiday/list/year/2020?app_id=akotsopmynpyvepi&app_secret=bUc0YThNcXZZUTVCVjN0OFp0Z1UyUT09", "");
-            data1 dd = JSONUtil.ParseFromJson<data1>(data);
-            List<string> sqls = new List<string>();
-            List<string> dates = new List<string>();
-            List<string> dates2 = new List<string>();
-            dates2.Add("2020-06-13");
-            dates2.Add("2020-06-14");
-            if (dd.data.Count > 0)
-            {
-                for (int i = 0; i < dd.data.Count; i++)
-                {
-                    if (dd.data[i].days.Count > 0)
-                    {
-                        for (int j = 0; j < dd.data[i].days.Count; j++)
-                        {
-                            if (dd.data[i].days[j].type > 0)
-                            {
-                                dates.Add(dd.data[i].days[j].date);
-                            }
-                        }
-                    }
-                }
-            }
-            if (dates.Count > 0)
-            {
-                for (int i = 0; i < dates.Count; i++)
-                {
-                    string sql = "insert into auctus_temp values ('" + dates[i] + "');";
-                    sqls.Add(sql);
-                }
-            }
-            List<string> r = dates.Where(a => !dates2.Exists(t => t == a)).ToList();
-            List<string> rs = dates.Where(a => a == "2020-06-13").ToList();
-
-            //SqlConnection con = new SqlConnection("Data Source=192.168.1.81;Initial Catalog=AuctusERP;User ID=sa;Password=db@auctus998.;");
-            //SqlCommand cmd = new SqlCommand();
-            //cmd.Connection = con;
-            //con.Open();
-            //for (int i = 0; i < sqls.Count; i++)
-            //{
-            //    cmd.CommandText = sqls[i];
-            //    cmd.ExecuteNonQuery();
-            //    cmd.Parameters.Clear();
-            //}
-            //con.Close();
+            DateTime startDate = new DateTime(2010,05,01);
+            AddDailyBasic(startDate);       
             Console.ReadLine();
         }
-
-        private static Hashtable GenPostData2()
+        public static void AddDaily(DateTime startDate)
         {
-            Hashtable dic = new Hashtable();
-            dic.Add("api_name", "dividend");
+            HttpHelper hh = new HttpHelper();
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            dic.Add("api_name", "index_daily");
             dic.Add("token", "8637e17fe4cbc18f2c412229ad41f8628d0849598c73e4fd3332d8fa");
-            dic.Add("params", GenParams2());
-            dic.Add("fields", "ts_code,end_date,ann_date,div_proc,stk_div,stk_bo_rate,stk_co_rate,cash_div,cash_div_tax,record_date,ex_date,pay_date,div_listdate,imp_ann_date,base_date,base_share");
-            return dic;
+            Dictionary<string, object> dicParam = new Dictionary<string, object>();
+            dicParam.Add("trade_date", "");
+            dicParam.Add("ts_code", "399006.SZ");
+            dicParam.Add("start_date", startDate.ToString("yyyyMMdd"));
+            dicParam.Add("end_date", startDate.AddDays(3000).ToString("yyyyMMdd"));
+            startDate = startDate.AddDays(3000);
+            dic.Add("params", dicParam);
+            dic.Add("fields", "ts_code,trade_date,close,open,high,low,pre_close,change,pct_chg,vol,amount");
+            string strJson = JsonHelper.GetJsonJS(dic);
+            string result = hh.Post("http://api.tushare.pro", strJson);
+            ResultInfo ri = JsonHelper.JsonDeserializeJS<ResultInfo>(result);
+            IDataBase db = new SqlServerDataBase();
+            List<string> liSql = new List<string>();
+            string sql = "";
+            for (int i = 0; i < ri.data.items.Count; i++)
+            {
+                sql = "insert into Base_MarketIndex_Daily values('399006.SZ','" + ri.data.items[i][1] + "'";
+                sql += ",'" + ri.data.items[i][2] + "'";
+                sql += ",'" + ri.data.items[i][3] + "'";
+                sql += ",'" + ri.data.items[i][4] + "'";
+                sql += ",'" + ri.data.items[i][5] + "'";
+                sql += ",'" + ri.data.items[i][6] + "'";
+                sql += ",'" + ri.data.items[i][7] + "'";
+                sql += ",'" + ri.data.items[i][8] + "'";
+                sql += ",'" + ri.data.items[i][9] + "'";
+                sql += ",'" + ri.data.items[i][10] + "'";
+                sql += ")";
+                liSql.Add(sql);
+            }
+            db.ExecuteTran(liSql);
+            if (startDate<DateTime.Now)
+            {
+                AddDaily(startDate.AddDays(1));
+            }
         }
-        private static Dictionary<string, string> GenPostData()
+        public static void AddDailyBasic(DateTime startDate)
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("api_name", "dividend");
+            HttpHelper hh = new HttpHelper();
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            dic.Add("api_name", "index_dailybasic");
             dic.Add("token", "8637e17fe4cbc18f2c412229ad41f8628d0849598c73e4fd3332d8fa");
-            dic.Add("params", GenParams());
-            dic.Add("fields", "ts_code,end_date,ann_date,div_proc,stk_div,stk_bo_rate,stk_co_rate,cash_div,cash_div_tax,record_date,ex_date,pay_date,div_listdate,imp_ann_date,base_date,base_share");
-            return dic;
-        }
-        private static string GenParams()
-        {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("ts_code", "600900.sh");
-            return Newtonsoft.Json.JsonConvert.SerializeObject(dic);
-        }
-
-        private static Dictionary<string, string> GenParams2()
-        {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("ts_code", "600900.sh");
-            return dic;
-        }
-        private void Cal()
-        {
-            bool flag = true;
-            while (flag)
+            Dictionary<string, object> dicParam = new Dictionary<string, object>();
+            dicParam.Add("trade_date", "");
+            dicParam.Add("ts_code", "399006.SZ");
+            dicParam.Add("start_date", startDate.ToString("yyyyMMdd"));
+            dicParam.Add("end_date", startDate.AddDays(3000).ToString("yyyyMMdd"));
+            startDate = startDate.AddDays(3000);
+            dic.Add("params", dicParam);
+            dic.Add("fields", "ts_code,trade_date,total_mv,float_mv,total_share,float_share,free_share,turnover_rate,turnover_rate_f,pe,pe_ttm,pb");
+            string strJson = JsonHelper.GetJsonJS(dic);
+            string result = hh.Post("http://api.tushare.pro", strJson);
+            ResultInfo ri = JsonHelper.JsonDeserializeJS<ResultInfo>(result);
+            IDataBase db = new SqlServerDataBase();
+            List<string> liSql = new List<string>();
+            string sql = "";
+            for (int i = 0; i < ri.data.items.Count; i++)
             {
-                Console.WriteLine("请输入总金额：");
-                string total = Console.ReadLine();
-                double dTotal;
-                if (!Double.TryParse(total, out dTotal))
-                {
-                    Console.WriteLine("请输入总金额：");
-                }
-                Console.WriteLine("请输入每年增量金额：");
-                string increaseAmount = Console.ReadLine();
-                double amount;
-                if (!Double.TryParse(increaseAmount, out amount))
-                {
-                    Console.WriteLine("请输入每年增量金额：");
-                }
-                Console.WriteLine("请输入增长率：");
-                string rate = Console.ReadLine();
-                double dRate;
-                if (!Double.TryParse(rate, out dRate))
-                {
-                    Console.WriteLine("请输入每年增量金额：");
-                }
-                for (int i = 0; i < 15; i++)
-                {
-                    dTotal = dTotal * (1 + dRate) + amount;
-                    Console.WriteLine("第" + (i + 1).ToString() + "年:" + dTotal);
-                }
-                Console.WriteLine("输入0结束，否则继续！");
-                string result = Console.ReadLine();
-                if (result == "0")
-                {
-                    flag = false;
-                }
+                sql = "insert into Base_MarketIndex values('399006.SZ','" + ri.data.items[i][1] + "'";
+                sql += ",'" + ri.data.items[i][2] + "'";
+                sql += ",'" + ri.data.items[i][3] + "'";
+                sql += ",'" + ri.data.items[i][4] + "'";
+                sql += ",'" + ri.data.items[i][5] + "'";
+                sql += ",'" + ri.data.items[i][6] + "'";
+                sql += ",'" + ri.data.items[i][7] + "'";
+                sql += ",'" + ri.data.items[i][8] + "'";
+                sql += ",'" + ri.data.items[i][9] + "'";
+                sql += ",'" + ri.data.items[i][10] + "'";
+                sql += ",'" + ri.data.items[i][11] + "'";
+                sql += ")";
+                liSql.Add(sql);
+            }
+            db.ExecuteTran(liSql);
+            if (startDate < DateTime.Now)
+            {
+                AddDailyBasic(startDate.AddDays(1));
             }
         }
-        #region 测试DAL
-        private static void Add()
-        {
-            Sys_Tables dal = new Sys_Tables();
-            MyPlatform.Model.Sys_Tables model = new MyPlatform.Model.Sys_Tables();
-            model.CreatedBy = "1";
-            model.DBName = "aa";
-            dal.Add(model);
-        }
-        #endregion
-
-        #region 辅助方法
-        private static string CreateInsertSqlByRef<T>(T t)
-        {
-            PropertyInfo[] pis = t.GetType().GetProperties();
-            StringBuilder sql = new StringBuilder();
-            sql.Append("Insert Into " + t.GetType().Name);
-            sql.Append(" (");
-            foreach (PropertyInfo pi in pis)
-            {
-                sql.Append(pi.Name + ",");
-            }
-            sql.Remove(sql.Length - 1, 1);
-            sql.Append(" )");
-            sql.Append(" values (");
-            foreach (PropertyInfo pi in pis)
-            {
-                sql.Append(" @" + pi.Name + ",");
-            }
-            sql.Remove(sql.Length - 1, 1);
-            sql.Append(" )");
-            SqlParameter[] paras = new SqlParameter[pis.Length];
-            return sql.ToString();
-        }
-        #endregion
 
     }
-    class data1
+
+    class ResultInfo
     {
+        public string request_id { get; set; }
         public string code { get; set; }
         public string msg { get; set; }
-        public List<data2> data { get; set; }
-    }
-    class data2
-    {
-        public string month { get; set; }
-
-        public string year { get; set; }
-        public List<data3> days { get; set; }
-    }
-    class data3
-    {
-        public string date { get; set; }
-        public int type { get; set; }
+        public Data2 data { get; set; }
+        public bool has_more { get; set; }
 
     }
-    class Doc
+    class Data2
     {
-        public string DocNo { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public List<Lines> lines { get; set; }
+        public string[] fields { get; set; }
+        public List<string[]> items { get; set; }
 
-    }
-    public class Lines
-    {
-        public int LineNum { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
     }
 }

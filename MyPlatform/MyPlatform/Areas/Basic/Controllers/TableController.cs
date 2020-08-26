@@ -33,7 +33,7 @@ namespace MyPlatform.Areas.Basic.Controllers
                 }
                 else
                 {
-                    if (model.CreatedDate==null)
+                    if (model.CreatedDate == null)
                     {
                         model.CreatedDate = DateTime.Now;
                     }
@@ -58,7 +58,7 @@ namespace MyPlatform.Areas.Basic.Controllers
             ReturnData result = new ReturnData();
             try
             {
-                if (model.UpdatedDate==null)
+                if (model.UpdatedDate == null)
                 {
                     model.UpdatedDate = DateTime.Now;
                 }
@@ -107,6 +107,21 @@ namespace MyPlatform.Areas.Basic.Controllers
                 result.S = false;
                 result.SetErrorMsg("获取数据失败：" + ex.Message);
                 LogHelper.Default.WriteError("获取数据失败：" + ex.Message);
+            }
+            return MyResponseMessage.SuccessJson<ReturnData>(result);
+        }
+        public HttpResponseMessage AddColumn([FromBody]string json)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                string s = "";
+            }
+            catch (Exception ex)
+            {
+                result.S = false;
+                result.SetErrorMsg("新增列失败："+ex.Message);
+                //throw;
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }

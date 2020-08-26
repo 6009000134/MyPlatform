@@ -13,10 +13,13 @@ namespace MyPlatform.Common
     public static class JWTTokenHelper
     {
 
-        public static int SetTimeOut()
+        public static int SetTimeOut(int t)
         {
-            int timeout = ConfigHelper.GetConfigInt("TokenTimeOut");//过期时间：分钟
-            return timeout;
+            if (t==0)
+            {
+                t = ConfigHelper.GetConfigInt("TokenTimeOut");//过期时间：分钟
+            }
+            return t;
         }
         /// <summary>
         /// 创建token
@@ -52,7 +55,7 @@ namespace MyPlatform.Common
         /// <param name="token">token</param>
         public static void ValidateToken(string token)
         {
-            string secret = "";
+            string secret = ConfigHelper.GetConfigString("JWTSecret"); ;
             try
             {
                 IJsonSerializer serializer = new JsonNetSerializer();

@@ -33,7 +33,7 @@ namespace MyPlatform.Areas.Web.Controllers
                 dicPayload.Add("Account",model.Account);
                 dicPayload.Add("UserName", model.UserName);
                 //生成Token
-                token = Common.JWTTokenHelper.GenerateToken(dicPayload);
+                token = Common.JWTTokenHelper.GenerateToken(dicPayload,Common.JWTTokenHelper.SetTimeOut(0));
                 
                 result.D = u;
             }
