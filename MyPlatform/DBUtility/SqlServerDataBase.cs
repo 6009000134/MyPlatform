@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MyPlatform.Model.Enum;
 
 namespace MyPlatform.DBUtility
 {
@@ -14,6 +15,21 @@ namespace MyPlatform.DBUtility
     {
         //TODO:Timeout设置
         public string connectionString;//连接字符串
+
+        public DBEnum DBType
+        {
+            get
+            {
+                return DBEnum.SqlServer;
+            }
+
+            set
+            {
+                DBType = value;
+            }
+        }
+
+        private string ss;
         #region 构造函数
         /// <summary>
         /// 构造函数
@@ -22,6 +38,8 @@ namespace MyPlatform.DBUtility
         {
             connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         }
+
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -44,9 +62,28 @@ namespace MyPlatform.DBUtility
                 con.Open();
             }
         }
-        public SqlCommand CreateCommand(string sql, IDataParameter[] paras,SqlConnection con)
+        /// <summary>
+        /// 创建SqlCommand
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="con"></param>
+        /// <returns></returns>
+        public SqlCommand CreateCommand(string sql, SqlConnection con)
         {
-            SqlCommand cmd = new SqlCommand(sql,con);
+            SqlCommand cmd = new SqlCommand(sql, con);
+            Open(con);
+            return cmd;
+        }
+        /// <summary>
+        /// 创建SqlCommand
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="paras"></param>
+        /// <param name="con"></param>
+        /// <returns></returns>
+        public SqlCommand CreateCommand(string sql, IDataParameter[] paras, SqlConnection con)
+        {
+            SqlCommand cmd = new SqlCommand(sql, con);
             foreach (SqlParameter item in paras)
             {
                 if ((item.Direction == ParameterDirection.Input || item.Direction == ParameterDirection.InputOutput) && (item.Value == null))
@@ -55,6 +92,7 @@ namespace MyPlatform.DBUtility
                 }
                 cmd.Parameters.Add(item);
             }
+            Open(con);
             return cmd;
         }
         #endregion
@@ -71,7 +109,7 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand(sql);
+                    SqlCommand cmd = CreateCommand(sql, con);
                     int rows = cmd.ExecuteNonQuery();
                     return rows;
                 }
@@ -93,7 +131,7 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand(sql);
+                    SqlCommand cmd = CreateCommand(sql, con);
                     return cmd.ExecuteReader();
                 }
             }
@@ -114,7 +152,7 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand(sql);
+                    SqlCommand cmd = CreateCommand(sql, con);
                     return cmd.ExecuteScalar();
                 }
             }
@@ -137,8 +175,7 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand(sql, con);
-                    Open(con);
+                    SqlCommand cmd = CreateCommand(sql, con);
                     using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                     {
                         sda.Fill(ds);
@@ -167,9 +204,8 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = CreateCommand(sql, paras,con);
-                    Open(con);
-                    int rows= cmd.ExecuteNonQuery();
+                    SqlCommand cmd = CreateCommand(sql, paras, con);
+                    int rows = cmd.ExecuteNonQuery();
                     cmd.Parameters.Clear();
                     return rows;
                 }
@@ -185,8 +221,7 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = CreateCommand(sql, paras,con);
-                    Open(con);
+                    SqlCommand cmd = CreateCommand(sql, paras, con);
                     object o = cmd.ExecuteScalar();
                     cmd.Parameters.Clear();
                     return o;
@@ -210,8 +245,7 @@ namespace MyPlatform.DBUtility
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = CreateCommand(sql, paras,con);
-                    Open(con);
+                    SqlCommand cmd = CreateCommand(sql, paras, con);
                     using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                     {
                         sda.Fill(ds);

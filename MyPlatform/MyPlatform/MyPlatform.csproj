@@ -208,6 +208,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Basic\BasicAreaRegistration.cs" />
+    <Compile Include="Areas\Basic\Controllers\ColumnController.cs" />
     <Compile Include="Areas\Basic\Controllers\DBController.cs" />
     <Compile Include="Areas\Basic\Controllers\MailController.cs" />
     <Compile Include="Areas\Basic\Controllers\TableController.cs" />

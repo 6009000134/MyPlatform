@@ -104,23 +104,72 @@ namespace MyPlatform.SQLServerDAL
         /// <returns></returns>
         public bool Add(MyPlatform.Model.Sys_Tables model)
         {
-            List<SqlCommandData> sqlCommmands = new List<SqlCommandData>();//事务参数
+            List<SqlCommandData> sqlCommands = new List<SqlCommandData>();//事务参数
             StringBuilder sql = new StringBuilder();
             sql.Append("Create table {0} (");
             sql.Append(" ID int primary key identity(1,1),");
-            sql.Append(" CreatedBy nvarchar(30),");
-            sql.Append(" CreatedDate DATETIME DEFAULT(GETDATE()),");
-            sql.Append(" UpdatedBy nvarchar(40) default(''),");
+            sql.Append(" CreatedBy nvarchar(30) not null,");
+            sql.Append(" CreatedDate DATETIME DEFAULT(GETDATE()) not null,");
+            sql.Append(" UpdatedBy nvarchar(30) default(''),");
             sql.Append(" UpdatedDate datetime default(getdate()),");
-            sql.Append(" Deleted int DEFAULT(0)");
+            sql.Append(" Deleted bit DEFAULT(0)");
             sql.Append(" )");
             SqlCommandData sc = new SqlCommandData();
             sc.CommandText = string.Format(sql.ToString(), model.TableName);
-            sqlCommmands.Add(sc);
+            sqlCommands.Add(sc);
             SqlCommandData sc2 = SqlFactory.CreateInsertSqlByRef<MyPlatform.Model.Sys_Tables>(model);
-            sqlCommmands.Add(sc2);
+            sqlCommands.Add(sc2);
             IDataBase db = new SqlServerDataBase();
-            return db.ExecuteTran(sqlCommmands);
+            if (db.ExecuteTran(sqlCommands))
+            {
+                SqlCommandData scID = new SqlCommandData();
+                scID.CommandText = "select SCOPE_IDENTITY()";
+                sqlCommands.Add(scID);
+                int id=Convert.ToInt32(db.ExecuteScalar("select IDENT_CURRENT('Sys_Tables')"));
+                sqlCommands = new List<SqlCommandData>();
+                SqlCommandData sc3 = new SqlCommandData();
+                sc3.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
+           ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
+           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
+           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+               + model.TableName + "','CreatedBy','CreatedBy','创建人','NVarchar',30,0,'','')";
+                sqlCommands.Add(sc3);
+                SqlCommandData sc4 = new SqlCommandData();
+                sc4.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
+           ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
+           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
+           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+               + model.TableName + "','CreatedDate','CreatedDate','创建时间','DateTime',0,0,'','')";
+                sqlCommands.Add(sc4);
+                SqlCommandData sc5 = new SqlCommandData();
+                sc5.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
+           ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
+           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
+           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+               + model.TableName + "','UpdatedBy','UpdatedBy','更新人','NVarchar',30,1,'','')";
+                sqlCommands.Add(sc5);
+                SqlCommandData sc6 = new SqlCommandData();
+                sc6.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
+           ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
+           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
+           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+               + model.TableName + "','UpdatedDate','UpdatedDate','更新时间','DateTime',0,1,'','')";
+                sqlCommands.Add(sc6);
+                SqlCommandData sc7 = new SqlCommandData();
+                sc7.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
+           ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
+           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
+           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+               + model.TableName + "','Deleted','Deleted','是否已删除','Bit',0,1,0,'')";
+                sqlCommands.Add(sc7);
+            }
+                   
+            return db.ExecuteTran(sqlCommands);
         }
         /// <summary>
         /// 编辑表信息

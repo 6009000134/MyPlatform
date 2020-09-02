@@ -1,4 +1,4 @@
-﻿using Model.Enum;
+﻿using MyPlatform.Model.Enum;
 using MyPlatform.Common.Cache;
 using MyPlatform.Model;
 using System;
@@ -12,6 +12,9 @@ using System.Web.Http;
 
 namespace MyPlatform.Areas.Basic.Controllers
 {
+    /// <summary>
+    /// 数据库连接信息
+    /// </summary>
     public class DBController : ApiController
     {
         /// <summary>

@@ -110,20 +110,5 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
-        public HttpResponseMessage AddColumn([FromBody]string json)
-        {
-            ReturnData result = new ReturnData();
-            try
-            {
-                string s = "";
-            }
-            catch (Exception ex)
-            {
-                result.S = false;
-                result.SetErrorMsg("新增列失败："+ex.Message);
-                //throw;
-            }
-            return MyResponseMessage.SuccessJson<ReturnData>(result);
-        }
     }
 }

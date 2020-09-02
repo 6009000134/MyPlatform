@@ -158,6 +158,26 @@ namespace MyPlatform.Model{
         } 
 		       
 		/// <summary>
+		/// IsNullable
+        /// </summary>		
+		private bool _isnullable;
+				public bool IsNullable
+        {   
+            get{ return _isnullable; }
+            set{ _isnullable =value; }
+        } 
+		       
+		/// <summary>
+		/// DefaultValue
+        /// </summary>		
+		private string _defaultvalue;
+				public string DefaultValue
+        {   
+            get{ return _defaultvalue; }
+            set{ _defaultvalue =value; }
+        } 
+		       
+		/// <summary>
 		/// Remark
         /// </summary>		
 		private string _remark;

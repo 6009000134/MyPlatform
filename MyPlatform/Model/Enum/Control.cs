@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model.Enum
+namespace MyPlatform.Model.Enum
 {
     public enum Control
     {

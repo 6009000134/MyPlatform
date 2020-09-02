@@ -9,6 +9,9 @@ using System.Web.Http;
 
 namespace MyPlatform.Areas.Web.Controllers
 {
+    /// <summary>
+    /// 登录
+    /// </summary>
     public class LoginController : ApiController
     {
         MyPlatform.BLL.Sys_Users userBLL = new MyPlatform.BLL.Sys_Users();
