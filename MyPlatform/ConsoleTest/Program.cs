@@ -18,7 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UFIDA.U9.CBO.PubBE.YYC;
 using MySql.Data.MySqlClient;
-
+using System.Text.RegularExpressions;
 
 namespace ConsoleTest
 {
@@ -34,9 +34,86 @@ namespace ConsoleTest
             //    amount += amount * 0.08+10;
             //    Console.WriteLine(amount);
             //}
-            //// AddDailyBasic(startDate);       
-            AddBonus("601398.SH");
+            //// AddDailyBasic(startDate);     
+
+            AddAPIInfo("sadas");
+            //AddBonus("601398.SH");
             Console.ReadLine();
+        }
+
+        public static void AddAPIInfo(string html)
+        {            
+            List<string> li = new List<string>();//Sqls
+            //标题
+            Regex regTitle = new Regex("(?<=<h2.*>).*(?=</[\\s\\S]*?h2 >)");
+            //API名称
+            Regex regApi = new Regex("(?<=接口：).*?(?=<br>)");
+            Regex regDescpri = new Regex("(?<=描述：).*?(?=<br>)");
+            Match m = regTitle.Match(html);
+            Match m1 = regApi.Match(html);
+            Match m2 = regDescpri.Match(html);
+            string title = m.Value;
+            string api = m1.Value;
+            string Descprition = m2.Value;
+            Console.WriteLine("title:" + title);
+            Console.WriteLine("api:" + api);
+            Console.WriteLine("Descprition:" + Descprition);
+            Console.WriteLine("如果有问题，请输入\"N\"终止");
+            string sql = "insert into Sys_APIs values('" + m.Value + "','" + m1.Value + "','" + m2.Value + "')";
+            string result = Console.ReadLine();
+            if (result.ToUpper() == "N")
+            {
+                return;
+            }
+            sql += "; select SCOPE_IDENTITY()";
+            IDataBase db = new SqlServerDataBase();
+            object o = db.ExecuteScalar(sql);
+            int apiID = 0;
+            Console.WriteLine("结果:" + o.ToString());
+
+
+            //Input Html
+            Match m3 = new Regex("输入参数[\\s\\S]*?输出参数").Match(html);
+            string input = m3.Value;
+            //输入参数            
+            MatchCollection m4 = new Regex("(?<=<td.*>).*(?=</td>)").Matches(input);
+            IEnumerator e = m4.GetEnumerator();
+            int i = 0;
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Insert into API_Input (ParamName ,ParamType,IsRequired,Descprition,ApiID, OrderNo) values(");
+            while (e.MoveNext())
+            {
+                if (i % 4 == 0 && i != 0)
+                {
+                    li.Add(sb.ToString().Substring(0, sb.ToString().Length - 1) + "," + apiID.ToString() + "," + (i * 10).ToString() + ")");
+                    sb = new StringBuilder();
+                    sb.Append("Insert into API_Input (ParamName ,ParamType,IsRequired,Descprition,ApiID, OrderNo) values(");
+                }
+                sb.Append(" '" + e.Current.ToString() + "',");
+                i++;
+            }
+
+            //输出参数Html
+            Match m5 = new Regex("输出参数[\\s\\S]*?</table>").Match(html);
+            string output = m5.Value;
+            //输出参数
+            MatchCollection m6 = new Regex("(?<=<td.*>).*(?=</td>)").Matches(output);
+            IEnumerator e2 = m6.GetEnumerator();
+            sb = new StringBuilder();
+            sb.Append("Insert into API_OutPut (ParamName ,ParamType,IsRequired,Descprition,ApiID, OrderNo) values (");
+            i = 0;
+            while (e2.MoveNext())
+            {
+                if (i % 4 == 0 && i != 0)
+                {
+                    li.Add(sb.ToString().Substring(0, sb.ToString().Length - 1) + "," + apiID.ToString() + "," + (i * 10).ToString() + ")");
+                    sb = new StringBuilder();
+                    sb.Append("Insert into API_OutPut (ParamName ,ParamType,IsRequired,Descprition,ApiID, OrderNo) values (");
+                }
+                sb.Append(" '" + e2.Current.ToString() + "',");
+                i++;
+            }
+            db.ExecuteTran(li);
         }
 
         public static void AddBonus(string ts_code)
@@ -61,7 +138,7 @@ namespace ConsoleTest
             string sql = "";
             for (int i = 0; i < ri.data.items.Count; i++)
             {
-                sql = "insert into Base_Bonus values('"+ts_code+"','" + ri.data.items[i][1] + "'";
+                sql = "insert into Base_Bonus values('" + ts_code + "','" + ri.data.items[i][1] + "'";
                 sql += ",'" + ri.data.items[i][2] + "'";
                 sql += ",'" + ri.data.items[i][3] + "'";
                 sql += ",'" + ri.data.items[i][4] + "'";
@@ -118,7 +195,7 @@ namespace ConsoleTest
                 liSql.Add(sql);
             }
             db.ExecuteTran(liSql);
-            if (startDate<DateTime.Now)
+            if (startDate < DateTime.Now)
             {
                 AddDaily(startDate.AddDays(1));
             }
