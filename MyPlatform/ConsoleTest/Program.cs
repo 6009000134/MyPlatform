@@ -22,23 +22,65 @@ using System.Text.RegularExpressions;
 
 namespace ConsoleTest
 {
-
+    
     class Program
     {
         static void Main(string[] args)
         {
-            //DateTime startDate = new DateTime(2010,05,01);
-            //double amount = 60.00;
-            //for (int i = 0; i < 30; i++)
-            //{
-            //    amount += amount * 0.08+10;
-            //    Console.WriteLine(amount);
-            //}
-            //// AddDailyBasic(startDate);     
-
-            AddAPIInfo("sadas");
+            // AddDailyBasic(startDate);     
+            //AddAPIInfo(html);
             //AddBonus("601398.SH");
+            string s = "2020-11-18";
+            DateTime d = new DateTime();
+            if (DateTime.TryParse(s,out d))
+            {
+                string s2 = "12";
+            }
+            //AddDailyBasic2();
             Console.ReadLine();
+        }
+
+        public static void AddDailyBasic2()
+        {
+            HttpHelper hh = new HttpHelper();
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            dic.Add("api_name", "daily_basic");
+            dic.Add("token", "8637e17fe4cbc18f2c412229ad41f8628d0849598c73e4fd3332d8fa");
+            Dictionary<string, object> dicParam = new Dictionary<string, object>();
+            dicParam.Add("ts_code", "600362.SH");
+            dicParam.Add("trade_date", "");
+            dicParam.Add("start_date", "");
+            dicParam.Add("end_date", "");
+            //startDate = startDate.AddDays(3000);
+            dic.Add("params", dicParam);
+            dic.Add("fields", "ts_code");
+            string strJson = JsonHelper.GetJsonJS(dic);
+            string result = hh.Post("http://api.tushare.pro", strJson);
+            ResultInfo ri = JsonHelper.JsonDeserializeJS<ResultInfo>(result);
+            IDataBase db = new SqlServerDataBase();
+            List<string> liSql = new List<string>();
+            string sql = "";
+            for (int i = 0; i < ri.data.items.Count; i++)
+            {
+                sql = "insert into Base_MarketIndex values('600362.SH','" + ri.data.items[i][1] + "'";
+                sql += ",'" + ri.data.items[i][2] + "'";
+                sql += ",'" + ri.data.items[i][3] + "'";
+                sql += ",'" + ri.data.items[i][4] + "'";
+                sql += ",'" + ri.data.items[i][5] + "'";
+                sql += ",'" + ri.data.items[i][6] + "'";
+                sql += ",'" + ri.data.items[i][7] + "'";
+                sql += ",'" + ri.data.items[i][8] + "'";
+                sql += ",'" + ri.data.items[i][9] + "'";
+                sql += ",'" + ri.data.items[i][10] + "'";
+                sql += ",'" + ri.data.items[i][11] + "'";
+                sql += ")";
+                liSql.Add(sql);
+            }
+            db.ExecuteTran(liSql);
+            //if (startDate < DateTime.Now)
+            //{
+            //    AddDailyBasic(startDate.AddDays(1));
+            //}
         }
 
         public static void AddAPIInfo(string html)
@@ -68,7 +110,7 @@ namespace ConsoleTest
             sql += "; select SCOPE_IDENTITY()";
             IDataBase db = new SqlServerDataBase();
             object o = db.ExecuteScalar(sql);
-            int apiID = 0;
+            int apiID = int.Parse(o.ToString());
             Console.WriteLine("结果:" + o.ToString());
 
 
@@ -208,7 +250,7 @@ namespace ConsoleTest
             dic.Add("token", "8637e17fe4cbc18f2c412229ad41f8628d0849598c73e4fd3332d8fa");
             Dictionary<string, object> dicParam = new Dictionary<string, object>();
             dicParam.Add("trade_date", "");
-            dicParam.Add("ts_code", "399006.SZ");
+            dicParam.Add("ts_code", "600362.SH");
             dicParam.Add("start_date", startDate.ToString("yyyyMMdd"));
             dicParam.Add("end_date", startDate.AddDays(3000).ToString("yyyyMMdd"));
             startDate = startDate.AddDays(3000);
@@ -222,7 +264,7 @@ namespace ConsoleTest
             string sql = "";
             for (int i = 0; i < ri.data.items.Count; i++)
             {
-                sql = "insert into Base_MarketIndex values('399006.SZ','" + ri.data.items[i][1] + "'";
+                sql = "insert into Base_MarketIndex values('600362.SH','" + ri.data.items[i][1] + "'";
                 sql += ",'" + ri.data.items[i][2] + "'";
                 sql += ",'" + ri.data.items[i][3] + "'";
                 sql += ",'" + ri.data.items[i][4] + "'";

@@ -88,7 +88,7 @@ namespace MyPlatform
             bool flag = true;
             if (allowUrls.Count>0)
             {
-                if (allowUrls.Contains(Request.UrlReferrer.AbsoluteUri))
+                if (allowUrls.Select(m => m.Contains(Request.UrlReferrer.Host)).Count() > 0)
                 {
                     flag = true;
                 }
