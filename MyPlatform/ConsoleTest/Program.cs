@@ -28,18 +28,52 @@ namespace ConsoleTest
         static void Main(string[] args)
         {
             // AddDailyBasic(startDate);     
-            //AddAPIInfo(html);
+           //AddAPIInfo(html);
             //AddBonus("601398.SH");
-            string s = "2020-11-18";
-            DateTime d = new DateTime();
-            if (DateTime.TryParse(s,out d))
-            {
-                string s2 = "12";
-            }
+           
             //AddDailyBasic2();
             Console.ReadLine();
         }
-
+        public static void Addfund()
+        {
+            HttpHelper hh = new HttpHelper();
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            dic.Add("api_name", "fund_basic");
+            dic.Add("token", "8637e17fe4cbc18f2c412229ad41f8628d0849598c73e4fd3332d8fa");
+            Dictionary<string, object> dicParam = new Dictionary<string, object>();
+            dicParam.Add("market", "");
+            dicParam.Add("status", "");
+            //startDate = startDate.AddDays(3000);
+            dic.Add("params", dicParam);
+            dic.Add("fields", "ts_code,name,management,custodian,fund_type,found_date,due_date,list_date,issue_date,delist_date,issue_amount,m_fee,c_fee,duration_year,p_value,min_amount,exp_return,benchmark,status,invest_type,type,trustee,purc_startdate,redm_startdate");
+            string strJson = JsonHelper.GetJsonJS(dic);
+            string result = hh.Post("http://api.tushare.pro", strJson);
+            ResultInfo ri = JsonHelper.JsonDeserializeJS<ResultInfo>(result);
+            IDataBase db = new SqlServerDataBase();
+            List<string> liSql = new List<string>();
+            string sql = "";
+            for (int i = 0; i < ri.data.items.Count; i++)
+            {
+                sql = "insert into Base_MarketIndex values('600362.SH','" + ri.data.items[i][1] + "'";
+                sql += ",'" + ri.data.items[i][2] + "'";
+                sql += ",'" + ri.data.items[i][3] + "'";
+                sql += ",'" + ri.data.items[i][4] + "'";
+                sql += ",'" + ri.data.items[i][5] + "'";
+                sql += ",'" + ri.data.items[i][6] + "'";
+                sql += ",'" + ri.data.items[i][7] + "'";
+                sql += ",'" + ri.data.items[i][8] + "'";
+                sql += ",'" + ri.data.items[i][9] + "'";
+                sql += ",'" + ri.data.items[i][10] + "'";
+                sql += ",'" + ri.data.items[i][11] + "'";
+                sql += ")";
+                liSql.Add(sql);
+            }
+            db.ExecuteTran(liSql);
+            //if (startDate < DateTime.Now)
+            //{
+            //    AddDailyBasic(startDate.AddDays(1));
+            //}
+        }
         public static void AddDailyBasic2()
         {
             HttpHelper hh = new HttpHelper();

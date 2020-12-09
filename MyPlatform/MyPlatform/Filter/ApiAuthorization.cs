@@ -23,10 +23,10 @@ namespace MyPlatform.Filter
             //base.OnAuthorization(actionContext);
             //return;
             // 对AllowAnonymousAttribute的Action不进行校验
-            //if (actionContext.ActionDescriptor.GetCustomAttributes<AllowAnonymousAttribute>().Any())
-            //{
-            //    return;
-            //}
+            if (actionContext.ActionDescriptor.GetCustomAttributes<AllowAnonymousAttribute>().Any())
+            {
+                return;
+            }
             // 校验token和权限
             string token = "";
             IEnumerable<string> iToken;
