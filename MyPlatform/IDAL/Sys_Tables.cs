@@ -12,6 +12,7 @@ namespace MyPlatform.IDAL {
         bool ExistsTable(string tableName,string dbName);
         bool Add(MyPlatform.Model.Sys_Tables model);
         bool Edit(MyPlatform.Model.Sys_Tables model);
+        DataTable GetDetailListByTID(int tableID, MyPlatform.Model.Pagination page);
         #endregion
 	} 
 }

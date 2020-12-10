@@ -27,7 +27,7 @@ namespace MyPlatform.Utils
         /// <returns></returns>
         public static HttpResponseMessage SuccessJson<T>(T t)
         {
-            return new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(JSONUtil.GetJson<T>(t), System.Text.Encoding.UTF8, jsonContentType) };
+            return new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(t.ToJson<T>(), System.Text.Encoding.UTF8, jsonContentType) };
         }
         /// <summary>
         /// 返回JSON
@@ -38,7 +38,7 @@ namespace MyPlatform.Utils
         /// <returns></returns>
         public static HttpResponseMessage SuccessJson<T>(Dictionary<string,string> header, T t)
         {
-            HttpResponseMessage result= new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(JSONUtil.GetJson<T>(t), System.Text.Encoding.UTF8, jsonContentType) };
+            HttpResponseMessage result= new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(t.ToJson<T>(), System.Text.Encoding.UTF8, jsonContentType) };
             for (int i = 0; i < header.Count(); i++)
             {                
                 result.Headers.Add(header.ElementAt(i).Key, header.ElementAt(i).Value);
@@ -56,7 +56,7 @@ namespace MyPlatform.Utils
             {
                 errorMsg = "未授权，请重新登录或联系管理员！";
             }
-            return new HttpResponseMessage() { StatusCode = HttpStatusCode.Unauthorized, Content = new StringContent(JSONUtil.GetJson<string>(errorMsg), System.Text.Encoding.UTF8, jsonContentType) };
+            return new HttpResponseMessage() { StatusCode = HttpStatusCode.Unauthorized, Content = new StringContent(errorMsg.ToJson(), System.Text.Encoding.UTF8, jsonContentType) };
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace MyPlatform.Utils
             {
                 errorMsg = "服务器内部错误，请联系管理员！";
             }
-            return new HttpResponseMessage() { StatusCode = HttpStatusCode.InternalServerError, Content = new StringContent(JSONUtil.GetJson<string>(errorMsg), System.Text.Encoding.UTF8, jsonContentType) };
+            return new HttpResponseMessage() { StatusCode = HttpStatusCode.InternalServerError, Content = new StringContent(errorMsg.ToJson(), System.Text.Encoding.UTF8, jsonContentType) };
         }
 
         public static HttpResponseMessage Forbidden(string errorMsg)
@@ -79,7 +79,7 @@ namespace MyPlatform.Utils
             {
                 errorMsg = "未经授权，禁止访问！若有疑问，请联系管理员！";
             }
-            return new HttpResponseMessage() { StatusCode = HttpStatusCode.Forbidden, Content = new StringContent(JSONUtil.GetJson<string>(errorMsg), System.Text.Encoding.UTF8, jsonContentType) };
+            return new HttpResponseMessage() { StatusCode = HttpStatusCode.Forbidden, Content = new StringContent(errorMsg.ToJson(), System.Text.Encoding.UTF8, jsonContentType) };
         }
 
         /// <summary>

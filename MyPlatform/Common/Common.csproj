@@ -65,17 +65,20 @@
     <Compile Include="DEncrypt\HashEncode.cs" />
     <Compile Include="DEncrypt\RSACryption.cs" />
     <Compile Include="Enum\Encoding.cs" />
+    <Compile Include="Extend\MyExtends.cs" />
     <Compile Include="JSONUtil.cs" />
     <Compile Include="JWTTokenHelper.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="Mail\MailConfig.cs" />
     <Compile Include="Mail\MailHelper.cs" />
     <Compile Include="ModelConverter.cs" />
+    <Compile Include="Pagination\Pagination.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

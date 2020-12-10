@@ -20,7 +20,8 @@ namespace MyPlatform.Areas.Basic.Controllers
         /// 获取表的列信息
         /// </summary>
         /// <returns></returns>
-        public HttpResponseMessage List([FromBody]string tableID)
+        [HttpPost]
+        public HttpResponseMessage List([FromBody]int tableID)
         {
             ReturnData result = new ReturnData();
             try
@@ -31,7 +32,7 @@ namespace MyPlatform.Areas.Basic.Controllers
             catch (Exception ex)
             {
                 result.S = false;
-                result.SetErrorMsg("新增列失败：" + ex.Message);
+                result.SetErrorMsg("获取表字段失败：" + ex.Message);
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }

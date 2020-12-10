@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Data;
 using MyPlatform.DBUtility;
 using MyPlatform.IDAL;
+using MyPlatform.Model;
+
 namespace MyPlatform.SQLServerDAL
 {
     //Sys_Tables
@@ -200,6 +202,18 @@ namespace MyPlatform.SQLServerDAL
             IDataBase db = new SqlServerDataBase();
             return db.ExecuteNonQuery(sql) > 0 ? true : false;
         }
+        //TODO:分页
+        public DataTable GetDetailListByTID(int tableID, Pagination page)
+        {
+            string sql = "select *from sys_columns a where a.tableID=@tableID";
+            SqlParameter[] pars = { new SqlParameter("@tableID",SqlDbType.Int)
+            };
+            pars[0].Value = tableID;
+            IDataBase db = new SqlServerDataBase();
+            return db.Query(sql,pars).Tables[0];
+        }
+
+
 
         #endregion
         #region 辅助方法

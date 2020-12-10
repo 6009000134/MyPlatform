@@ -11,7 +11,7 @@ namespace MyPlatform.IDAL
         /// <summary>
         /// 获得数据列表
         /// </summary>
-        DataSet GetList(string tableID);
+        DataSet GetList(int tableID);
         bool Add(string DBName,Model.Sys_Columns model);
         #endregion  成员方法
     }

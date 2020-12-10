@@ -53,6 +53,11 @@ namespace MyPlatform.BLL
         {
             return dal.Edit(model);
         }
+        //TODO:分页
+        public DataTable GetDetailListByTID(int tableID, Pagination page)
+        {
+            return dal.GetDetailListByTID(tableID, page);
+        }
         #endregion
     }
 }

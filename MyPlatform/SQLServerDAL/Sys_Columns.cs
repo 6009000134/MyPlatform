@@ -17,10 +17,11 @@ namespace MyPlatform.SQLServerDAL
         /// </summary>
         /// <param name="tableID">表ID</param>
         /// <returns></returns>
-        public DataSet GetList(string tableID)
+        public DataSet GetList(int tableID)
         {
             string sql = "SELECT * FROM dbo.Sys_Columns where tableID=@tableID";
             IDataParameter[] pars = { new SqlParameter("tableID", SqlDbType.Int) };
+            pars[0].Value = tableID;
             IDataBase db = DBHelperFactory.CreateDBInstance("DefaultConnection");
             return db.Query(sql, pars);
         }

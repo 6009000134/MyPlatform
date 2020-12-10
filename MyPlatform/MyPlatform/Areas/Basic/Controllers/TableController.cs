@@ -1,8 +1,10 @@
-﻿using MyPlatform.Common;
+﻿using Common.Pagination;
+using MyPlatform.Common;
 using MyPlatform.Model;
 using MyPlatform.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -91,7 +93,8 @@ namespace MyPlatform.Areas.Basic.Controllers
         /// <summary>
         /// 获取表列表
         /// </summary>
-        /// <param name="DBName"></param>
+        /// <param name="DBName">数据库名</param>
+        /// <param name="page">分页信息</param>
         /// <returns></returns>
         [HttpPost]
         public HttpResponseMessage List([FromBody]string DBName)
@@ -110,5 +113,21 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
+        //[HttpPost]
+        //public HttpResponseMessage Detail([FromBody]int tableID)
+        //{
+        //    ReturnData result = new ReturnData();
+        //    try
+        //    {
+        //        result.D = tableBLL.GetDetailListByTID(tableID, null);
+        //        result.S = true;
+        //    }
+        //    catch (Exception ex)
+        //    {             
+        //        result.S = false;
+        //        result.SetErrorMsg("错误信息："+ex.Message);
+        //    }
+        //    return MyResponseMessage.SuccessJson<ReturnData>(result);
+        //}
     }
 }

@@ -14,7 +14,7 @@ namespace MyPlatform.BLL
         public Sys_Columns()
         { }
 
-        public DataSet GetList(string tableID)
+        public DataSet GetList(int tableID)
         {
             return dal.GetList(tableID);
         }
