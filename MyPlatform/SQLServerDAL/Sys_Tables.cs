@@ -212,6 +212,18 @@ namespace MyPlatform.SQLServerDAL
             IDataBase db = new SqlServerDataBase();
             return db.Query(sql,pars).Tables[0];
         }
+        /// <summary>
+        /// 刪除表以及相关信息
+        /// </summary>
+        /// <param name="tableID"></param>
+        /// <returns></returns>
+        public bool Delete(int tableID,string dbName)
+        {
+            //无数据的表可以删除            
+            string sql = "select 1 from @tableName";
+
+            return true;
+        }
 
 
 

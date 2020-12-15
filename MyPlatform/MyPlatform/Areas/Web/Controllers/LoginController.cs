@@ -36,15 +36,14 @@ namespace MyPlatform.Areas.Web.Controllers
                 dicPayload.Add("Account",model.Account);
                 dicPayload.Add("UserName", model.UserName);
                 //生成Token
-                token = Common.JWTTokenHelper.GenerateToken(dicPayload,Common.JWTTokenHelper.SetTimeOut(0));
-                
+                token = Common.JWTTokenHelper.GenerateToken(dicPayload,Common.JWTTokenHelper.SetTimeOut(0));                
                 result.D = u;
             }
             else
             {
                 result.SetErrorMsg("账号/密码错误！");
             }
-            HttpResponseMessage rep = MyPlatform.Utils.MyResponseMessage.SuccessJson<ReturnData>(result);
+            HttpResponseMessage rep = MyPlatform.Utils.MyResponseMessage.SuccessJson(result);
             rep.Headers.Add("Access-Control-Expose-Headers","Token");
             rep.Headers.Add("Token",token);
             return rep;

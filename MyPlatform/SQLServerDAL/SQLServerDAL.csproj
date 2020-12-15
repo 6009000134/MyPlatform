@@ -7,7 +7,7 @@
     <ProjectGuid>{B3FD44FD-7DC7-40BF-B507-94B8A0B53D5A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SQLServerDAL</RootNamespace>
+    <RootNamespace>MyPlatform.SQLServerDAL</RootNamespace>
     <AssemblyName>SQLServerDAL</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

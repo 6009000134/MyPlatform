@@ -240,6 +240,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Areas\Web\Controllers\APIController.cs" />
     <Compile Include="Areas\Web\Controllers\LoginController.cs" />
     <Compile Include="Areas\Web\Controllers\RegisterController.cs" />
     <Compile Include="Areas\Web\WebAreaRegistration.cs" />
@@ -264,6 +265,7 @@
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="DataBase.xml" />
     <Content Include="favicon.ico" />
     <Content Include="Filter\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

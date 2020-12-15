@@ -34,7 +34,7 @@ namespace MyPlatform.SQLServerDAL
         public bool Add(string DBName, Model.Sys_Columns model)
         {
             IDataBase db = DBHelperFactory.CreateDBInstance(DBName);
-            if (db.DBType.ToString() == "0")//SqlServer
+            if (db.DBType ==Model.Enum.DBEnum.SqlServer )//SqlServer
             {                
                 StringBuilder sb = new StringBuilder();
                 sb.Append("alter table "+model.TableName+" add column "+model.ColumnName+" "+model.ColumnType+model.Size);                
@@ -48,11 +48,11 @@ namespace MyPlatform.SQLServerDAL
                 }
                 //TODO:增加默认值
             }
-            else if(db.DBType.ToString()=="1")//MySql
+            else if(db.DBType== Model.Enum.DBEnum.MySql)//MySql
             {
 
             }
-            else if (db.DBType.ToString() == "2")//Oracle
+            else if (db.DBType == Model.Enum.DBEnum.Oracle)//Oracle
             {
 
             }

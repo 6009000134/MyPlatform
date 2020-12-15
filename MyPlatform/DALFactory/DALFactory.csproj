@@ -7,7 +7,7 @@
     <ProjectGuid>{488C36D8-16AF-42B5-8E06-164A8BE8CAA8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DALFactory</RootNamespace>
+    <RootNamespace>MyPlatform.DALFactory</RootNamespace>
     <AssemblyName>DALFactory</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

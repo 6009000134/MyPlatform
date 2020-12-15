@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyPlatform.Model.Enum;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -10,7 +11,7 @@ namespace MyPlatform.DBUtility
 {
     public interface IDataBase
     {
-        MyPlatform.Model.Enum.DBEnum DBType { get; set; }
+        DBEnum DBType { get; set; }
         #region 执行简单sql
         /// <summary>
         /// 执行增删改操作

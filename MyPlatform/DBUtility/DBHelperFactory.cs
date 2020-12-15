@@ -15,9 +15,9 @@ namespace MyPlatform.DBUtility
         /// <summary>
         /// 根据数据库连接名，返回对应DBHelper实例
         /// </summary>
-        /// <param name="dbName"></param>
+        /// <param name="conName"></param>
         /// <returns></returns>
-        public static IDataBase CreateDBInstance(string dbName)
+        public static IDataBase CreateDBInstance(string conName)
         {
             IDataBase db;
             DataCache cache = new DataCache();
@@ -25,12 +25,12 @@ namespace MyPlatform.DBUtility
             string dbType = "";
             if (DBList == null)
             {
-                dbType = ConfigurationManager.AppSettings.Get(dbName);                
+                dbType = ConfigurationManager.AppSettings.Get(conName);                
             }
             else
             {
                 List<KeyValueData> li = DBList as List<KeyValueData>;
-                dbType = li.Where(m => m.Key == dbName).First().Value;
+                dbType = li.Where(m => m.Key == conName).First().Value;
             }
             if (string.IsNullOrEmpty(dbType))
             {
@@ -39,7 +39,7 @@ namespace MyPlatform.DBUtility
             switch (dbType.ToLower())
             {
                 case "sqlserver":
-                    db = new SqlServerDataBase(dbName);
+                    db = new SqlServerDataBase(conName);
                     break;
                 case "oracle":
                     throw new Exception("系统暂不支持Oracle数据库");

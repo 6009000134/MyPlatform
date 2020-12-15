@@ -7,7 +7,7 @@
     <ProjectGuid>{F16BAC7A-B12A-4CD3-9695-0F889ACF2CB4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IDAL</RootNamespace>
+    <RootNamespace>MyPlatform.IDAL</RootNamespace>
     <AssemblyName>IDAL</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

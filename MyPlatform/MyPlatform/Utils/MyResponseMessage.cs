@@ -30,6 +30,15 @@ namespace MyPlatform.Utils
             return new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(t.ToJson<T>(), System.Text.Encoding.UTF8, jsonContentType) };
         }
         /// <summary>
+        /// 返回Json数据
+        /// </summary>
+        /// <param name="result">ReturnData对象</param>
+        /// <returns></returns>
+        public static HttpResponseMessage SuccessJson(Model.ReturnData result)
+        {
+            return new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(result.ToJson(), System.Text.Encoding.UTF8, jsonContentType) };
+        }
+        /// <summary>
         /// 返回JSON
         /// </summary>
         /// <typeparam name="T"></typeparam>

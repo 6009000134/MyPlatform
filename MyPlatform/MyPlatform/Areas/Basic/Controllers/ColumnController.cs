@@ -34,7 +34,7 @@ namespace MyPlatform.Areas.Basic.Controllers
                 result.S = false;
                 result.SetErrorMsg("获取表字段失败：" + ex.Message);
             }
-            return MyResponseMessage.SuccessJson<ReturnData>(result);
+            return MyResponseMessage.SuccessJson(result);
         }
 
         /// <summary>

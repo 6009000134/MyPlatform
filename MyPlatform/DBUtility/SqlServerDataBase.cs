@@ -11,34 +11,20 @@ using MyPlatform.Model.Enum;
 
 namespace MyPlatform.DBUtility
 {
-    public class SqlServerDataBase : IDataBase
+    public class SqlServerDataBase : DBHelperBase, IDataBase
     {
         //TODO:Timeout设置
-        public string connectionString;//连接字符串
+        //public string ConnectionString;//连接字符串
 
-        public DBEnum DBType
-        {
-            get
-            {
-                return DBEnum.SqlServer;
-            }
-
-            set
-            {
-                DBType = value;
-            }
-        }
-
-        private string ss;
         #region 构造函数
         /// <summary>
         /// 构造函数
         /// </summary>
         public SqlServerDataBase()
         {
-            connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            //ConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            DBType = DBEnum.SqlServer;
         }
-
 
         /// <summary>
         /// 构造函数
@@ -46,7 +32,8 @@ namespace MyPlatform.DBUtility
         /// <param name="dbname">数据库连接名</param>
         public SqlServerDataBase(string dbname)
         {
-            connectionString = ConfigurationManager.ConnectionStrings[dbname].ConnectionString;
+            DBType = DBEnum.SqlServer;
+            ConnectionString = ConfigurationManager.ConnectionStrings[dbname].ConnectionString;
         }
         #endregion
 
@@ -107,7 +94,7 @@ namespace MyPlatform.DBUtility
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(ConnectionString))
                 {
                     SqlCommand cmd = CreateCommand(sql, con);
                     int rows = cmd.ExecuteNonQuery();
@@ -129,7 +116,7 @@ namespace MyPlatform.DBUtility
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(ConnectionString))
                 {
                     SqlCommand cmd = CreateCommand(sql, con);
                     return cmd.ExecuteReader();
@@ -150,7 +137,7 @@ namespace MyPlatform.DBUtility
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(ConnectionString))
                 {
                     SqlCommand cmd = CreateCommand(sql, con);
                     return cmd.ExecuteScalar();
@@ -173,7 +160,7 @@ namespace MyPlatform.DBUtility
             DataSet ds = new DataSet();
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(ConnectionString))
                 {
                     SqlCommand cmd = CreateCommand(sql, con);
                     using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
@@ -202,7 +189,7 @@ namespace MyPlatform.DBUtility
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(ConnectionString))
                 {
                     SqlCommand cmd = CreateCommand(sql, paras, con);
                     int rows = cmd.ExecuteNonQuery();
@@ -219,7 +206,7 @@ namespace MyPlatform.DBUtility
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(ConnectionString))
                 {
                     SqlCommand cmd = CreateCommand(sql, paras, con);
                     object o = cmd.ExecuteScalar();
@@ -243,7 +230,7 @@ namespace MyPlatform.DBUtility
             DataSet ds = new DataSet();
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(ConnectionString))
                 {
                     SqlCommand cmd = CreateCommand(sql, paras, con);
                     using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
@@ -264,7 +251,7 @@ namespace MyPlatform.DBUtility
         public DataSet ExecProcedure(string procedureName)
         {
             DataSet ds = new DataSet();
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection con = new SqlConnection(ConnectionString))
             {
                 try
                 {
@@ -291,7 +278,7 @@ namespace MyPlatform.DBUtility
         public DataSet ExecProcedure(string procedureName, IDataParameter[] paras)
         {
             DataSet ds = new DataSet();
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection con = new SqlConnection(ConnectionString))
             {
                 try
                 {
@@ -321,7 +308,7 @@ namespace MyPlatform.DBUtility
         #region 执行简单语句事务
         public bool ExecuteTran(List<string> liSql)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection con = new SqlConnection(ConnectionString))
             {
                 bool flag = true;
                 con.Open();
@@ -362,7 +349,7 @@ namespace MyPlatform.DBUtility
         public bool ExecuteTran(List<SqlCommandData> tranSqls)
         {
             bool flag = true;
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection con = new SqlConnection(ConnectionString))
             {
                 con.Open();
                 using (SqlTransaction ts = con.BeginTransaction())

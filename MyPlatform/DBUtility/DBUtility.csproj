@@ -7,7 +7,7 @@
     <ProjectGuid>{FEA52F0C-1C42-45CD-8449-1010209FB6B6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DBUtility</RootNamespace>
+    <RootNamespace>MyPlatform.DBUtility</RootNamespace>
     <AssemblyName>DBUtility</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
