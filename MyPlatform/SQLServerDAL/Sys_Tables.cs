@@ -27,7 +27,7 @@ namespace MyPlatform.SQLServerDAL
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select * from Sys_Tables where 1=1 ");
-            IDataBase db = DBHelperFactory.CreateDBInstance("DefaultConnection");
+            IDataBase db = DBHelperFactory.CreateDBInstance("Default");
             if (!string.IsNullOrEmpty(DBName))
             {
                 strSql.Append(" and DBName=@DBName");
@@ -58,11 +58,11 @@ namespace MyPlatform.SQLServerDAL
         /// <param name="dbName">数据库名</param>
         /// <param name="dbTypeCode">数据库类型</param>
         /// <returns></returns>
-        public bool ExistsTable(string tableName, string dbName)
+        public bool ExistsTable(string tableName, string dbCon)
         {
             try
             {
-                IDataBase db = DBHelperFactory.CreateDBInstance(dbName);
+                IDataBase db = DBHelperFactory.CreateDBInstance(dbCon);
                 string sql = "";
                 sql = " SELECT  1 FROM dbo.SysObjects WHERE ID = object_id(@tableName) AND OBJECTPROPERTY(ID, 'IsTable') = 1 ";
                 SqlParameter[] paras = { new SqlParameter("@tableName", SqlDbType.VarChar, 30) };
@@ -80,13 +80,13 @@ namespace MyPlatform.SQLServerDAL
         /// 统计表数据记录数
         /// </summary>
         /// <param name="tableName">表名</param>
-        /// <param name="dbName">数据库连接名</param>
+        /// <param name="dbCon">数据库连接名</param>
         /// <returns></returns>
-        public int RecordCount(string tableName, string dbName)
+        public int RecordCount(string tableName, string dbCon)
         {
             try
             {
-                IDataBase db = DBHelperFactory.CreateDBInstance(dbName);
+                IDataBase db = DBHelperFactory.CreateDBInstance(dbCon);
                 string sql = "";
                 sql = "select count(1) from @tableName";
                 SqlParameter[] pars = { new SqlParameter("@tableName", SqlDbType.VarChar, 100) };
@@ -121,13 +121,13 @@ namespace MyPlatform.SQLServerDAL
             sqlCommands.Add(sc);
             SqlCommandData sc2 = SqlFactory.CreateInsertSqlByRef<MyPlatform.Model.Sys_Tables>(model);
             sqlCommands.Add(sc2);
-            IDataBase db = new SqlServerDataBase();
+            IDataBase db = DBHelperFactory.CreateDBInstance("Default");
             if (db.ExecuteTran(sqlCommands))
             {
                 SqlCommandData scID = new SqlCommandData();
                 scID.CommandText = "select SCOPE_IDENTITY()";
                 sqlCommands.Add(scID);
-                int id=Convert.ToInt32(db.ExecuteScalar("select IDENT_CURRENT('Sys_Tables')"));
+                int id = Convert.ToInt32(db.ExecuteScalar("select IDENT_CURRENT('Sys_Tables')"));
                 sqlCommands = new List<SqlCommandData>();
                 SqlCommandData sc3 = new SqlCommandData();
                 sc3.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
@@ -170,7 +170,7 @@ namespace MyPlatform.SQLServerDAL
                + model.TableName + "','Deleted','Deleted','是否已删除','Bit',0,1,0,'')";
                 sqlCommands.Add(sc7);
             }
-                   
+
             return db.ExecuteTran(sqlCommands);
         }
         /// <summary>
@@ -210,14 +210,15 @@ namespace MyPlatform.SQLServerDAL
             };
             pars[0].Value = tableID;
             IDataBase db = new SqlServerDataBase();
-            return db.Query(sql,pars).Tables[0];
+            return db.Query(sql, pars).Tables[0];
         }
         /// <summary>
         /// 刪除表以及相关信息
         /// </summary>
         /// <param name="tableID"></param>
+        /// <param name="dbName"></param>
         /// <returns></returns>
-        public bool Delete(int tableID,string dbName)
+        public bool Delete(int tableID, string dbName)
         {
             //无数据的表可以删除            
             string sql = "select 1 from @tableName";

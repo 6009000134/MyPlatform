@@ -18,11 +18,12 @@ namespace MyPlatform.DBUtility
 
         #region 构造函数
         /// <summary>
-        /// 构造函数
+        /// 构造函数，使用Default数据库连接
         /// </summary>
         public SqlServerDataBase()
         {
-            //ConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            //ConnectionString = GetConStr("Default");
+            ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
             DBType = DBEnum.SqlServer;
         }
 
@@ -30,10 +31,11 @@ namespace MyPlatform.DBUtility
         /// 构造函数
         /// </summary>
         /// <param name="dbname">数据库连接名</param>
-        public SqlServerDataBase(string dbname)
+        public SqlServerDataBase(string dbCon)
         {
             DBType = DBEnum.SqlServer;
-            ConnectionString = ConfigurationManager.ConnectionStrings[dbname].ConnectionString;
+            ConnectionString = ConfigurationManager.ConnectionStrings[dbCon].ConnectionString;
+            //ConnectionString = GetConStr(dbCon);
         }
         #endregion
 

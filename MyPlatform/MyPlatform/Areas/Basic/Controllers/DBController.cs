@@ -35,39 +35,7 @@ namespace MyPlatform.Areas.Basic.Controllers
                 object DBList = cache.GetCache("Sys_DBList");
                 if (DBList == null)
                 {
-                    XMLHelper xmlHelper = new XMLHelper();
-                    xmlHelper.FilePath = System.Web.Hosting.HostingEnvironment.MapPath("~/DataBase.xml");
-                    List<Dictionary<string, string>> li = new List<Dictionary<string, string>>();
-                    XmlNodeList nodeList = xmlHelper.GetNodeList("/root/DB");
-                    foreach (XmlNode node in nodeList)
-                    {
-                        if (node.HasChildNodes)
-                        {
-                            Dictionary<string, string> dicDB = new Dictionary<string, string>();
-                            foreach (XmlNode item in node.ChildNodes)
-                            {
-                                dicDB.Add(item.Name, item.InnerText);
-                            }
-                            li.Add(dicDB);
-                        }
-                        else
-                        {
-                            throw new Exception("数据库信息配置不正确");
-                        }                        
-                    }
-                    //for (int i = 0; i < ConfigurationManager.ConnectionStrings.Count; i++)
-                    //{
-                    //    string dbType = ConfigurationManager.AppSettings.Get(ConfigurationManager.ConnectionStrings[i].Name);
-                    //    if (!string.IsNullOrEmpty(dbType))
-                    //    {
-                    //        KeyValueData kv = new KeyValueData();
-                    //        kv.Key = ConfigurationManager.ConnectionStrings[i].Name;
-                    //        kv.Value = ((DBEnum)Convert.ToInt32(dbType)).ToString();
-                    //        li.Add(kv);
-                    //    }
-                    //}
-                    cache.SetCache("Sys_DBList", li);
-                    result.D = li;
+                    result.D = DBInfoCache.GetDBInfo();
                 }
                 else
                 {

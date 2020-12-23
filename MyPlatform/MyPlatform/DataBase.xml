@@ -1,26 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <root>
   <DB>
-    <DBCode>Default</DBCode>
+    <DBCon>Default</DBCon>
     <DBName>CMS</DBName>
     <DBType>0</DBType>
     <DBTypeCode>SqlServer</DBTypeCode>
   </DB>
   <DB>
-    <DBCode>MySqlCon</DBCode>
+    <DBCon>MySqlCon</DBCon>
     <DBName>au_mes</DBName>
     <DBType>1</DBType>
     <DBTypeCode>MySql</DBTypeCode>
   </DB>
   <DB>
-    <DBCode>OracleCon</DBCode>
+    <DBCon>OracleCon</DBCon>
     <DBName>au_oa</DBName>
     <DBType>2</DBType>
     <DBTypeCode>Oracle</DBTypeCode>
   
 </DB>
 </root>
-<!--DBCode数据库key，不可重复-->
+<!--DBCon数据库key，不可重复-->
 <!--DBName数据库真是名称-->
 <!--DBType数据库类型值-->
 <!--DBTypeCode数据库类型-->

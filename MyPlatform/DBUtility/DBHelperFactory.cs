@@ -25,12 +25,17 @@ namespace MyPlatform.DBUtility
             string dbType = "";
             if (DBList == null)
             {
-                dbType = ConfigurationManager.AppSettings.Get(conName);                
+                DBList = DBInfoCache.GetDBInfo();
             }
-            else
+            List<Dictionary<string, string>> li = DBList as List<Dictionary<string, string>>;
+            Dictionary<string, string> s = new Dictionary<string, string>();
+            foreach (Dictionary<string, string> dic in li)
             {
-                List<KeyValueData> li = DBList as List<KeyValueData>;
-                dbType = li.Where(m => m.Key == conName).First().Value;
+                if (dic["DBCon"].ToString().ToLower() == conName.ToLower())
+                {
+                    dbType = dic["DBTypeCode"].ToString().ToLower();
+                    break;
+                }
             }
             if (string.IsNullOrEmpty(dbType))
             {

@@ -28,12 +28,11 @@ namespace MyPlatform.BLL
         /// 判断数据库中是否存在同名表
         /// </summary>
         /// <param name="tableName">表名</param>
-        /// <param name="dbName">数据库名</param>
-        /// <param name="dbType">数据库类型</param>
+        /// <param name="dbCon">数据库名</param>
         /// <returns></returns>
-        public bool ExistsTable(string tableName, string dbName)
+        public bool ExistsTable(string tableName, string dbCon)
         {
-            return dal.ExistsTable(tableName, dbName);
+            return dal.ExistsTable(tableName, dbCon);
         }
         /// <summary>
         /// 新增表信息

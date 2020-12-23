@@ -14,7 +14,6 @@ namespace MyPlatform.Areas.Web.Controllers
     /// </summary>
     public class APIController : ApiController
     {
-
         [HttpPost]
         public HttpResponseMessage List([FromBody]string codition)
         {

@@ -44,8 +44,8 @@ namespace MyPlatform.SQLServerDAL
             SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30), new SqlParameter("@Password", SqlDbType.VarChar, 30) };
             parameters[0].Value = model.Account;
             parameters[1].Value = model.Password;
-            DbHelperSQL db = new DbHelperSQL();
-            return db.Exists(strSql.ToString(), parameters);
+            IDataBase db = new SqlServerDataBase();            
+            return Convert.ToInt32(db.ExecuteScalar(strSql.ToString(), parameters)) == 0 ? false : true;
         }
         /// <summary>
         /// 检测账号是否存在
@@ -60,8 +60,8 @@ namespace MyPlatform.SQLServerDAL
             strSql.Append(" deleted=0 and Account=@Account ");
             SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30) };
             parameters[0].Value = Account;
-            DbHelperSQL db = new DbHelperSQL();
-            return db.Exists(strSql.ToString(), parameters);
+            IDataBase db = new SqlServerDataBase();            
+            return Convert.ToInt32(db.ExecuteScalar(strSql.ToString(), parameters)) == 0 ? false : true;
 
         }
 
@@ -75,8 +75,8 @@ namespace MyPlatform.SQLServerDAL
                     new SqlParameter("@ID", SqlDbType.Int,4)
             };
             parameters[0].Value = ID;
-            DbHelperSQL db = new DbHelperSQL();
-            return db.Exists(strSql.ToString(), parameters);
+            IDataBase db = new SqlServerDataBase();            
+            return Convert.ToInt32(db.ExecuteScalar(strSql.ToString(), parameters)) == 0 ? false : true;
         }
 
 

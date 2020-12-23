@@ -1,4 +1,5 @@
-﻿using MyPlatform.Model.Enum;
+﻿using MyPlatform.Common.Cache;
+using MyPlatform.Model.Enum;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,7 +18,24 @@ namespace MyPlatform.DBUtility
         {
             //ConnectionString = GetDBConnection("DefaultConnection");
         }
-
+        //TODO:获取连接字符串
+        public string GetConStr(string dbCon)
+        {
+            DataCache cache = new DataCache();
+            object DBList = cache.GetCache("Sys_DBList");
+            if (DBList!=null)
+            {
+                List<Dictionary<string, string>> dbs = (List<Dictionary<string, string>>)DBList;                
+                foreach (Dictionary<string,string> dic in dbs)
+                {
+                    if (dic["DBCon"] == "Default")
+                    {
+                        return "";
+                    }
+                }
+            }
+            return "";
+        }
         //public DBHelperBase(string dbCon)
         //{
         //    ConnectionString = GetDBConnection(dbCon);

@@ -9,7 +9,7 @@ namespace MyPlatform.IDAL {
         #region Extend By liufei
         DataTable GetListByDBName(string DBName);
         bool Exists(string dbName);
-        bool ExistsTable(string tableName,string dbName);
+        bool ExistsTable(string tableName,string dbCon);
         bool Add(MyPlatform.Model.Sys_Tables model);
         bool Edit(MyPlatform.Model.Sys_Tables model);
         bool Delete(int tableID,string dbname);
