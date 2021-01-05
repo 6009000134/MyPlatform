@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyPlatform.Model;
+using System;
 using System.Data;
 namespace MyPlatform.IDAL {
 	/// <summary>
@@ -9,10 +10,10 @@ namespace MyPlatform.IDAL {
         #region Extend By liufei
         DataTable GetListByDBName(string DBName);
         bool Exists(string dbName);
-        bool ExistsTable(string tableName,string dbCon);
-        bool Add(MyPlatform.Model.Sys_Tables model);
+        ReturnData ExistsTable(string tableName,string dbCon);
+        ReturnData Add(MyPlatform.Model.Sys_Tables model);
         bool Edit(MyPlatform.Model.Sys_Tables model);
-        bool Delete(int tableID,string dbname);
+        bool Delete(int tableID );
         DataTable GetDetailListByTID(int tableID, MyPlatform.Model.Pagination page);
         #endregion
 	} 

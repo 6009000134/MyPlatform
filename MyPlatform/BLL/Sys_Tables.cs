@@ -15,6 +15,10 @@ namespace MyPlatform.BLL
         {
         }
         #region extend 
+        public bool Delete(int tableID )
+        {
+            return dal.Delete(tableID);
+        }
         public DataTable GetListByDBName(string DBName)
         {
             return dal.GetListByDBName(DBName);
@@ -30,7 +34,7 @@ namespace MyPlatform.BLL
         /// <param name="tableName">表名</param>
         /// <param name="dbCon">数据库名</param>
         /// <returns></returns>
-        public bool ExistsTable(string tableName, string dbCon)
+        public ReturnData ExistsTable(string tableName, string dbCon)
         {
             return dal.ExistsTable(tableName, dbCon);
         }
@@ -39,7 +43,7 @@ namespace MyPlatform.BLL
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public bool Add(MyPlatform.Model.Sys_Tables model)
+        public ReturnData Add(MyPlatform.Model.Sys_Tables model)
         {
             return dal.Add(model);
         }

@@ -7,8 +7,15 @@ using System.Web.Mvc;
 
 namespace MyPlatform.Filter
 {
+    /// <summary>
+    /// 自定义授权逻辑
+    /// </summary>
     public class CustomAuthorization:AuthorizeAttribute
     {
+        /// <summary>
+        /// 授权验证
+        /// </summary>
+        /// <param name="filterContext"></param>
         public void OnAuthorization(AuthorizationContext filterContext)
         {
             // 

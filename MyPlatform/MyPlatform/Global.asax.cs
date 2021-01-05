@@ -105,7 +105,7 @@ namespace MyPlatform
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        /// <param name="name">额外增加的参数</param>
+        /// <param name="extraPar">额外增加的参数</param>
         private void CronJob_Elapsed(object sender, System.Timers.ElapsedEventArgs e,string extraPar)
         {
             MyPlatform.Common.LogHelper.Default.WriteInfo("My Name is: "+ extraPar + "!----SignalTime: "+e.SignalTime.ToString());

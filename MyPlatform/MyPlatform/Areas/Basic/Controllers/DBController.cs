@@ -29,13 +29,14 @@ namespace MyPlatform.Areas.Basic.Controllers
             ReturnData result = new ReturnData();
             try
             {
+                //TODO:ConnectionString会传到前端，需要修正
                 //Dictionary<string, string> dicDBList = new Dictionary<string, string>();
                 //List<KeyValueData> li = new List<KeyValueData>();
                 DataCache cache = new DataCache();
-                object DBList = cache.GetCache("Sys_DBList");
+                object DBList = cache.GetCache("Sys_DBList2");
                 if (DBList == null)
                 {
-                    result.D = DBInfoCache.GetDBInfo();
+                    result.D = DBInfoCache.GetDBListWithoutConStr();
                 }
                 else
                 {

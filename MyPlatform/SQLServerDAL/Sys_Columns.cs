@@ -22,7 +22,7 @@ namespace MyPlatform.SQLServerDAL
             string sql = "SELECT * FROM dbo.Sys_Columns where tableID=@tableID";
             IDataParameter[] pars = { new SqlParameter("tableID", SqlDbType.Int) };
             pars[0].Value = tableID;
-            IDataBase db = DBHelperFactory.CreateDBInstance("DefaultConnection");
+            IDataBase db = DBHelperFactory.CreateDBInstance("Default");
             return db.Query(sql, pars);
         }
         /// <summary>

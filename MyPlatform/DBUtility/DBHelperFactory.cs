@@ -25,7 +25,7 @@ namespace MyPlatform.DBUtility
             string dbType = "";
             if (DBList == null)
             {
-                DBList = DBInfoCache.GetDBInfo();
+                DBList = DBInfoCache.GetDBList();
             }
             List<Dictionary<string, string>> li = DBList as List<Dictionary<string, string>>;
             Dictionary<string, string> s = new Dictionary<string, string>();

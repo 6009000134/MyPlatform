@@ -83,8 +83,7 @@ namespace MyPlatform.DBUtility
         #endregion
         #region 执行带参数事务
         bool ExecuteTran(List<SqlCommandData> tranSqls);
-        #endregion
-
+        #endregion        
 
     }
 }

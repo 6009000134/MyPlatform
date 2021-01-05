@@ -12,6 +12,9 @@ using System.Web.Http;
 
 namespace MyPlatform.Areas.Basic.Controllers
 {
+    /// <summary>
+    /// 表操作
+    /// </summary>
     [AllowAnonymous]
     public class TableController : ApiController
     {
@@ -29,23 +32,21 @@ namespace MyPlatform.Areas.Basic.Controllers
             try
             {
                 //校验是否存在同名表
-                if (tableBLL.ExistsTable(model.TableName, model.DBName))
-                {
-                    result.SetErrorMsg("数据库已经存在同名表！！");
-                }
-                else
+                result = tableBLL.ExistsTable(model.TableName, model.DBCon);
+                if (result.S)
                 {
                     if (model.CreatedDate == null)
                     {
                         model.CreatedDate = DateTime.Now;
                     }
                     //创建表
-                    tableBLL.Add(model);
+                    result = tableBLL.Add(model);
                 }
             }
             catch (Exception ex)
             {
-                throw;
+                result.S = false;
+                result.SetErrorMsg(ex.Message);
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
@@ -83,18 +84,26 @@ namespace MyPlatform.Areas.Basic.Controllers
         /// <summary>
         /// 删除表信息数据，但是不删除数据库中具体表，需要手动去数据库删
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="tableID"></param>
         /// <returns></returns>
         [HttpPost]
-        public HttpResponseMessage Delete(Sys_Tables model)
+        public HttpResponseMessage Delete([FromBody]int tableID)
         {
-            return null;
+            ReturnData result = new ReturnData();
+            if (tableBLL.Delete(tableID))
+            {
+                result.S = true;
+            }
+            else
+            {
+                result.SetErrorMsg("删除表失败");
+            }
+            return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
         /// <summary>
         /// 获取表列表
         /// </summary>
         /// <param name="DBName">数据库名</param>
-        /// <param name="page">分页信息</param>
         /// <returns></returns>
         [HttpPost]
         public HttpResponseMessage List([FromBody]string DBName)

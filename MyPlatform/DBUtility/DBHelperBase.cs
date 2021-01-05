@@ -16,25 +16,7 @@ namespace MyPlatform.DBUtility
 
         public DBHelperBase()
         {
-            //ConnectionString = GetDBConnection("DefaultConnection");
-        }
-        //TODO:获取连接字符串
-        public string GetConStr(string dbCon)
-        {
-            DataCache cache = new DataCache();
-            object DBList = cache.GetCache("Sys_DBList");
-            if (DBList!=null)
-            {
-                List<Dictionary<string, string>> dbs = (List<Dictionary<string, string>>)DBList;                
-                foreach (Dictionary<string,string> dic in dbs)
-                {
-                    if (dic["DBCon"] == "Default")
-                    {
-                        return "";
-                    }
-                }
-            }
-            return "";
+      
         }
         //public DBHelperBase(string dbCon)
         //{
@@ -45,17 +27,74 @@ namespace MyPlatform.DBUtility
         /// </summary>
         /// <param name="dbCon"></param>
         /// <returns></returns>
-        //public string GetDBConnection(string dbCon)
-        //{
-        //    if (string.IsNullOrEmpty(dbCon))
-        //    {
-        //        return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-        //    }
-        //    else
-        //    {
-        //        return ConfigurationManager.ConnectionStrings[dbCon].ConnectionString;
-        //    }
-        //}
+        public string GetConStr(string dbCon)
+        {
+            DataCache cache = new DataCache();
+            object DBList = cache.GetCache("Sys_DBList");
+            if (DBList == null)
+            {
+                DBList = DBInfoCache.GetDBList();
+            }
+            List<Dictionary<string, string>> li = DBList as List<Dictionary<string, string>>;
+            Dictionary<string, string> s = new Dictionary<string, string>();
+            foreach (Dictionary<string, string> dic in li)
+            {
+                if (dic["DBCon"].ToString().ToLower() == dbCon.ToLower())
+                {
+                    return dic["ConnectionString"].ToString().ToLower();                    
+                }
+            }
+            return "";
+        }
+        /// <summary>
+        /// 根据dbCon获取数据库类型
+        /// </summary>
+        /// <param name="dbCon"></param>
+        /// <returns></returns>
+        public string GetDBType(string dbCon)
+        {
+            DataCache cache = new DataCache();
+            object DBList = cache.GetCache("Sys_DBList");
+            if (DBList == null)
+            {
+                DBList = DBInfoCache.GetDBList();
+            }
+            List<Dictionary<string, string>> li = DBList as List<Dictionary<string, string>>;
+            Dictionary<string, string> s = new Dictionary<string, string>();
+            foreach (Dictionary<string, string> dic in li)
+            {
+                if (dic["DBCon"].ToString().ToLower() == dbCon.ToLower())
+                {
+                    return dic["DBTypeCode"].ToString().ToLower();
+                }
+            }
+            return "";
+        }
+        /// <summary>
+        /// 根据dbCon返回DB所有信息
+        /// </summary>
+        /// <param name="dbCon"></param>
+        /// <returns></returns>
+        public Dictionary<string, string> GetDBInfo(string dbCon)
+        {
+            DataCache cache = new DataCache();
+            object DBList = cache.GetCache("Sys_DBList");
+            if (DBList == null)
+            {
+                DBList = DBInfoCache.GetDBList();
+            }
+            List<Dictionary<string, string>> li = DBList as List<Dictionary<string, string>>;
+            Dictionary<string, string> s = new Dictionary<string, string>();
+            foreach (Dictionary<string, string> dic in li)
+            {
+                if (dic["DBCon"].ToString().ToLower() == dbCon.ToLower())
+                {
+                    return dic;
+                }
+            }
+            return null;
+
+        }
 
     }
 }

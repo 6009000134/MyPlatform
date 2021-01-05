@@ -167,7 +167,7 @@ namespace MyPlatform.Model
 
         private string _dbName;
         /// <summary>
-        /// 数据库连接字符串Name
+        /// 数据库名称
         /// </summary>
         public string DBName
         {
@@ -195,6 +195,23 @@ namespace MyPlatform.Model
             set
             {
                 _dbTypeCode = value;
+            }
+        }
+
+        private string _dbCon;
+        /// <summary>
+        /// 数据库连接名称（SqlServer/MySql/Oracle）
+        /// </summary>
+        public string DBCon
+        {
+            get
+            {
+                return _dbCon;
+            }
+
+            set
+            {
+                _dbCon = value;
             }
         }
 

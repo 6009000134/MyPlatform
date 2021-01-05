@@ -12,6 +12,9 @@ using MyPlatform.Models;
 
 namespace MyPlatform.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Authorize]
     public class AccountController : Controller
     {

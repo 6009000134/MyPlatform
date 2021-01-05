@@ -22,7 +22,7 @@ namespace MyPlatform.Areas.Web.Controllers
         /// <summary>
         /// 注册用户
         /// </summary>
-        /// <param name="json">用户注册信息Json字符串</param>
+        /// <param name="model">用户注册信息Json字符串</param>
         /// <returns></returns>
         [HttpPost]
         //public HttpResponseMessage Register([FromBody]string json)

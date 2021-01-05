@@ -25,7 +25,7 @@ namespace MyPlatform.Model
         /// </summary>
         public object D { get; set; }
         /// <summary>
-        /// 设置错误提示
+        /// 设置错误提示,并将返回信息S设置成false
         /// </summary>
         /// <param name="msg"></param>
         public void SetErrorMsg(string msg)

@@ -6,8 +6,15 @@ using System.Web.Mvc;
 
 namespace MyPlatform.Filter
 {
+    /// <summary>
+    /// Web授权认证
+    /// </summary>
     public class WebAuthorization: AuthorizeAttribute
     {
+        /// <summary>
+        /// OnAuthorization
+        /// </summary>
+        /// <param name="filterContext"></param>
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
             //             filterContext.RequestContext.HttpContext.Request.Headers

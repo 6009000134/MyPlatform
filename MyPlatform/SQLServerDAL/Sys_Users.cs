@@ -12,11 +12,12 @@ namespace MyPlatform.SQLServerDAL
     //Sys_Users
     public partial class Sys_Users : ISys_Users
     {
+        string dbCon = "Default";
         public MyPlatform.Model.Sys_Users GetModelByAccount(string account)
         {
             try
             {
-                IDataBase db = new SqlServerDataBase();
+                IDataBase db = new SqlServerDataBase(dbCon);
                 MyPlatform.Model.Sys_Users user = new Model.Sys_Users();
                 StringBuilder strSql = new StringBuilder();
                 strSql.Append(" select * from Sys_Users where deleted=0 and Account=@Account");
@@ -44,7 +45,7 @@ namespace MyPlatform.SQLServerDAL
             SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30), new SqlParameter("@Password", SqlDbType.VarChar, 30) };
             parameters[0].Value = model.Account;
             parameters[1].Value = model.Password;
-            IDataBase db = new SqlServerDataBase();            
+            IDataBase db = new SqlServerDataBase(dbCon);            
             return Convert.ToInt32(db.ExecuteScalar(strSql.ToString(), parameters)) == 0 ? false : true;
         }
         /// <summary>
@@ -60,7 +61,7 @@ namespace MyPlatform.SQLServerDAL
             strSql.Append(" deleted=0 and Account=@Account ");
             SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30) };
             parameters[0].Value = Account;
-            IDataBase db = new SqlServerDataBase();            
+            IDataBase db = new SqlServerDataBase(dbCon);            
             return Convert.ToInt32(db.ExecuteScalar(strSql.ToString(), parameters)) == 0 ? false : true;
 
         }
@@ -75,7 +76,7 @@ namespace MyPlatform.SQLServerDAL
                     new SqlParameter("@ID", SqlDbType.Int,4)
             };
             parameters[0].Value = ID;
-            IDataBase db = new SqlServerDataBase();            
+            IDataBase db = new SqlServerDataBase(dbCon);            
             return Convert.ToInt32(db.ExecuteScalar(strSql.ToString(), parameters)) == 0 ? false : true;
         }
 
@@ -114,7 +115,7 @@ namespace MyPlatform.SQLServerDAL
             parameters[6].Value = model.Password;
             parameters[7].Value = model.UserName;
 
-            IDataBase db = new SqlServerDataBase();
+            IDataBase db = new SqlServerDataBase(dbCon);
             return db.ExecuteNonQuery(strSql.ToString(), parameters);
         }
     }

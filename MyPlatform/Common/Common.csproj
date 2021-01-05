@@ -67,6 +67,7 @@
     <Compile Include="DEncrypt\RSACryption.cs" />
     <Compile Include="Enum\Encoding.cs" />
     <Compile Include="Extend\MyExtends.cs" />
+    <Compile Include="HttpHelper.cs" />
     <Compile Include="JSONUtil.cs" />
     <Compile Include="JWTTokenHelper.cs" />
     <Compile Include="LogHelper.cs" />

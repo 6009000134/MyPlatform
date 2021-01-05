@@ -5,20 +5,30 @@
     <DBName>CMS</DBName>
     <DBType>0</DBType>
     <DBTypeCode>SqlServer</DBTypeCode>
+    <ConnectionString>Data Source=localhost;Initial Catalog=CMS;User ID=sa;Password=123456;Integrated Security=True</ConnectionString>
+  </DB>
+  <DB>
+    <DBCon>SqlDB</DBCon>
+    <DBName>CRMSystem</DBName>
+    <DBType>1</DBType>
+    <DBTypeCode>SqlServer</DBTypeCode>
+    <ConnectionString>Data Source=localhost;Initial Catalog=CRMSystem;User ID=sa;Password=123456;Integrated Security=True</ConnectionString>
   </DB>
   <DB>
     <DBCon>MySqlCon</DBCon>
     <DBName>au_mes</DBName>
     <DBType>1</DBType>
     <DBTypeCode>MySql</DBTypeCode>
+    <ConnectionString>SqlServer</ConnectionString>
   </DB>
   <DB>
     <DBCon>OracleCon</DBCon>
     <DBName>au_oa</DBName>
     <DBType>2</DBType>
     <DBTypeCode>Oracle</DBTypeCode>
-  
-</DB>
+    <ConnectionString></ConnectionString>
+
+  </DB>
 </root>
 <!--DBCon数据库key，不可重复-->
 <!--DBName数据库真是名称-->

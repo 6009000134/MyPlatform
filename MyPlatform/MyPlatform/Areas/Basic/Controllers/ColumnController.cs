@@ -47,7 +47,7 @@ namespace MyPlatform.Areas.Basic.Controllers
             ReturnData result = new ReturnData();
             try
             {
-                string s = "";
+                //string s = "";
             }
             catch (Exception ex)
             {

@@ -22,8 +22,6 @@ namespace MyPlatform.DBUtility
         /// </summary>
         public SqlServerDataBase()
         {
-            //ConnectionString = GetConStr("Default");
-            ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
             DBType = DBEnum.SqlServer;
         }
 
@@ -34,8 +32,7 @@ namespace MyPlatform.DBUtility
         public SqlServerDataBase(string dbCon)
         {
             DBType = DBEnum.SqlServer;
-            ConnectionString = ConfigurationManager.ConnectionStrings[dbCon].ConnectionString;
-            //ConnectionString = GetConStr(dbCon);
+            ConnectionString=GetConStr(dbCon);
         }
         #endregion
 
@@ -46,6 +43,10 @@ namespace MyPlatform.DBUtility
         /// <param name="con"></param>
         public void Open(SqlConnection con)
         {
+            if (con==null)
+            {
+                throw new Exception("数据库连接为空，请确认数据库配置信息！");
+            }
             if (con.State != ConnectionState.Open)
             {
                 con.Open();
