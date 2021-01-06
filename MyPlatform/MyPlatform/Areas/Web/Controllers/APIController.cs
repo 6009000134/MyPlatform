@@ -24,18 +24,19 @@ namespace MyPlatform.Areas.Web.Controllers
         /// <param name="dic"></param>
         /// <returns></returns>
         [HttpPost]
-        public HttpResponseMessage Add(Dictionary<object,object>dic)
+        public HttpResponseMessage Add(Dictionary<object, object> dic)
         {
             ReturnData result = new ReturnData();
             try
             {
-
+                dic["inputParam"]=((Newtonsoft.Json.Linq.JArray)dic["inputParam"]).ToObject<string[]>();
+                dic["outputParam"]=((Newtonsoft.Json.Linq.JArray)dic["outputParam"]).ToObject<string[]>();
+                result = bll.Add(dic);
             }
             catch (Exception ex)
             {
                 result.SetErrorMsg(ex.Message);
             }
-
             return MyResponseMessage.SuccessJson(result);
         }
         /// <summary>

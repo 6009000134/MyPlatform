@@ -20,5 +20,14 @@ namespace MyPlatform.BLL
         {
             return dal.GetList(condition);
         }
+        /// <summary>
+        /// 新增API
+        /// </summary>
+        /// <param name="dic"></param>
+        /// <returns></returns>
+        public ReturnData Add(Dictionary<object, object> dic)
+        {
+            return dal.Add(dic);
+        }
     }
 }
