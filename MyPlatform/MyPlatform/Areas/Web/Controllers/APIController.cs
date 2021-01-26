@@ -19,6 +19,45 @@ namespace MyPlatform.Areas.Web.Controllers
     {
         MyPlatform.BLL.Sys_Api bll = new MyPlatform.BLL.Sys_Api();
         /// <summary>
+        /// 根据API信息，创建表
+        /// </summary>
+        /// <param name="apiID"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpResponseMessage CreateApiTable([FromBody]int apiID)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                result = bll.CreateApiTable(apiID);
+            }
+            catch (Exception ex)
+            {
+                result.SetErrorMsg(ex.Message);
+            }
+            return MyResponseMessage.SuccessJson(result);
+        }
+        /// <summary>
+        /// 获取API详情
+        /// </summary>
+        /// <param name="apiID">API ID</param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpResponseMessage GetDetail([FromBody]int apiID)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                result.S = true;
+                result.D = bll.GetDetail(apiID);
+            }
+            catch (Exception ex)
+            {
+                result.SetErrorMsg(ex.Message);
+            }
+            return MyResponseMessage.SuccessJson(result);
+        }
+        /// <summary>
         /// 新增API
         /// </summary>
         /// <param name="dic"></param>
@@ -29,8 +68,8 @@ namespace MyPlatform.Areas.Web.Controllers
             ReturnData result = new ReturnData();
             try
             {
-                dic["inputParam"]=((Newtonsoft.Json.Linq.JArray)dic["inputParam"]).ToObject<string[]>();
-                dic["outputParam"]=((Newtonsoft.Json.Linq.JArray)dic["outputParam"]).ToObject<string[]>();
+                dic["inputParam"] = ((Newtonsoft.Json.Linq.JArray)dic["inputParam"]).ToObject<string[]>();
+                dic["outputParam"] = ((Newtonsoft.Json.Linq.JArray)dic["outputParam"]).ToObject<string[]>();
                 result = bll.Add(dic);
             }
             catch (Exception ex)

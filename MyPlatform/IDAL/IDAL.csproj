@@ -52,6 +52,12 @@
     <Compile Include="ISys_Tables.cs" />
     <Compile Include="ISys_Users.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DBUtility\DBUtility.csproj">
+      <Project>{FEA52F0C-1C42-45CD-8449-1010209FB6B6}</Project>
+      <Name>DBUtility</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

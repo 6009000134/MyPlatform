@@ -28,7 +28,6 @@ namespace MyPlatform.DBUtility
                 DBList = DBInfoCache.GetDBList();
             }
             List<Dictionary<string, string>> li = DBList as List<Dictionary<string, string>>;
-            Dictionary<string, string> s = new Dictionary<string, string>();
             foreach (Dictionary<string, string> dic in li)
             {
                 if (dic["DBCon"].ToString().ToLower() == conName.ToLower())

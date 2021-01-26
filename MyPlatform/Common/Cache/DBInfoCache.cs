@@ -39,7 +39,8 @@ namespace MyPlatform.Common.Cache
                         throw new Exception("数据库信息配置不正确");
                     }
                 }
-                cache.SetCache("Sys_DBList", li);                
+                DBList = li;
+                cache.SetCache("Sys_DBList", li);                                
             }
             return DBList;
         }
@@ -76,6 +77,7 @@ namespace MyPlatform.Common.Cache
                         throw new Exception("数据库信息配置不正确");
                     }
                 }
+                DBList = li;
                 cache.SetCache("Sys_DBList2", li);
             }
             return DBList;

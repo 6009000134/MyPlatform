@@ -1,4 +1,5 @@
-﻿using MyPlatform.Model;
+﻿using MyPlatform.DBUtility;
+using MyPlatform.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,6 +11,12 @@ namespace MyPlatform.IDAL
 {
     public interface ISys_Api
     {
+        /// <summary>
+        /// 获取API详情
+        /// </summary>
+        /// <param name="apiID"></param>
+        /// <returns></returns>
+        DataSet GetDetail(int apiID);
         /// <summary>
         /// 查询API信息
         /// </summary>
@@ -34,5 +41,6 @@ namespace MyPlatform.IDAL
         /// <param name="model"></param>
         /// <returns></returns>
         ReturnData Edit(Sys_API model);
+        ReturnData CreateApiTable(IDataBase db, int apiID);
     }
 }

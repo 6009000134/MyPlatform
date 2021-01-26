@@ -5,12 +5,23 @@ using MyPlatform.Common;
 using MyPlatform.Model;
 using MyPlatform.DALFactory;
 using MyPlatform.IDAL;
+using MyPlatform.DBUtility;
 
 namespace MyPlatform.BLL
 {
     public class Sys_Api
     {
+        string defaultCon = "Default";
         private readonly ISys_Api dal = DataAccess.CreateInstance<ISys_Api>("Sys_Api");
+        public ReturnData CreateApiTable(int apiID)
+        {
+            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            return dal.CreateApiTable(db,apiID);
+        }
+        public DataSet GetDetail(int apiID)
+        {
+            return dal.GetDetail(apiID);
+        }
         /// <summary>
         /// 查询api信息
         /// </summary>

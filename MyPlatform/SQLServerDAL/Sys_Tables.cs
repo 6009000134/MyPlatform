@@ -25,8 +25,30 @@ namespace MyPlatform.SQLServerDAL
         /// </summary>
         /// <param name="DBName"></param>
         /// <returns></returns>
-        public DataTable GetListByDBName(string DBCon)
+        public DataTable GetListByDBName(Dictionary<string,object> dicCondition)
         {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("select * from Sys_Tables where 1=1 ");
+            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            if (!string.IsNullOrEmpty("DBCon"))
+            {
+                strSql.Append(" and DBCon=@DBCon");
+                SqlParameter[] parameters = { new SqlParameter("@DBCon", SqlDbType.VarChar, 30) };
+                parameters[0].Value = "DBCon";
+                return db.Query(strSql.ToString(), parameters).Tables[0];
+            }
+            else
+            {
+                return db.Query(strSql.ToString()).Tables[0];
+            }
+        }
+        /// <summary>
+        /// 获取
+        /// </summary>
+        /// <param name="DBName"></param>
+        /// <returns></returns>
+        public DataTable GetListByDBName(string DBCon)
+        {   
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select * from Sys_Tables where 1=1 ");
             IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);

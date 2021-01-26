@@ -15,6 +15,79 @@ namespace MyPlatform.SQLServerDAL
     public class Sys_Api : ISys_Api
     {
         string defaultCon = "Default";
+
+        public ReturnData CreateApiTable(IDataBase db, int apiID)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                string sql = "select * from sys_Apis where ID=@ID;select * from api_output where apiID=@ID";
+                SqlParameter[] pars = { new SqlParameter("@ID", apiID) };
+                string tableName = "";
+                DataSet ds = db.Query(sql, pars);
+                List<string> liSql = new List<string>();
+                string sqlTable = "create table [";
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    tableName = ds.Tables[0].Rows[0]["ApiName"].ToString();
+                    sqlTable += tableName+"]";
+                    sqlTable += "(";
+                }
+                else
+                {
+                    throw new Exception("不存在ID为" + apiID.ToString() + "的API信息");
+                }
+                if (ds.Tables[1].Rows.Count > 0)
+                {
+                    foreach (DataRow item in ds.Tables[1].Rows)
+                    {
+                        sqlTable += "["+item["ParamName"].ToString()+"]";
+                        switch (item["ParamType"].ToString().ToLower())
+                        {
+                            case "str":
+                                sqlTable += " varchar(50) ,";
+                                break;
+                            case "float":
+                                sqlTable += " float ,";
+                                break;
+                            default:
+                                break;
+                        }
+                        string sqlExtend = "execute sp_addextendedproperty 'MS_Description','" + item["Description"].ToString() + "','user','dbo','table','" + tableName + "','column','" + item["ParamName"] + "';";
+                        liSql.Add(sqlExtend);
+                    }
+                }
+                else
+                {
+                    result.SetErrorMsg("不存在ID为" + apiID.ToString() + "的API信息");
+                }
+                sqlTable= sqlTable.Trim(',') + ")";
+                liSql.Insert(0, sqlTable);
+                if (db.ExecuteTran(liSql))
+                {
+                    result.S = true;
+                }
+                else
+                {
+                    result.SetErrorMsg("创建失败，请联系管理员！");
+                }
+            }
+            catch (Exception ex)
+            {
+                result.SetErrorMsg(ex.Message);
+            }
+            return result;
+        }
+
+        public DataSet GetDetail(int apiID)
+        {
+            DataSet ds = new DataSet();
+            string sql = "select * from sys_apis where ID=@ID;select * from api_input where apiid=@ID;select * from api_output where apiid=@ID;";
+            SqlParameter[] pars = { new SqlParameter("@ID", apiID) };
+            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            ds = db.Query(sql, pars);
+            return ds;
+        }
         /// <summary>
         /// 新增API
         /// </summary>
@@ -29,7 +102,7 @@ namespace MyPlatform.SQLServerDAL
                 //保存API信息
                 string sqlApi = @"insert into sys_apis(Title ,
           ApiName ,
-          Descprition ,
+          Description ,
           CreatedBy ,
           CreatedDate           
           ) values(@title,@apiName,@description,'',getdate())";
@@ -54,7 +127,7 @@ namespace MyPlatform.SQLServerDAL
           ParamName ,
           ParamType ,
           IsRequired ,
-          Descprition ,
+          Description ,
           OrderNo ,
           CreatedBy ,
           CreatedDate) values((SELECT IDENT_CURRENT('Sys_Apis')),@input" + i.ToString();
@@ -96,7 +169,7 @@ namespace MyPlatform.SQLServerDAL
           ParamName ,
           ParamType ,
           IsRequired ,
-          Descprition ,
+          Description ,
           OrderNo ,
           CreatedBy ,
           CreatedDate) values((SELECT IDENT_CURRENT('Sys_Apis')),@output" + i.ToString();
@@ -134,7 +207,7 @@ namespace MyPlatform.SQLServerDAL
           ParamName ,
           ParamType ,
           IsRequired ,
-          Descprition ,
+          Description ,
           OrderNo ,
           CreatedBy ,
           CreatedDate)  values((SELECT IDENT_CURRENT('Sys_Apis')),@output" + i.ToString();
@@ -204,7 +277,7 @@ namespace MyPlatform.SQLServerDAL
         {
             DataSet ds = new DataSet();
             condition = "%" + condition + "%";
-            string sql = "select * from Sys_APIs WHERE PATINDEX(@condition,Title+ApiName+Descprition)>0";
+            string sql = "select * from Sys_APIs WHERE PATINDEX(@condition,Title+ApiName+Description)>0";
             IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
             IDataParameter[] pars = { new SqlParameter("@condition", condition) };
             return db.Query(sql, pars);

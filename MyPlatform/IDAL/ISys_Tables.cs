@@ -1,5 +1,6 @@
 ﻿using MyPlatform.Model;
 using System;
+using System.Collections.Generic;
 using System.Data;
 namespace MyPlatform.IDAL {
 	/// <summary>
@@ -9,6 +10,7 @@ namespace MyPlatform.IDAL {
 	{
         #region Extend By liufei
         DataTable GetListByDBName(string DBName);
+        DataTable GetListByDBName(Dictionary<string, object> dicCondition);
         bool Exists(string dbName);
         ReturnData ExistsTable(string tableName,string dbCon);
         ReturnData Add(MyPlatform.Model.Sys_Tables model);
