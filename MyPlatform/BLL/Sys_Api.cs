@@ -13,6 +13,16 @@ namespace MyPlatform.BLL
     {
         string defaultCon = "Default";
         private readonly ISys_Api dal = DataAccess.CreateInstance<ISys_Api>("Sys_Api");
+        public DataSet GetTsCode(string tsCode)
+        {
+            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            return dal.GetTsCode(db,tsCode);
+        }
+        public ReturnData GetApiResult(TuShareResult data, int apiID)
+        {
+            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            return dal.GetApiResult(db,data,apiID);
+        }
         public ReturnData CreateApiTable(int apiID)
         {
             IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);

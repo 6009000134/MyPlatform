@@ -15,6 +15,120 @@ namespace MyPlatform.SQLServerDAL
     public class Sys_Api : ISys_Api
     {
         string defaultCon = "Default";
+        /// <summary>
+        /// 获取股票代码/列表
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="tsCode"></param>
+        /// <returns></returns>
+        public DataSet GetTsCode(IDataBase db, string tsCode)
+        {
+            DataSet ds = new DataSet();
+            string sql = "";
+            SqlParameter[] pars;
+            if (string.IsNullOrEmpty(tsCode))
+            {
+                sql = "select * from stock_basic ";
+                ds = db.Query(sql);
+            }
+            else
+            {
+                sql = "select * from stock_basic where patindex('@pat',ts_code)>0";
+                pars = new SqlParameter[1] { new SqlParameter("@pat", "%" + tsCode + "%") };
+                ds = db.Query(sql, pars);
+            }
+            return ds;
+        }
+        public ReturnData GetApiResult(IDataBase db, TuShareResult data, int apiID)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                string sqlSelect = "select * from sys_Apis where ID=@ID;select * from api_output where apiID=@ID";
+                SqlParameter[] pars = { new SqlParameter("@ID", apiID) };
+                DataSet ds = db.Query(sqlSelect, pars);
+                string tableName = "";
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    tableName = ds.Tables[0].Rows[0]["ApiName"].ToString();
+                }
+                else
+                {
+                    throw new Exception("不存在ID为" + apiID.ToString() + "的API信息");
+                }
+                //TODO:检测表是否存在，不存在则调用CreateApiTable创建
+                List<string> liInserts = new List<string>();
+                string sql = "";
+                StringBuilder sqlSb = new StringBuilder();
+                if (data.data.items.Count > 0)
+                {
+                    foreach (List<string> item in data.data.items)
+                    {
+                        sqlSb.Append("insert into " + tableName);
+                        sqlSb.Append("(");
+                        foreach (DataRow dr in ds.Tables[1].Rows)
+                        {
+                            sqlSb.Append(dr["ParamName"].ToString() + ",");
+                        }
+                        sqlSb.Remove(sqlSb.Length - 1, 1);
+                        sqlSb.Append(")");
+                        sqlSb.Append(" values (");
+                        for (int i = 0; i < item.Count; i++)
+                        {
+                            if (item[i] == null)
+                            {
+                                sqlSb.Append("'',");
+                            }
+                            else
+                            {
+                                sqlSb.Append("'" + item[i].Replace("'", "''") + "',");
+                            }
+                        }
+
+                        sqlSb.Remove(sqlSb.Length - 1, 1);
+                        sqlSb.Append(");");
+                        //sql += "insert into " + tableName;
+                        //sql += "(";
+                        //foreach (DataRow dr in ds.Tables[1].Rows)
+                        //{
+                        //    sql += dr["ParamName"].ToString() + ",";
+                        //}
+                        //sql = sql.TrimEnd(',');
+                        //sql += ")";
+                        //sql += " values (";
+                        //for (int i = 0; i < item.Count; i++)
+                        //{
+                        //    if (item[i] == null)
+                        //    {
+                        //        sql += "'',";
+                        //    }
+                        //    else
+                        //    {
+                        //        sql += "'" + item[i].Replace("'", "''") + "',";
+                        //    }
+                        //}
+
+                        //sql = sql.TrimEnd(',');
+                        //sql += ");";
+                    }
+                }
+                liInserts.Add(sqlSb.ToString());
+                if (db.ExecuteTran(liInserts))
+                {
+                    result.S = true;
+                }
+                else
+                {
+                    result.S = false;
+                    result.M = "插入数据失败";
+                }
+            }
+            catch (Exception ex)
+            {
+                result.SetErrorMsg(ex.Message);
+            }
+            return result;
+        }
 
         public ReturnData CreateApiTable(IDataBase db, int apiID)
         {
@@ -30,7 +144,7 @@ namespace MyPlatform.SQLServerDAL
                 if (ds.Tables[0].Rows.Count > 0)
                 {
                     tableName = ds.Tables[0].Rows[0]["ApiName"].ToString();
-                    sqlTable += tableName+"]";
+                    sqlTable += tableName + "]";
                     sqlTable += "(";
                 }
                 else
@@ -41,7 +155,7 @@ namespace MyPlatform.SQLServerDAL
                 {
                     foreach (DataRow item in ds.Tables[1].Rows)
                     {
-                        sqlTable += "["+item["ParamName"].ToString()+"]";
+                        sqlTable += "[" + item["ParamName"].ToString() + "]";
                         switch (item["ParamType"].ToString().ToLower())
                         {
                             case "str":
@@ -61,7 +175,7 @@ namespace MyPlatform.SQLServerDAL
                 {
                     result.SetErrorMsg("不存在ID为" + apiID.ToString() + "的API信息");
                 }
-                sqlTable= sqlTable.Trim(',') + ")";
+                sqlTable = sqlTable.Trim(',') + ")";
                 liSql.Insert(0, sqlTable);
                 if (db.ExecuteTran(liSql))
                 {

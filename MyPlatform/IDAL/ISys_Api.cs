@@ -42,5 +42,7 @@ namespace MyPlatform.IDAL
         /// <returns></returns>
         ReturnData Edit(Sys_API model);
         ReturnData CreateApiTable(IDataBase db, int apiID);
+        ReturnData GetApiResult(IDataBase db, TuShareResult data, int apiID);
+        DataSet GetTsCode(IDataBase db, string tsCode);
     }
 }
