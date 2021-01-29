@@ -8,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Web.Http;
 
 namespace MyPlatform.Areas.Web.Controllers
@@ -114,6 +115,123 @@ namespace MyPlatform.Areas.Web.Controllers
             }
             return MyResponseMessage.SuccessJson(result);
         }
+        private object lockObj = new object();
+        public void GetDividend(object obj)
+        {
+            Dictionary<string, object> dic = (Dictionary<string, object>)obj;
+            int apiID = (int)dic["apiID"];
+            APIInputParam inputParam = (APIInputParam)dic["inputParam"];
+            DataTable dt = (DataTable)dic["dt"];
+            TuShareResult apiResultInsert = new TuShareResult();
+            apiResultInsert.data = new TuShareResultData();
+            apiResultInsert.data.items = new List<List<string>>();
+            int index = 1;
+            int min = DateTime.Now.Minute;
+            int sec = DateTime.Now.Second;
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (index % 60 == 0)
+                {
+                    int min2 = DateTime.Now.Minute;
+                    int sec2 = DateTime.Now.Second;
+
+                    if (min2 - min == 1)
+                    {
+                        if (60 - sec + sec2 < 60)
+                        {
+                            Thread.Sleep((Math.Abs(sec2 - sec)) * 1000);
+                        }
+                    }
+                    else if (min2 - min == 0)
+                    {
+                        Thread.Sleep(Math.Abs(60 - sec2 + sec) * 1000);
+                    }
+                    min = min2;
+                    sec = sec2;
+                }
+                index += 1;
+                HttpHelper hh = new HttpHelper();
+                inputParam.@params["ts_code"] = dr["ts_code"].ToString();
+                //postData.
+                TuShareResult apiResult;
+                string inputStr = "";
+                lock (this)
+                {
+                    inputStr = inputParam.ToJson<APIInputParam>();
+                }
+                string responStr = hh.Post(apiUrl, inputStr);
+                apiResult = JSONUtil.ParseFromJson<TuShareResult>(responStr);
+                if (apiResult.data != null)//API接口无返回数据
+                {
+                    if (apiResultInsert.data.items.Count > 3000)
+                    {
+                        apiResultInsert.data.items.AddRange(apiResult.data.items);
+                        bll.GetApiResult(apiResultInsert, apiID);
+                        apiResultInsert.data.items = new List<List<string>>();
+                    }
+                    else
+                    {
+                        apiResultInsert.data.items.AddRange(apiResult.data.items);
+                    }
+
+                }
+            }
+            if (apiResultInsert.data.items.Count > 0)
+            {
+                bll.GetApiResult(apiResultInsert, apiID);
+            }
+
+        }
+        /// <summary>
+        /// 多线程获取分红数据
+        /// </summary>
+        /// <param name="dic"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpResponseMessage GetDividendResultMultiple([FromBody]Dictionary<string, object> dic)
+        {
+            int apiID = Convert.ToInt32(dic["apiID"]);
+            APIInputParam inputParam = CreateInputStr(apiID, new Dictionary<string, string>());
+            ReturnData result = new ReturnData();
+            try
+            {
+                DataTable dt = bll.GetTsCode(dic["ts_code"].ToString()).Tables[0];
+                TuShareResult apiResultInsert = new TuShareResult();
+                apiResultInsert.data = new TuShareResultData();
+                apiResultInsert.data.items = new List<List<string>>();
+                if (dt.Rows.Count > 0)
+                {
+                    int count = dt.Rows.Count;
+                    int thCount = count % 2 == 0 ? 2 : 3;
+                    int perThCount = count / 2;
+                    for (int i = 1; i < thCount + 1; i++)
+                    {
+                        Dictionary<string, object> dicTh = new Dictionary<string, object>();
+                        dicTh.Add("apiID", apiID);
+                        DataTable dtNew = new DataTable();
+                        dtNew = dt.Copy();
+                        dtNew.Clear();
+                        for (int j = perThCount * (i - 1); j < i * perThCount; j++)
+                        {
+                            dtNew.Rows.Add(dt.Rows[j].ItemArray);
+                        }
+                        dicTh.Add("dt", dtNew);
+                        dicTh.Add("inputParam", inputParam);
+                        Thread td = new Thread(new ParameterizedThreadStart(GetDividend));
+                        td.Start(dicTh);
+                    }
+                }
+                else
+                {
+                    result.SetErrorMsg("找不到股票代码数据！");
+                }
+            }
+            catch (Exception ex)
+            {
+                result.SetErrorMsg(ex.Message);
+            }
+            return MyResponseMessage.SuccessJson(result);
+        }
         /// <summary>
         /// 获取分红数据
         /// </summary>
@@ -163,7 +281,7 @@ namespace MyPlatform.Areas.Web.Controllers
 
                         }
                     }
-                    if (apiResultInsert.data.items.Count>0)
+                    if (apiResultInsert.data.items.Count > 0)
                     {
                         result = bll.GetApiResult(apiResultInsert, apiID);
                     }

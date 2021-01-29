@@ -68,7 +68,7 @@ namespace MyPlatform.SQLServerDAL
                         sqlSb.Append("(");
                         foreach (DataRow dr in ds.Tables[1].Rows)
                         {
-                            sqlSb.Append(dr["ParamName"].ToString() + ",");
+                            sqlSb.Append("["+dr["ParamName"].ToString() + "],");
                         }
                         sqlSb.Remove(sqlSb.Length - 1, 1);
                         sqlSb.Append(")");
