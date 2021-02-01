@@ -22,15 +22,29 @@ using System.Text.RegularExpressions;
 
 namespace ConsoleTest
 {
+    class OAInfo
+    {
+        public string MainTable { get; set; }
+        public string DocNo { get; set; }
+        public string field { get; set; }
+    }
     
     class Program
     {
         static void Main(string[] args)
         {
             // AddDailyBasic(startDate);     
-           //AddAPIInfo(html);
+            //AddAPIInfo(html);
             //AddBonus("601398.SH");
-           
+            TestSer.PRWorkflowPortTypeClient cc = new TestSer.PRWorkflowPortTypeClient();
+            OAInfo oo = new OAInfo();
+            oo.MainTable = "formtable_main_191111";
+            oo.DocNo = "AMO-30190730014";
+            oo.field = "scdd";
+            List<OAInfo> li = new List<OAInfo>();
+            li.Add(oo);
+            string ss = JsonHelper.GetJsonJS(li);
+            string result=cc.PRCheck("dv12wegewqdx2321229flmqocdt765", ss);
             //AddDailyBasic2();
             Console.ReadLine();
         }

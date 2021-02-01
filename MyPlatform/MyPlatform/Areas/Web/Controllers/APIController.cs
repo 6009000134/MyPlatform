@@ -18,6 +18,7 @@ namespace MyPlatform.Areas.Web.Controllers
     /// </summary>
     public class APIController : ApiController
     {
+        //TODO：更新接口每日数据
         MyPlatform.BLL.Sys_Api bll = new MyPlatform.BLL.Sys_Api();
         string apiToken = "8637e17fe4cbc18f2c412229ad41f8628d0849598c73e4fd3332d8fa";
         string apiUrl = "http://api.tushare.pro";
