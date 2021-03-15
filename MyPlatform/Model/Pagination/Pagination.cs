@@ -21,7 +21,7 @@ namespace MyPlatform.Model
         /// </summary>
         public int TotalCount { get; set; }
         /// <summary>
-        /// 总也数
+        /// 总页数
         /// </summary>
         public int PageCount { get; set; }
     }

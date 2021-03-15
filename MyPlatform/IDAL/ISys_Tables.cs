@@ -17,6 +17,7 @@ namespace MyPlatform.IDAL {
         bool Edit(MyPlatform.Model.Sys_Tables model);
         bool Delete(int tableID );
         DataTable GetDetailListByTID(int tableID, MyPlatform.Model.Pagination page);
+        ReturnData GetDetail(int tableID, MyPlatform.Model.Pagination page);
         #endregion
 	} 
 }

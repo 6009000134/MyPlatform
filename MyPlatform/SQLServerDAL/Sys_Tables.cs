@@ -25,7 +25,7 @@ namespace MyPlatform.SQLServerDAL
         /// </summary>
         /// <param name="DBName"></param>
         /// <returns></returns>
-        public DataTable GetListByDBName(Dictionary<string,object> dicCondition)
+        public DataTable GetListByDBName(Dictionary<string, object> dicCondition)
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select * from Sys_Tables where 1=1 ");
@@ -48,7 +48,7 @@ namespace MyPlatform.SQLServerDAL
         /// <param name="DBName"></param>
         /// <returns></returns>
         public DataTable GetListByDBName(string DBCon)
-        {   
+        {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select * from Sys_Tables where 1=1 ");
             IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
@@ -97,7 +97,7 @@ namespace MyPlatform.SQLServerDAL
                 else
                 {
                     string sql = "";
-                    IDataParameter[] paras=new IDataParameter[1];
+                    IDataParameter[] paras = new IDataParameter[1];
                     switch (dic["DBTypeCode"].ToLower())
                     {
                         case "sqlserver":
@@ -301,6 +301,34 @@ namespace MyPlatform.SQLServerDAL
             pars[0].Value = tableID;
             IDataBase db = new SqlServerDataBase();
             return db.Query(sql, pars).Tables[0];
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableID"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        public ReturnData GetDetail(int tableID, Pagination page)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                DataSet ds = new DataSet();
+                int startIndex = DALUtils.CalStartIndex(page.PageSize, page.PageIndex);
+                int endIndex = DALUtils.CalEndIndex(page.PageSize, page.PageIndex);
+                string sql = "select * from sys_tables where ID=@ID;select * from (select ROW_NUMBER() OVER(ORDER BY orderNO)RN,* from sys_columns where tableID=@ID)t where t.rn>" + startIndex.ToString() + " and t.rn<" + endIndex.ToString() + ";select count(1)TotalCount from sys_columns where tableID=@ID";
+                IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+                SqlParameter[] pars = { new SqlParameter("@ID", tableID) };
+                ds = db.Query(sql, pars);
+                result.D = ds;
+                result.S = true;
+            }
+            catch (Exception ex)
+            {
+                result.SetErrorMsg(ex.Message);
+            }
+
+            return result;
         }
         /// <summary>
         /// 刪除表以及相关信息

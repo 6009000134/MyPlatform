@@ -1,5 +1,4 @@
-﻿using Common.Pagination;
-using MyPlatform.Common;
+﻿using MyPlatform.Common;
 using MyPlatform.Model;
 using MyPlatform.Utils;
 using System;
@@ -122,21 +121,24 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
-        //[HttpPost]
-        //public HttpResponseMessage Detail([FromBody]int tableID)
-        //{
-        //    ReturnData result = new ReturnData();
-        //    try
-        //    {
-        //        result.D = tableBLL.GetDetailListByTID(tableID, null);
-        //        result.S = true;
-        //    }
-        //    catch (Exception ex)
-        //    {             
-        //        result.S = false;
-        //        result.SetErrorMsg("错误信息："+ex.Message);
-        //    }
-        //    return MyResponseMessage.SuccessJson<ReturnData>(result);
-        //}
+        [HttpPost]
+        public HttpResponseMessage GetDetail([FromBody]Dictionary<string, object> dic)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                //Pagination page=JSONUtil.ParseFromJson<>
+                int tableID = Convert.ToInt32(dic["tableID"]);
+                string s = dic["page"].ToJson();
+                Pagination page=JSONUtil.ParseFromJson<Pagination>(dic["page"].ToJson());
+                result = tableBLL.GetDetail(Convert.ToInt32(dic["tableID"]),page);
+            }
+            catch (Exception ex)
+            {
+                result.S = false;
+                result.SetErrorMsg("错误信息：" + ex.Message);
+            }
+            return MyResponseMessage.SuccessJson<ReturnData>(result);
+        }
     }
 }

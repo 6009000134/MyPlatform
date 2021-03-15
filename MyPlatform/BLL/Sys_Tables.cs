@@ -61,6 +61,16 @@ namespace MyPlatform.BLL
         {
             return dal.GetDetailListByTID(tableID, page);
         }
+        /// <summary>
+        /// 获取表详情（表信息及列信息）
+        /// </summary>
+        /// <param name="tableID"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        public ReturnData GetDetail(int tableID, Pagination page)
+        {
+            return dal.GetDetail(tableID,page);
+        }
         #endregion
     }
 }
