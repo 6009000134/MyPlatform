@@ -212,6 +212,7 @@
     <Compile Include="Areas\Basic\Controllers\DBController.cs" />
     <Compile Include="Areas\Basic\Controllers\MailController.cs" />
     <Compile Include="Areas\Basic\Controllers\TableController.cs" />
+    <Compile Include="Areas\Basic\Controllers\TestAPIController.cs" />
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
     <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
     <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />

@@ -99,18 +99,41 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
+        ///// <summary>
+        ///// 获取表列表
+        ///// </summary>
+        ///// <param name="DBName">数据库名</param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //public HttpResponseMessage List([FromBody]string DBName)
+        //{
+        //    ReturnData result = new ReturnData();
+        //    try
+        //    {
+        //        result.D = tableBLL.GetListByDBName(DBName);
+        //        result.S = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.S = false;
+        //        result.SetErrorMsg("获取数据失败：" + ex.Message);
+        //        LogHelper.Default.WriteError("获取数据失败：" + ex.Message);
+        //    }
+        //    return MyResponseMessage.SuccessJson<ReturnData>(result);
+        //}
         /// <summary>
-        /// 获取表列表
+        /// ss
         /// </summary>
-        /// <param name="DBName">数据库名</param>
+        /// <param name="qp"></param>
+        /// <param name="page"></param>
         /// <returns></returns>
         [HttpPost]
-        public HttpResponseMessage List([FromBody]string DBName)
+        public HttpResponseMessage List([FromBody]List<QueryParam> qp)
         {
             ReturnData result = new ReturnData();
             try
             {
-                result.D = tableBLL.GetListByDBName(DBName);
+                result.D = tableBLL.GetListByDBName("");
                 result.S = true;
             }
             catch (Exception ex)
