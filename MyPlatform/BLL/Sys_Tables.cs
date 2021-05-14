@@ -13,6 +13,7 @@ namespace MyPlatform.BLL
         private readonly ISys_Tables dal = DataAccess.CreateInstance<ISys_Tables>("Sys_Tables");
         public Sys_Tables()
         {
+
         }
         #region extend 
         public bool Delete(int tableID )

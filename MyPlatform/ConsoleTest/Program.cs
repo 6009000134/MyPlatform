@@ -19,33 +19,31 @@ using System.Threading.Tasks;
 using UFIDA.U9.CBO.PubBE.YYC;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
+using Oracle.ManagedDataAccess.Client;
 
 namespace ConsoleTest
 {
-    class OAInfo
-    {
-        public string MainTable { get; set; }
-        public string DocNo { get; set; }
-        public string field { get; set; }
-    }
     
     class Program
     {
         static void Main(string[] args)
         {
-            // AddDailyBasic(startDate);     
-            //AddAPIInfo(html);
-            //AddBonus("601398.SH");
-            TestSer.PRWorkflowPortTypeClient cc = new TestSer.PRWorkflowPortTypeClient();
-            OAInfo oo = new OAInfo();
-            oo.MainTable = "formtable_main_191111";
-            oo.DocNo = "AMO-30190730014";
-            oo.field = "scdd";
-            List<OAInfo> li = new List<OAInfo>();
-            li.Add(oo);
-            string ss = JsonHelper.GetJsonJS(li);
-            string result=cc.PRCheck("dv12wegewqdx2321229flmqocdt765", ss);
-            //AddDailyBasic2();
+            OracleConnection con = new OracleConnection("user id=ecology;password=ecology;data source=192.168.20.29/orclpdb");
+            con.Open();
+            string sql = @"
+declare v_sql varchar(1000);
+begin
+ v_sql:='select * from v_auctus_bugfreeinfo';
+ execute immediate v_sql;
+ end ;
+";            
+            OracleCommand cmd = new OracleCommand(sql,con);
+            //cmd.ExecuteNonQuery();
+            //OracleDataReader odr = cmd.ExecuteReader(CommandBehavior.Default);    
+            OracleDataAdapter oda = new OracleDataAdapter(cmd);
+            DataSet ds = new DataSet();
+            oda.Fill(ds);
+            con.Close();
             Console.ReadLine();
         }
         public static void Addfund()

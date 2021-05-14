@@ -9,24 +9,29 @@ using MyPlatform.DBUtility;
 
 namespace MyPlatform.BLL
 {
-    public class Sys_Api
+    public class Sys_Api:BLLBase
     {
+        //TODO:做个基类，用来决定使用哪个DBHelper，声明对应dal
         string defaultCon = "Default";
         private readonly ISys_Api dal = DataAccess.CreateInstance<ISys_Api>("Sys_Api");
-        public DataSet GetTsCode(string tsCode)
+        public Sys_Api()
         {
-            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
-            return dal.GetTsCode(db,tsCode);
+            GetDataBase(defaultCon);
+        }
+        public DataSet GetTsCode(string tsCode)
+        {            
+            //IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);            
+            return dal.GetTsCode(currentDB, tsCode);
         }
         public ReturnData GetApiResult(TuShareResult data, int apiID)
         {
-            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
-            return dal.GetApiResult(db,data,apiID);
+            //IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            return dal.GetApiResult(currentDB, data,apiID);
         }
         public ReturnData CreateApiTable(int apiID)
         {
-            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
-            return dal.CreateApiTable(db,apiID);
+            //IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            return dal.CreateApiTable(currentDB, apiID);
         }
         public DataSet GetDetail(int apiID)
         {

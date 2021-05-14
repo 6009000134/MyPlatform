@@ -46,7 +46,7 @@ namespace MyPlatform.DBUtility
                     db = new SqlServerDataBase(conName);
                     break;
                 case "oracle":
-                    throw new Exception("系统暂不支持Oracle数据库");
+                    db = new OracleDataBase(conName);
                     break;
                 case "mysql":
                     throw new Exception("系统暂不支持MySql数据库");

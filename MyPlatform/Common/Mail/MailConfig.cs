@@ -40,7 +40,7 @@ namespace MyPlatform.Common.Mail
         public ArrayList CC { get; set; }
         /// <summary>
         /// 密送人集合
-        /// </summary>
+        /// </summary>  
         public ArrayList Bcc { get; set; }
         /// <summary>
         /// 邮件标题

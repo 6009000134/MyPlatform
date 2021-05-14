@@ -144,6 +144,7 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
+
         [HttpPost]
         public HttpResponseMessage GetDetail([FromBody]Dictionary<string, object> dic)
         {

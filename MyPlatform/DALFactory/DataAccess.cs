@@ -9,6 +9,8 @@ namespace MyPlatform.DALFactory
     /// </summary>
     public sealed class DataAccess
     {
+
+        private static readonly string defaultAssemblyPath = ConfigurationManager.AppSettings["SQLServerDAL"];
         private static readonly string SqlServerAssemblyPath = ConfigurationManager.AppSettings["SQLServerDAL"];
         private static readonly string OracleAssemblyPath = ConfigurationManager.AppSettings["OracleDAL"];
         private static readonly string MySqlAssemblyPath = ConfigurationManager.AppSettings["MySqlDAL"];
@@ -56,13 +58,15 @@ namespace MyPlatform.DALFactory
         /// <summary>
         /// 创建数据层接口。
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ClassName">类名</param>
+        /// <returns></returns>
         public static T CreateInstance<T>(string ClassName)
         {
 
             string ClassNamespace = "";
-            string AssemblyPath = "";
-            ClassNamespace = "MyPlatform." + SqlServerAssemblyPath + "." + ClassName;
-            AssemblyPath = SqlServerAssemblyPath;
+            string AssemblyPath = defaultAssemblyPath;
+            ClassNamespace = "MyPlatform." + AssemblyPath + "." + ClassName;
             object objType = CreateObject(AssemblyPath, ClassNamespace);
             return (T)objType;
         }
@@ -71,30 +75,28 @@ namespace MyPlatform.DALFactory
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
         /// <param name="ClassName">命名空间</param>
-        /// <param name="dbName">数据库类型</param>
+        /// <param name="dbType">数据库类型,默认取sqlserver</param>
         /// <returns></returns>
-        public static T CreateInstance<T>(string ClassName, string dbName)
+        public static T CreateInstance<T>(string ClassName, string dbType)
         {
-
             string ClassNamespace = "";
             string AssemblyPath = "";
-            switch (dbName.ToLower())
+            switch (dbType.ToLower())
             {
                 case "sqlserver":
-                    ClassNamespace = "MyPlatform." + SqlServerAssemblyPath + "." + ClassName;
                     AssemblyPath = SqlServerAssemblyPath;
                     break;
                 case "oracle":
-                    ClassNamespace = "MyPlatform." + OracleAssemblyPath + "." + ClassName;
                     AssemblyPath = OracleAssemblyPath;
                     break;
                 case "mysql":
-                    ClassNamespace = "MyPlatform." + MySqlAssemblyPath + "." + ClassName;
                     AssemblyPath = MySqlAssemblyPath;
                     break;
                 default:
+                    AssemblyPath = SqlServerAssemblyPath;
                     break;
             }
+            ClassNamespace = "MyPlatform." + AssemblyPath + "." + ClassName;
             object objType = CreateObject(AssemblyPath, ClassNamespace);
             return (T)objType;
         }
