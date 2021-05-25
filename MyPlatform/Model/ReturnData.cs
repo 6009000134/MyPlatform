@@ -9,6 +9,13 @@ namespace MyPlatform.Model
     public class ReturnData
     {
         /// <summary>
+        /// 构造函数
+        /// </summary>
+        public ReturnData()
+        {
+            S = true;
+        }
+        /// <summary>
         /// 编码
         /// </summary>
         public string C { get; set; }

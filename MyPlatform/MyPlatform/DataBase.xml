@@ -22,11 +22,11 @@
     <ConnectionString>SqlServer</ConnectionString>
   </DB>
   <DB>
-    <DBCon>OracleCon</DBCon>
-    <DBName>au_oa</DBName>
+    <DBCon>OACon</DBCon>
+    <DBName>orcldb</DBName>
     <DBType>2</DBType>
     <DBTypeCode>Oracle</DBTypeCode>
-    <ConnectionString></ConnectionString>
+    <ConnectionString>user id=ecology;password=ecology;data source=192.168.20.29/orclpdb</ConnectionString>
 
   </DB>
 </root>

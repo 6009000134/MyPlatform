@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="APIInputParam.cs" />
+    <Compile Include="Chart\EChartModel.cs" />
     <Compile Include="Enum\Control.cs" />
     <Compile Include="Enum\DBEnum.cs" />
     <Compile Include="KeyValueData.cs" />
