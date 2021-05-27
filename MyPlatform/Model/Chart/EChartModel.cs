@@ -13,13 +13,14 @@ namespace MyPlatform.Model.Chart
     {
         public EChartModel()
         {
-            title = new List<object>();
-            legend = new List<object>();
-            xAxis = new List<object>();
-            yAxis = new List<object>();
-            grid = new List<object>();
-            series = new List<object>();
+            title = new List<Dictionary<string,object>>();
+            legend = new List<Dictionary<string, object>>();
+            xAxis = new List<Dictionary<string, object>>();
+            yAxis = new List<Dictionary<string, object>>();
+            grid = new List<Dictionary<string, object>>();
+            series = new List<Dictionary<string, object>>();
             dataset = new List<Dictionary<string, object>>();
+            tooltip = new Dictionary<string, object>();
         }
         /// <summary>
         /// 前端DOM ID
@@ -28,31 +29,31 @@ namespace MyPlatform.Model.Chart
         /// <summary>
         /// 标题
         /// </summary>
-        public List<object> title { get; set; }
+        public List<Dictionary<string, object>> title { get; set; }
         /// <summary>
         /// 提示
         /// </summary>
-        public object tooltip { get; set; }
+        public Dictionary<string, object> tooltip { get; set; }
         /// <summary>
         /// 图例
         /// </summary>
-        public List<object> legend { get; set; }
+        public List<Dictionary<string, object>> legend { get; set; }
         /// <summary>
         /// x轴
         /// </summary>
-        public List<object> xAxis { get; set; }
+        public List<Dictionary<string, object>> xAxis { get; set; }
         /// <summary>
         /// y轴
         /// </summary>
-        public List<object> yAxis { get; set; }
+        public List<Dictionary<string, object>> yAxis { get; set; }
         /// <summary>
         /// grid
         /// </summary>
-        public List<object> grid { get; set; }
+        public List<Dictionary<string, object>> grid { get; set; }
         /// <summary>
         /// 系列
         /// </summary>
-        public List<object> series { get; set; }
+        public List<Dictionary<string, object>> series { get; set; }
         /// <summary>
         /// 数据集
         /// </summary>
