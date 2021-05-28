@@ -43,6 +43,13 @@ namespace MyPlatform.BLL
                     case "10":
                         list.Add(GetEchart2(db, xmbm, arr[i], "1"));
                         break;
+                    case "11":
+                    case "12":
+                    case "13":
+                    case "14":
+                    case "15":
+                        list.Add(GetEchart3(db, xmbm, arr[i], "1"));
+                        break;
                     case "16":
                     case "17":
                     case "18":
@@ -56,6 +63,175 @@ namespace MyPlatform.BLL
             result.D = list;
             return result;
         }
+        #region 分布图
+        public EChartModel GetEchart3(IDataBase db, string xmbm, string type, string sfsx)
+        {
+            EChartModel model = new EChartModel();
+            string domid = "main" + type;
+            model.DomID = domid;
+            Dictionary<string, object> title = new Dictionary<string, object>();
+            Dictionary<string, object> dicEncode = new Dictionary<string, object>();
+            Dictionary<string, object> label = new Dictionary<string, object>();
+            //legend设置
+            Dictionary<string, object> legend = new Dictionary<string, object>();
+            Dictionary<string, object> legendSelected = new Dictionary<string, object>();
+            //Grid设置
+            model.grid.Add(new Dictionary<string, object>());
+            //标题设置
+            string titleText = "";
+            string sql = "";
+            switch (type)
+            {
+                case "11":
+                    titleText = "Bug状态下的严重等级";
+                    model.grid[0].Add("top", "20%");
+                    sql = string.Format(@"select 
+a.xmbm,a.xmbm1,a.xmmc,a.item1,a.item2,b.quantity
+from 
+(
+select a.xmbm,a.xmbm1,a.xmmc,a.item item1,b.item item2 from (select xmbm,xmbm1,xmmc,item from v_bugfree_items where type='1')a,
+(select xmbm,item from v_bugfree_items where type='5') b where a.xmbm=b.xmbm and a.xmbm='{0}'
+) a
+left join 
+(select a.xmmc,a.xmbm,a.status item1,a.yccd,a.yccdmc item2,count(1)Quantity from v_bugfreeinfo a 
+where  a.xmbm='{0}'
+group by a.xmmc,a.xmbm,a.status,a.yccd,a.yccdmc) b on a.xmbm=b.xmbm and a.item1=b.item1 and a.item2=b.item2 ", xmbm);
+                    break;
+                case "12":
+                    model.grid[0].Add("top", "20%");
+                    titleText = "发生阶段下严重等级";
+                    sql = string.Format(@"select 
+a.xmbm,a.xmbm1,a.xmmc,a.item1,a.item2,b.quantity
+from 
+(
+select a.xmbm,a.xmbm1,a.xmmc,a.item item1,b.item item2 from (select xmbm,xmbm1,xmmc,item from v_bugfree_items where type='2')a,
+(select xmbm,item from v_bugfree_items where type='5') b where a.xmbm=b.xmbm and a.xmbm='{0}'
+) a
+left join 
+(select a.xmmc,a.xmbm,a.wtfxjd item1,a.yccd,a.yccdmc item2,count(1)Quantity from v_bugfreeinfo a 
+group by a.xmmc,a.xmbm,a.wtfxjd,a.yccd,a.yccdmc) b on a.xmbm=b.xmbm and a.item1=b.item1 and a.item2=b.item2
+", xmbm);
+                    break;
+                case "13":
+                    model.grid[0].Add("top", "20%");
+                    titleText = "故障大类下故障小类";
+                    sql = string.Format(@"select 
+a.xmbm,a.xmbm1,a.xmmc,a.item1,a.item2,b.quantity
+from 
+(
+select a.xmbm,a.xmbm1,a.xmmc,b.iName item1,b.iiname item2 from (select distinct xmbm,xmmc,xmbm1 from v_bugfreeinfo where nvl(xmbm,'-1')!='-1')a,
+(select IName,IIName from auctus_fault)b
+where a.xmbm='{0}'
+) a
+left join 
+(select a.xmmc,a.xmbm,a.parenttype item1,a.childtype item2,count(1)Quantity from v_bugfreeinfo a 
+group by a.xmmc,a.xmbm,a.flid,a.sjfl,a.parenttype,a.childtype) b on a.xmbm=b.xmbm and a.item1=b.item1 and a.item2=b.item2
+ ", xmbm);
+                    break;
+                case "14":
+                    model.grid[0].Add("top", "20%");
+                    titleText = "故障大类下的严重等级";
+                    sql = string.Format(@"select 
+a.xmbm,a.xmmc,a.item1,a.item2,b.quantity
+from 
+(
+select a.xmbm,a.xmmc,a.item item1,b.item item2 from (select xmbm,xmmc,item from v_bugfree_items where type='3')a,
+(select xmbm,item from v_bugfree_items where type='5') b where a.xmbm=b.xmbm and a.xmbm='{0}'
+) a
+left join 
+(select a.xmmc,a.xmbm,a.parenttype item1,a.yccd,a.yccdmc item2,count(1)Quantity from v_bugfreeinfo a 
+group by a.xmmc,a.xmbm,a.parenttype,a.yccd,a.yccdmc) b on a.xmbm=b.xmbm and a.item1=b.item1 and a.item2=b.item2", xmbm);
+                    break;
+                case "15":
+                    model.grid[0].Add("top", "20%");
+                    titleText = "发生阶段下的问题责任分类";
+                    sql = string.Format(@"select 
+a.xmbm,a.xmmc,a.item1,a.item2,b.quantity
+from 
+(
+select a.xmbm,a.xmmc,a.item item1,b.item item2 from (select xmbm,xmmc,item from v_bugfree_items where type='2')a,
+(select xmbm,item from v_bugfree_items where type='10') b where a.xmbm=b.xmbm and a.xmbm='{0}'
+) a
+left join 
+(select a.xmmc,a.xmbm,a.wtfxjd item1,a.wtzrfl,a.wtlymc item2,count(1)Quantity from v_bugfreeinfo a 
+group by a.xmmc,a.xmbm,a.wtfxjd,a.wtzrfl,a.wtlymc) b on a.xmbm=b.xmbm and a.item1=b.item1 and a.item2=b.item2", xmbm);
+                    break;
+                default:
+                    break;
+            }
+            if (sfsx == "0")
+            {
+                sql += " sfsx=0";
+            }
+            title.Add("text", titleText);
+            model.title.Add(title);
+
+            //series设置
+            DataSet ds = db.Query(sql);
+            DataView dv = ds.Tables[0].DefaultView;
+            DataTable dtItem1 = dv.ToTable(true, new string[] { "Item1" });
+            DataTable dtItem2 = dv.ToTable(true, new string[] { "Item2" });
+            List<List<string>> source = new List<List<string>>();
+            if (dtItem1.Rows.Count > 0)
+            {
+                string[] arrTitle = new string[dtItem1.Rows.Count + 1];
+                List<string> temp = new List<string>();
+                temp.Add("table");
+                for (int i = 0; i < dtItem1.Rows.Count; i++)
+                {
+                    temp.Add(dtItem1.Rows[i][0].ToString());
+                }
+                source.Add(temp);
+            }
+            if (dtItem2.Rows.Count > 0)
+            {
+                for (int i = 0; i < dtItem2.Rows.Count; i++)
+                {
+                    List<string> temp = new List<string>();
+                    temp.Add(dtItem2.Rows[i][0].ToString());
+                    for (int j = 0; j < dtItem1.Rows.Count; j++)
+                    {
+                        DataRow[] drs = ds.Tables[0].Select("Item2='" + dtItem2.Rows[i][0].ToString() + "' and item1='" + dtItem1.Rows[j][0].ToString() + "'");
+                        if (drs.Count() > 0)
+                        {
+                            temp.Add(drs[0]["Quantity"].ToString());
+                        }
+                        else
+                        {
+                            temp.Add("0");
+                        }
+                    }
+                    source.Add(temp);
+                    //系列设置
+                    Dictionary<string, object> series = new Dictionary<string, object>();
+                    series.Add("type", "bar");
+                    //label.Add("show", "true");
+                    //label.Add("formatter", "{a}({@" + i.ToString() + "})");
+                    //label.Add("fontSize", "14px");
+                    //series.Add("label", label);
+                    series.Add("seriesLayoutBy", "row");
+                    model.series.Add(series);
+                }
+            }
+            Dictionary<string, object> dicSource = new Dictionary<string, object>();
+            dicSource.Add("source", source);
+            model.dataset.Add(dicSource);
+            legend.Add("top", "8%");
+            //x轴设置
+            Dictionary<string, object> xAxis = new Dictionary<string, object>();
+            xAxis.Add("type", "category");
+            Dictionary<string, object> splitLine = new Dictionary<string, object>();
+            splitLine.Add("show",true);
+            xAxis.Add("splitLine",splitLine);
+            model.xAxis.Add(xAxis);
+            //y轴设置
+            Dictionary<string, object> yAxis = new Dictionary<string, object>();
+            model.yAxis.Add(yAxis);
+            //legend  
+            model.legend.Add(legend);
+            return model;
+        }
+        #endregion
         #region 趋势图
         public EChartModel GetEchart4(IDataBase db, string xmbm, string type, string sfsx)
         {
@@ -77,49 +253,60 @@ namespace MyPlatform.BLL
             {
                 case "16":
                     titleText = "故障大类";
-                    type = "2";
-                    sql = string.Format(@"select a.xmbm,a.xmmc,substr(a.sqrq,0,7)sqrq,a.sjfl,a.ParentType,count(1)Quantity
+                    model.grid[0].Add("top", "20%");
+                    sql = string.Format(@"select a.xmmc,a.xmbm,a.item,a.sfsx,b.sqrq,b.quantity
+from v_bugfree_items a left join 
+(
+select a.xmbm,a.xmmc,substr(a.sqrq,0,7)sqrq,a.sjfl ItemID,a.ParentType Item,count(1)Quantity
 from v_bugfreeinfo a
 where nvl(a.xmbm,'-1')!='-1'
 and a.nodeorder>0 and a.xmbm='{0}'
 group by a.xmbm,a.xmmc,substr(a.sqrq,0,7),a.sjfl,a.parenttype
-order by a.ParentType,sqrq;", xmbm);
+)b on a.xmbm=b.xmbm and a.item=b.item
+where a.xmbm='{0}' and a.type='3'
+order by a.item,b.sqrq ", xmbm);
                     break;
                 case "17":
+                    model.grid[0].Add("top", "10%");
                     titleText = "严重等级";
-                    sql = string.Format(@"select '{0}' Item,'数量' Quantity from dual  
-                            union all select a.item,to_char(nvl(b.Quantity, 0))Quantity from v_bugfree_items a 
-left join
+                    sql = string.Format(@"select a.xmmc,a.xmbm,a.item,a.sfsx,b.sqrq,b.quantity
+from v_bugfree_items a left join 
 (
-select a.xmbm,a.xmmc,count(a.sjfl)Quantity,a.parenttype, '{1}'Type, '{0}'TypeName from v_bugfreeinfo a 
-where a.nodeorder>0 group by a.xmbm,a.xmmc,a.sjfl,a.parenttype
-) b on a.xmbm=b.xmbm and a.type=b.type and a.item=b.parenttype
-where a.type = '{1}'and a.xmbm = '{2}'
-order by Quantity desc", titleText, type, xmbm);
+select a.xmbm,a.xmmc,substr(a.sqrq,0,7)sqrq,a.yccd ItemID,a.yccdmc Item,count(1)Quantity
+from v_bugfreeinfo a
+where nvl(a.xmbm,'-1')!='-1'
+and a.nodeorder>0 and a.xmbm='{0}'
+group by a.xmbm,a.xmmc,substr(a.sqrq,0,7),a.yccd,a.yccdmc
+)b on a.xmbm=b.xmbm and a.item=b.item
+where a.xmbm='{0}' and a.type='5'
+order by a.item,b.sqrq
+", xmbm);
                     break;
                 case "18":
-                    model.grid[0].Add("top", "40%");
+                    model.grid[0].Add("top", "20%");
                     titleText = "责任分类";
-                    sql = string.Format(@"select '{0}' Item,'数量' Quantity from dual  
-                            union all select a.item,to_char(nvl(b.Quantity, 0))Quantity from v_bugfree_items a 
-left join
+                    sql = string.Format(@"select a.xmmc,a.xmbm,a.item,a.sfsx,b.sqrq,b.quantity
+from v_bugfree_items a left join 
 (
-select a.xmbm,a.xmmc,count(a.flid)Quantity,a.childtype, '{1}'Type, '{0}'TypeName from v_bugfreeinfo a 
-where a.nodeorder>0 group by a.xmbm,a.xmmc,a.flid,a.childtype
-) b on a.xmbm=b.xmbm and a.type=b.type and a.item=b.childtype
-where a.type = '{1}'and a.xmbm = '{2}'", titleText, "4", xmbm);
+select a.xmbm,a.xmmc,substr(a.sqrq,0,7)sqrq,a.wtzrfl ItemID,a.wtlymc Item,count(1)Quantity
+from v_bugfreeinfo a
+where nvl(a.xmbm,'-1')!='-1'
+and nvl(a.wtlymc,'-1')!='-1'
+and a.nodeorder>0 and a.xmbm='{0}'
+group by a.xmbm,a.xmmc,substr(a.sqrq,0,7),a.wtlymc,a.wtzrfl
+)b on a.xmbm=b.xmbm and a.item=b.item
+where a.xmbm='{0}' and a.type='10'
+order by a.item,b.sqrq ", xmbm);
                     break;
                 case "19":
                     titleText = "超时数";
-                    sql = string.Format(@"select '{0}' Item,'数量' Quantity from dual  
-                            union all select a.item,to_char(nvl(b.Quantity, 0))Quantity from v_bugfree_items a 
-left join
-(
-select a.xmbm,a.xmmc,count(a.yccdmc)Quantity,a.yccdmc,'{1}'Type, '{0}'TypeName from v_bugfreeinfo a 
-where a.nodeorder>0 group by a.xmbm,a.xmmc,a.yccdmc
-) b on a.xmbm=b.xmbm and a.type=b.type and a.item=b.yccdmc
-where a.type = '{1}'and a.xmbm = '{2}'
-order by Quantity desc", titleText, type, xmbm);
+                    sql = string.Format(@"select a.xmbm,a.xmmc,'超时'item,0 sfsx,substr(a.sqrq,0,7)sqrq,count(1)Quantity
+from v_bugfreeinfo a  
+where  nvl(a.xmbm,'-1')!='-1'
+and a.nodeorder>0 and a.xmbm='{0}'
+and to_char(nvl(a.actualcompletedate,sysdate),'yyyy-MM-dd')>a.yqwcrq
+group by a.xmbm,a.xmmc,substr(a.sqrq,0,7)
+order by sqrq", xmbm);
                     break;
                 default:
                     break;
@@ -131,49 +318,71 @@ order by Quantity desc", titleText, type, xmbm);
             title.Add("text", titleText);
             model.title.Add(title);
 
-            //dataset设置
+            //series设置
             DataSet ds = db.Query(sql);
-            List<List<string>> liData = new List<List<string>>();
-            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+            DataView dv = ds.Tables[0].DefaultView;
+            DataTable dtLegend = dv.ToTable(true, new string[] { "Item" });
+            dv.Sort = " sqrq ";
+            dv.RowFilter = " sqrq<>''";
+            DataTable dtDate = dv.ToTable(true, new string[] { "SQRQ" });
+            //legend data设置
+            if (dtLegend.Rows.Count > 0)
             {
-                List<string> temp = new List<string>();
-                for (int j = 0; j < ds.Tables[0].Columns.Count; j++)
+                string[] arr = new string[dtLegend.Rows.Count];
+
+                for (int i = 0; i < dtLegend.Rows.Count; i++)
                 {
-                    temp.Add(ds.Tables[0].Rows[i][j].ToString());
+                    arr[i] = dtLegend.Rows[i][0].ToString();
                 }
-                liData.Add(temp);
-                if (i > 0)
-                {
-                    Dictionary<string, object> series = new Dictionary<string, object>();
-                    label = new Dictionary<string, object>();
-                    //系列设置
-                    series.Add("type", "line");
-                    label.Add("show", "true");
-                    label.Add("formatter", "{a}({@" + i.ToString() + "})");
-                    label.Add("fontSize", "14px");
-                    series.Add("label", label);
-                    series.Add("seriesLayoutBy", "row");
-                    model.series.Add(series);
-                    //设置没数据的选不被选中
-                    //if (type == "4" || type == "8")
-                    //{
-                    //    if (ds.Tables[0].Rows[i][1].ToString() == "0")
-                    //    {
-                    //        if (!legendSelected.ContainsKey(ds.Tables[0].Rows[i][0].ToString()))
-                    //        {
-                    //            legendSelected.Add(ds.Tables[0].Rows[i][0].ToString(), false);
-                    //        }
-                    //    }
-                    //}
-                }
+                legend.Add("data", arr);
             }
+            for (int i = 0; i < dtLegend.Rows.Count; i++)
+            {
+                label = new Dictionary<string, object>();
+                Dictionary<string, object> series = new Dictionary<string, object>();
+                series.Add("name", dtLegend.Rows[i][0]);
+                List<int> liSData = new List<int>();
+                DataRow[] drs = ds.Tables[0].Select("Item='" + dtLegend.Rows[i][0].ToString() + "'");
+                for (int j = 0; j < dtDate.Rows.Count; j++)
+                {
+                    DataRow[] drSelect = ds.Tables[0].Select("Item='" + dtLegend.Rows[i][0].ToString() + "' and sqrq='" + dtDate.Rows[j][0].ToString() + "'");
+                    if (drSelect.Count() > 0)
+                    {
+                        liSData.Add(Convert.ToInt32(drSelect[0]["Quantity"]));
+                    }
+                    else
+                    {
+                        liSData.Add(0);
+                    }
+                }
+                series.Add("data", liSData);
+                //系列设置
+                series.Add("type", "line");
+                label.Add("show", "true");
+                //label.Add("formatter", "{a}({@" + i.ToString() + "})");
+                label.Add("fontSize", "14px");
+                series.Add("label", label);
+                //series.Add("seriesLayoutBy", "row");
+                model.series.Add(series);
+            }
+
+
             //legend.Add("selected", legendSelected);
             legend.Add("top", "8%");
-            Dictionary<string, object> dicTemp = new Dictionary<string, object>();
-            dicTemp.Add("source", liData);
-            model.dataset.Add(dicTemp);
+            //Dictionary<string, object> dicTemp = new Dictionary<string, object>();
+            //dicTemp.Add("source", liData);
+            //model.dataset.Add(dicTemp);
             //x轴设置
             Dictionary<string, object> xAxis = new Dictionary<string, object>();
+            if (dtDate.Rows.Count > 0)
+            {
+                string[] arrDate = new string[dtDate.Rows.Count];
+                for (int i = 0; i < dtDate.Rows.Count; i++)
+                {
+                    arrDate[i] = dtDate.Rows[i][0].ToString();
+                }
+                xAxis.Add("data", arrDate);
+            }
             xAxis.Add("type", "category");
             xAxis.Add("boundaryGap", false);
             //xAxis.Add("data",arr);
