@@ -155,12 +155,14 @@ namespace MyPlatform.Areas.Basic.Controllers
                 int tableID = Convert.ToInt32(dic["tableID"]);
                 string s = dic["page"].ToJson();
                 Pagination page=JSONUtil.ParseFromJson<Pagination>(dic["page"].ToJson());
+                BLL.Sys_Columns columnBLL = new BLL.Sys_Columns();
                 result = tableBLL.GetDetail(Convert.ToInt32(dic["tableID"]),page);
             }
             catch (Exception ex)
             {
-                result.S = false;
-                result.SetErrorMsg("错误信息：" + ex.Message);
+                //result.S = false;
+                //result.SetErrorMsg("错误信息：" + ex.Message);
+                throw ex;                
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }

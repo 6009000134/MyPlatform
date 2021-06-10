@@ -41,7 +41,7 @@ namespace MyPlatform.Common
             //用户信息
             var payload = dic;
             //过期时间
-            dic.Add("exp",UnixTimeStampUTC(DateTime.UtcNow.AddMinutes(timeout)));            
+            dic.Add("exp",UnixTimeStampUTC(DateTime.UtcNow.AddMinutes(timeout)));
             IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
             IJsonSerializer serializer = new JsonNetSerializer();
             IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();

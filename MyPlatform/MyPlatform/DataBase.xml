@@ -27,7 +27,6 @@
     <DBType>2</DBType>
     <DBTypeCode>Oracle</DBTypeCode>
     <ConnectionString>user id=ecology;password=ecology;data source=192.168.20.29/orclpdb</ConnectionString>
-
   </DB>
 </root>
 <!--DBCon数据库key，不可重复-->

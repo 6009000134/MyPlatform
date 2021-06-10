@@ -267,7 +267,7 @@ where a.xmbm='{0}' and a.type='3'
 order by a.item,b.sqrq ", xmbm);
                     break;
                 case "17":
-                    model.grid[0].Add("top", "10%");
+                    model.grid[0].Add("top", "20%");
                     titleText = "严重等级";
                     sql = string.Format(@"select a.xmmc,a.xmbm,a.item,a.sfsx,b.sqrq,b.quantity
 from v_bugfree_items a left join 
@@ -299,6 +299,7 @@ where a.xmbm='{0}' and a.type='10'
 order by a.item,b.sqrq ", xmbm);
                     break;
                 case "19":
+                    model.grid[0].Add("top", "20%");
                     titleText = "超时数";
                     sql = string.Format(@"select a.xmbm,a.xmmc,'超时'item,0 sfsx,substr(a.sqrq,0,7)sqrq,count(1)Quantity
 from v_bugfreeinfo a  

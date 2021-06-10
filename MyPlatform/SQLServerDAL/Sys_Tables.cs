@@ -317,7 +317,8 @@ namespace MyPlatform.SQLServerDAL
                 int startIndex = DALUtils.CalStartIndex(page.PageSize, page.PageIndex);
                 int endIndex = DALUtils.CalEndIndex(page.PageSize, page.PageIndex);
                 string sql = "select * from sys_tables where ID=@ID;select * from (select ROW_NUMBER() OVER(ORDER BY orderNO)RN,* from sys_columns where tableID=@ID)t where t.rn>" + startIndex.ToString() + " and t.rn<" + endIndex.ToString() + ";select count(1)TotalCount from sys_columns where tableID=@ID";
-                IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+                //IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+                IDataBase db = DBHelperFactory.CreateDBInstance("31");
                 SqlParameter[] pars = { new SqlParameter("@ID", tableID) };
                 ds = db.Query(sql, pars);
                 result.D = ds;
@@ -325,7 +326,8 @@ namespace MyPlatform.SQLServerDAL
             }
             catch (Exception ex)
             {
-                result.SetErrorMsg(ex.Message);
+                throw ex;
+                //result.SetErrorMsg(ex.Message);
             }
 
             return result;

@@ -24,7 +24,14 @@ namespace MyPlatform
             //AllowedUrls=System.Configuration.ConfigurationManager.AppSettings["AllowedOptions"].Split(new char[] { ';'}).ToList();
             foreach (string item in System.Configuration.ConfigurationManager.AppSettings["AllowedOptions"].Split(new char[] { ';' }).ToList())
             {
-                AllowedUrls.Add(item);
+                if (item == "*")
+                {
+                    AllowedUrls.Insert(0, item);
+                }
+                else
+                {
+                    AllowedUrls.Add(item);
+                }                
             }
             //加载log4net配置
             string path = AppContext.BaseDirectory + "log4net.config";
@@ -88,7 +95,7 @@ namespace MyPlatform
             bool flag = true;
             if (allowUrls.Count>0)
             {
-                if (allowUrls.Select(m => m.Contains(Request.UrlReferrer.Host)).Count() > 0)
+                if (allowUrls[0] == "*"|| allowUrls.Select(m => m.Contains(Request.UrlReferrer.Host)).Count() > 0)
                 {
                     flag = true;
                 }
