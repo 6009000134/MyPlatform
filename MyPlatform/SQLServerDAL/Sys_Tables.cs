@@ -156,7 +156,7 @@ namespace MyPlatform.SQLServerDAL
 
         }
         /// <summary>
-        /// 创建表以及默认字段CreatedBy、CreatedDate、UpdatedDate、CreatedDate、Deleted
+        /// 创建表以及默认字段CreatedBy、CreatedDate、UpdatedDate、CreatedDate
         /// </summary>
         /// <param name="model">表信息</param>
         /// <returns></returns>
@@ -172,8 +172,8 @@ namespace MyPlatform.SQLServerDAL
                 sql.Append(" CreatedBy nvarchar(30) not null,");
                 sql.Append(" CreatedDate DATETIME DEFAULT(GETDATE()) not null,");
                 sql.Append(" UpdatedBy nvarchar(30) default(''),");
-                sql.Append(" UpdatedDate datetime default(getdate()),");
-                sql.Append(" Deleted bit DEFAULT(0)");
+                sql.Append(" UpdatedDate datetime default(getdate())");
+                // sql.Append(" Deleted bit DEFAULT(0)");
                 sql.Append(" )");
                 SqlCommandData sc = new SqlCommandData();
                 sc.CommandText = string.Format(sql.ToString(), model.TableName);
@@ -224,43 +224,43 @@ namespace MyPlatform.SQLServerDAL
             SqlCommandData sc3 = new SqlCommandData();
             sc3.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
            ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
-           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
            ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
-           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "',(SELECT IDENT_CURRENT('Sys_Tables')),'"
            + model.TableName + "','CreatedBy','CreatedBy','创建人','NVarchar',30,0,'','')";
             sqlCommands.Add(sc3);
             SqlCommandData sc4 = new SqlCommandData();
             sc4.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
            ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
-           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
            ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
-           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "',(SELECT IDENT_CURRENT('Sys_Tables')),'"
            + model.TableName + "','CreatedDate','CreatedDate','创建时间','DateTime',0,0,'','')";
             sqlCommands.Add(sc4);
             SqlCommandData sc5 = new SqlCommandData();
             sc5.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
            ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
-           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
            ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
-           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "',(SELECT IDENT_CURRENT('Sys_Tables')),'"
            + model.TableName + "','UpdatedBy','UpdatedBy','更新人','NVarchar',30,1,'','')";
             sqlCommands.Add(sc5);
             SqlCommandData sc6 = new SqlCommandData();
             sc6.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
            ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
-           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
            ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
-           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "',(SELECT IDENT_CURRENT('Sys_Tables')),'"
            + model.TableName + "','UpdatedDate','UpdatedDate','更新时间','DateTime',0,1,'','')";
             sqlCommands.Add(sc6);
-            SqlCommandData sc7 = new SqlCommandData();
-            sc7.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
-           ([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
-           ,[Deleted]           ,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
-           ,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
-           ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
-           + model.TableName + "','Deleted','Deleted','是否已删除','Bit',0,1,0,'')";
-            sqlCommands.Add(sc7);
+           // SqlCommandData sc7 = new SqlCommandData();
+           // sc7.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
+           //([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
+           //,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+           //,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
+           //,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+           //+ model.TableName + "','Deleted','Deleted','是否已删除','Bit',0,1,0,'')";
+           // sqlCommands.Add(sc7);
             return dbDefault.ExecuteTran(sqlCommands);
         }
         /// <summary>
@@ -317,8 +317,7 @@ namespace MyPlatform.SQLServerDAL
                 int startIndex = DALUtils.CalStartIndex(page.PageSize, page.PageIndex);
                 int endIndex = DALUtils.CalEndIndex(page.PageSize, page.PageIndex);
                 string sql = "select * from sys_tables where ID=@ID;select * from (select ROW_NUMBER() OVER(ORDER BY orderNO)RN,* from sys_columns where tableID=@ID)t where t.rn>" + startIndex.ToString() + " and t.rn<" + endIndex.ToString() + ";select count(1)TotalCount from sys_columns where tableID=@ID";
-                //IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
-                IDataBase db = DBHelperFactory.CreateDBInstance("31");
+                IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
                 SqlParameter[] pars = { new SqlParameter("@ID", tableID) };
                 ds = db.Query(sql, pars);
                 result.D = ds;
@@ -374,11 +373,11 @@ namespace MyPlatform.SQLServerDAL
                     IDataParameter[] pars4 = { new SqlParameter("@tableID", tableID) };
                     List<SqlCommandData> li = new List<SqlCommandData>();
                     SqlCommandData scd = new SqlCommandData();
-                    scd.CommandText = "update sys_tables set deleted=1 where id=@tableID";
+                    scd.CommandText = "delete from  sys_tables  where id=@tableID";
                     scd.Paras = new SqlParameter[1] { new SqlParameter("@tableID", tableID) };
                     li.Add(scd);
                     SqlCommandData scd2 = new SqlCommandData();
-                    scd2.CommandText = "update sys_columns set deleted=1 where tableid=@tableID";
+                    scd2.CommandText = "delete from   sys_columns  where tableid=@tableID";
                     scd2.Paras = new SqlParameter[1] { new SqlParameter("@tableID", tableID) };
                     li.Add(scd2);
                     return db.ExecuteTran(li);

@@ -53,9 +53,10 @@ namespace MyPlatform.Common
         /// 验证token是否有效
         /// </summary>
         /// <param name="token">token</param>
-        public static void ValidateToken(string token)
+        public static Dictionary<string,object> ValidateToken(string token)
         {
-            string secret = ConfigHelper.GetConfigString("JWTSecret"); ;
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            string secret = ConfigHelper.GetConfigString("JWTSecret");
             try
             {
                 IJsonSerializer serializer = new JsonNetSerializer();
@@ -64,19 +65,30 @@ namespace MyPlatform.Common
                 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
                 IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
                 IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
-                var json = decoder.Decode(token, secret, verify: true);
+                var json = decoder.Decode(token, secret, verify: true);                
+                result.Add("S", true);
+                result.Add("M", "");
             }
             catch (TokenExpiredException)
             {
                 //TODO:Token验证返回信息
                 Console.WriteLine("Token has expired");
-
+                result.Add("S", false);
+                result.Add("M", "Token has expired");
             }
             catch (SignatureVerificationException)
             {
                 //TODO:Token验证返回信息
                 Console.WriteLine("Token has invalid signature");
+                result.Add("S", false);
+                result.Add("M", "Token has invalid signature");
             }
+            catch (Exception)
+            {
+                result.Add("S",false);
+                result.Add("M","令牌格式不对！");
+            }
+            return result;
         }
         /// <summary>
         /// 日期转换成秒

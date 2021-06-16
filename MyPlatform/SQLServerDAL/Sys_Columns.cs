@@ -31,9 +31,9 @@ namespace MyPlatform.SQLServerDAL
         /// <param name="DBName"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public bool Add(string DBName, Model.Sys_Columns model)
+        public bool Add(IDataBase db, Model.Sys_Columns model)
         {
-            IDataBase db = DBHelperFactory.CreateDBInstance(DBName);
+            // IDataBase db = DBHelperFactory.CreateDBInstance(DBName);
             if (db.DBType ==Model.Enum.DBEnum.SqlServer )//SqlServer
             {                
                 StringBuilder sb = new StringBuilder();
@@ -58,7 +58,7 @@ namespace MyPlatform.SQLServerDAL
             }
             else
             {
-                throw new Exception(DBName + "数据库类型未知");
+                throw new Exception(db.DBType + "数据库类型未知");
             }
             return true;
         }

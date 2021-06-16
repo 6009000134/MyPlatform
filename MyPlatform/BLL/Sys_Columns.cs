@@ -13,6 +13,19 @@ namespace MyPlatform.BLL
         private readonly ISys_Columns dal = DataAccess.CreateInstance<ISys_Columns>("Sys_Columns");
         public Sys_Columns()
         { }
+        public ReturnData AddColumn(Model.Sys_Columns model)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                result.S = true;                
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
 
         public DataSet GetList(int tableID)
         {
