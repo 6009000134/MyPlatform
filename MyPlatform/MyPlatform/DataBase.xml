@@ -15,6 +15,13 @@
     <ConnectionString>Data Source=localhost;Initial Catalog=CRMSystem;User ID=sa;Password=123456;Integrated Security=True</ConnectionString>
   </DB>
   <DB>
+    <DBCon>DiaryCon</DBCon>
+    <DBName>Diary</DBName>
+    <DBType>1</DBType>
+    <DBTypeCode>SqlServer</DBTypeCode>
+    <ConnectionString>Data Source=localhost;Initial Catalog=Diary;User ID=sa;Password=123456;Integrated Security=True</ConnectionString>
+  </DB>
+  <DB>
     <DBCon>MySqlCon</DBCon>
     <DBName>au_mes</DBName>
     <DBType>1</DBType>

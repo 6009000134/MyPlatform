@@ -210,6 +210,7 @@
     <Compile Include="Areas\Basic\BasicAreaRegistration.cs" />
     <Compile Include="Areas\Basic\Controllers\ColumnController.cs" />
     <Compile Include="Areas\Basic\Controllers\DBController.cs" />
+    <Compile Include="Areas\Basic\Controllers\FileController.cs" />
     <Compile Include="Areas\Basic\Controllers\MailController.cs" />
     <Compile Include="Areas\Basic\Controllers\TableController.cs" />
     <Compile Include="Areas\Basic\Controllers\TestAPIController.cs" />
