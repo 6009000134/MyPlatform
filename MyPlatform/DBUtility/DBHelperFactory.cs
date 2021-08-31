@@ -17,7 +17,7 @@ namespace MyPlatform.DBUtility
         /// </summary>
         /// <param name="conName"></param>
         /// <returns></returns>
-        public static IDataBase CreateDBInstance(string conName)
+        public static IDataBase Create(string conName)
         {
             IDataBase db;
             DataCache cache = new DataCache();

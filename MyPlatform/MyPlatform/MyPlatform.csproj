@@ -210,6 +210,7 @@
     <Compile Include="Areas\Basic\BasicAreaRegistration.cs" />
     <Compile Include="Areas\Basic\Controllers\ColumnController.cs" />
     <Compile Include="Areas\Basic\Controllers\DBController.cs" />
+    <Compile Include="Areas\Basic\Controllers\FileController.cs" />
     <Compile Include="Areas\Basic\Controllers\MailController.cs" />
     <Compile Include="Areas\Basic\Controllers\TableController.cs" />
     <Compile Include="Areas\Basic\Controllers\TestAPIController.cs" />
@@ -243,6 +244,8 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Areas\Web\Controllers\APIController.cs" />
     <Compile Include="Areas\Web\Controllers\LoginController.cs" />
+    <Compile Include="Areas\Web\Controllers\OAController.cs" />
+    <Compile Include="Areas\Web\Controllers\QueryController.cs" />
     <Compile Include="Areas\Web\Controllers\RegisterController.cs" />
     <Compile Include="Areas\Web\WebAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />

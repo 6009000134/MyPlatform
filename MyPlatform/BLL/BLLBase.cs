@@ -16,7 +16,7 @@ namespace MyPlatform.BLL
         }
         public void GetDataBase(string con)
         {
-            currentDB = DBHelperFactory.CreateDBInstance(con);
+            currentDB = DBHelperFactory.Create(con);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MyPlatform.DBUtility;
+using MyPlatform.Model;
+using System;
 using System.Data;
 namespace MyPlatform.IDAL
 {
@@ -12,7 +14,7 @@ namespace MyPlatform.IDAL
         /// 获得数据列表
         /// </summary>
         DataSet GetList(int tableID);
-        bool Add(string DBName,Model.Sys_Columns model);
+        ReturnData Add(IDataBase db,Model.Sys_Columns model);
         #endregion  成员方法
     }
 }

@@ -15,6 +15,10 @@ namespace MyPlatform.Filter
     /// </summary>
     public class MyExceptionAttribute : ExceptionFilterAttribute
     {
+        /// <summary>
+        /// OnException
+        /// </summary>
+        /// <param name="actionExecutedContext"></param>
         public override void OnException(HttpActionExecutedContext actionExecutedContext)
         {
             base.OnException(actionExecutedContext);
@@ -22,10 +26,11 @@ namespace MyPlatform.Filter
             Exception ex = actionExecutedContext.Exception;
             MyPlatform.Common.LogHelper.Default.WriteError(ex.Message.ToString(), ex);
             //返回异常信息
-            //ReturnData result = new ReturnData();
-            //result.S = false;
-            //result.M = ex.Message.ToString();
-            actionExecutedContext.Response = MyResponseMessage.InternalServerError(ex.Message.ToString());
+            ReturnData result = new ReturnData();
+            result.S = false;
+            result.M = ex.Message.ToString();
+            //actionExecutedContext.Response = MyResponseMessage.InternalServerError(ex.Message.ToString());
+            actionExecutedContext.Response = MyResponseMessage.SuccessJson(result);
         }
     }
 }

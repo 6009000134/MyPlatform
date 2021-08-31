@@ -78,16 +78,6 @@ namespace MyPlatform.Model{
         } 
 				       
 		/// <summary>
-		/// Deleted
-        /// </summary>		
-		private int _deleted;
-				public int Deleted
-        {   
-            get{ return _deleted; }
-            set{ _deleted =value; }
-        } 
-		       
-		/// <summary>
 		/// TableID
         /// </summary>		
 		private int _tableid;
@@ -185,8 +175,22 @@ namespace MyPlatform.Model{
         {   
             get{ return _remark; }
             set{ _remark =value; }
-        } 
-		       
+        }
+
+        public int OrderNo
+        {
+            get
+            {
+                return orderNo;
+            }
+
+            set
+            {
+                orderNo = value;
+            }
+        }
+
+        private int orderNo;
 		   
 	}
 }

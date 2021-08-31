@@ -42,11 +42,13 @@ namespace MyPlatform.Areas.Basic.Controllers
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>
+        [HttpPost]
         public HttpResponseMessage AddColumn([FromBody]Sys_Columns columns)
         {
             ReturnData result = new ReturnData();
             try
             {
+                colBLL.AddColumn(columns);
                 //string s = "";
             }
             catch (Exception ex)

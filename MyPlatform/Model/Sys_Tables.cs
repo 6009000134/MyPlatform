@@ -83,18 +83,6 @@ namespace MyPlatform.Model
             set { _updateddate = value; }
         }
 
-        /// <summary>
-        /// Deleted
-        /// </summary>		
-        private int _deleted;
-        /// <summary>
-        /// 是否已删除（0/1-否/是）
-        /// </summary>
-        public int Deleted
-        {
-            get { return _deleted; }
-            set { _deleted = value; }
-        }
 
         /// <summary>
         /// TableName
@@ -148,11 +136,11 @@ namespace MyPlatform.Model
             set { _remark = value; }
         }
 
-        private string _dbType;
+        private int _dbType;
         /// <summary>
         /// 数据库类型
         /// </summary>
-        public string DBType
+        public int DBType
         {
             get
             {

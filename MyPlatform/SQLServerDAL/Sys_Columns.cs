@@ -12,6 +12,7 @@ namespace MyPlatform.SQLServerDAL
     //Sys_Columns
     public partial class Sys_Columns : ISys_Columns
     {
+        string defaultCon = "Default";
         /// <summary>
         /// 获取列集合
         /// </summary>
@@ -22,7 +23,7 @@ namespace MyPlatform.SQLServerDAL
             string sql = "SELECT * FROM dbo.Sys_Columns where tableID=@tableID";
             IDataParameter[] pars = { new SqlParameter("tableID", SqlDbType.Int) };
             pars[0].Value = tableID;
-            IDataBase db = DBHelperFactory.CreateDBInstance("Default");
+            IDataBase db = DBHelperFactory.Create("Default");
             return db.Query(sql, pars);
         }
         /// <summary>
@@ -31,36 +32,103 @@ namespace MyPlatform.SQLServerDAL
         /// <param name="DBName"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public bool Add(string DBName, Model.Sys_Columns model)
+        public ReturnData Add(IDataBase db, Model.Sys_Columns model)
         {
-            IDataBase db = DBHelperFactory.CreateDBInstance(DBName);
-            if (db.DBType ==Model.Enum.DBEnum.SqlServer )//SqlServer
-            {                
-                StringBuilder sb = new StringBuilder();
-                sb.Append("alter table "+model.TableName+" add column "+model.ColumnName+" "+model.ColumnType+model.Size);                
-                if (model.IsNullable)
+            ReturnData result = new ReturnData();
+            try
+            {
+                // IDataBase db = DBHelperFactory.CreateDBInstance(DBName);
+                if (db.DBType == Model.Enum.DBEnum.SqlServer)//SqlServer
                 {
-                    sb.Append("  null");
+                    StringBuilder sb = new StringBuilder();
+                    if (model.Size > 0)
+                    {
+                        sb.Append("alter table " + model.TableName + " add " + model.ColumnName + " " + model.ColumnType + "(" + model.Size + ")");
+                    }
+                    else
+                    {
+                        sb.Append("alter table " + model.TableName + " add  " + model.ColumnName + " " + model.ColumnType);
+                    }
+                    if (model.IsNullable)
+                    {
+                        sb.Append("  null");
+                    }
+                    else
+                    {
+                        sb.Append(" not null ");
+                    }
+                    //TODO:增加默认值
+                    if (db.ExecuteNonQuery(sb.ToString()) > 0)
+                    {
+                        result.S = true;
+                    }
+                }
+                else if (db.DBType == Model.Enum.DBEnum.MySql)//MySql
+                {
+                    result.SetErrorMsg("MySql数据库尚未实现！");
+                }
+                else if (db.DBType == Model.Enum.DBEnum.Oracle)//Oracle
+                {
+                    result.SetErrorMsg("Oracle数据库尚未实现！");
                 }
                 else
                 {
-                    sb.Append(" not null ");
+                    throw new Exception(db.DBType + "数据库类型未知");
                 }
-                //TODO:增加默认值
-            }
-            else if(db.DBType== Model.Enum.DBEnum.MySql)//MySql
-            {
+                //列信息记录到默认系统库
+                IDataBase dbDef = DBHelperFactory.Create(defaultCon);
+                string sql = @"INSERT INTO dbo.Sys_Columns
+        ( CreatedBy ,
+          CreatedDate ,
+          TableID ,
+          TableName ,
+          ColumnName ,
+          ColumnName_EN ,
+          ColumnName_CN ,
+          ColumnType ,
+          Size ,
+          IsNullable ,
+          DefaultValue ,
+          Remark ,
+          OrderNo
+        )
+VALUES  (
+@CreatedBy ,
+          GetDate(),
+          @TableID ,
+          @TableName ,
+          @ColumnName ,
+          @ColumnName_EN ,
+          @ColumnName_CN ,
+          @ColumnType ,
+          @Size ,
+          @IsNullable ,
+          @DefaultValue ,
+          @Remark ,
+          @OrderNo
+        )";
+                SqlParameter[] pars = { new SqlParameter("CreatedBy",model.CreatedBy),
+                     new SqlParameter("TableID",model.TableID),
+                     new SqlParameter("TableName",model.TableName),
+                     new SqlParameter("ColumnName",model.ColumnName),
+                     new SqlParameter("ColumnName_EN",model.ColumnName_EN),
+                     new SqlParameter("ColumnName_CN",model.ColumnName_CN),
+                     new SqlParameter("ColumnType",model.ColumnType),
+                     new SqlParameter("Size",model.Size),
+                     new SqlParameter("IsNullable",model.IsNullable),
+                     new SqlParameter("DefaultValue",model.DefaultValue),
+                     new SqlParameter("Remark",model.Remark),
+                     new SqlParameter("OrderNo",model.OrderNo),
 
+                };
+                dbDef.ExecuteNonQuery(sql, pars);
+                return result;
             }
-            else if (db.DBType == Model.Enum.DBEnum.Oracle)//Oracle
+            catch (Exception ex)
             {
+                throw ex;
+            }
 
-            }
-            else
-            {
-                throw new Exception(DBName + "数据库类型未知");
-            }
-            return true;
         }
     }
 }

@@ -23,28 +23,215 @@ using Oracle.ManagedDataAccess.Client;
 
 namespace ConsoleTest
 {
-    
+
     class Program
     {
         static void Main(string[] args)
         {
-            OracleConnection con = new OracleConnection("user id=ecology;password=ecology;data source=192.168.20.29/orclpdb");
-            con.Open();
-            string sql = @"
-declare v_sql varchar(1000);
-begin
- v_sql:='select * from v_auctus_bugfreeinfo';
- execute immediate v_sql;
- end ;
-";            
-            OracleCommand cmd = new OracleCommand(sql,con);
-            //cmd.ExecuteNonQuery();
-            //OracleDataReader odr = cmd.ExecuteReader(CommandBehavior.Default);    
-            OracleDataAdapter oda = new OracleDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            oda.Fill(ds);
-            con.Close();
+            decimal a = 0.115m;
+            decimal b = 567;
+            decimal sss = a * b;
+            decimal ss=Math.Round(a*b, 2);
+            decimal ss2=decimal.Round(65.205m, 2, MidpointRounding.AwayFromZero);
             Console.ReadLine();
+        }
+
+        public static string GetCRMCustomer()
+        {
+            string sql = "";
+            try
+            {
+                int limit = 1000;
+                int offset = 0;
+                int pageSize = 1000;
+                //Dictionary<string, object> dicParam = new Dictionary<string, object>();
+                //Dictionary<string, string> dicToken = GetCRMToken();
+                //Dictionary<string, object> dicData = new Dictionary<string, object>();//查询对象
+                //Dictionary<string, object> dicSearchInfo = new Dictionary<string, object>();//查询条件
+                //dicSearchInfo.Add("limit", limit);
+                //dicSearchInfo.Add("offset", 0);
+                //dicData.Add("dataObjectApiName", "AccountObj");
+                //dicData.Add("search_query_info", dicSearchInfo);
+                //dicData.Add("find_explicit_total_num", true);//返回total记录数
+                //string u = "https://open.fxiaoke.com/cgi/crm/v2/data/query";
+                ////参数
+                //dicParam.Add("corpAccessToken", dicToken["corpAccessToken"]);
+                //dicParam.Add("corpId", dicToken["corpId"]);
+                //dicParam.Add("currentOpenUserId", "FSUID_D8A6A93A28FDA27BB086C803174AD5E3");
+                //dicParam.Add("data", dicData);
+                //MyPlatform.Common.HttpHelper http = new MyPlatform.Common.HttpHelper();
+                //string result = http.Post(u, dicParam.ToJson());
+                //CRMEntityResult<CRMEntityData> data = result.ToEntity<CRMEntityResult<CRMEntityData>>();
+                Dictionary<string, string> dicToken = GetCRMToken();
+                CRMUserData userData = GetUserData(1000, 1, dicToken);
+                if (userData.errorCode == "0")//获取用户成功
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("begin  ");
+                    sb.Append(" delete from CRM_User;");//清空CRM客户
+                    for (int i = 0; i < userData.employees.Count; i++)
+                    {
+                        sb.Append(string.Format("insert into CRM_User values('{0}','{1}');", userData.employees[i].openUserId, userData.employees[i].name));
+                    }
+
+                    sb.Append("  end;  ");
+                    //new ComMethod(CommonData.getInstance().dicConnect["OACon"], 3000).ExecuteNonQuery(CommandType.Text, sb.ToString(), null);
+                }
+                else
+                {
+                    throw new Exception("错误编码：" + userData.errorCode + ",错误信息：" + userData.errorMessage + "," + userData.errorDescription);
+                }
+                CRMEntityResult<CRMEntityData> data = GetCustomerData(1, 0, dicToken);
+                if (data.errorCode == "0")//成功
+                {
+                    int total = data.data.total;
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("begin  ");
+                    sb.Append(" delete from crm_Test;");//清空CRM客户
+                    if (total > limit)
+                    {
+                        long times = Convert.ToInt64(Math.Ceiling(Convert.ToDouble(total) / Convert.ToDouble(limit)));
+                        for (int i = 0; i < times; i++)
+                        {
+                            CRMEntityResult<CRMEntityData> resultData = GetCustomerData(limit, offset, dicToken);
+                            for (int j = 0; j < resultData.data.dataList.Count; j++)
+                            {
+                                string owner = "";
+                                if (resultData.data.dataList[j].owner != null)
+                                {
+                                    for (int n = 0; n < resultData.data.dataList[j].owner.Count; n++)
+                                    {
+                                        owner += resultData.data.dataList[j].owner[n] + ",";
+                                    }
+                                }
+                                sb.Append(string.Format("insert into CRM_Test values('{0}','{1}','{2}','{3}','');", resultData.data.dataList[j]._id, resultData.data.dataList[j].name, resultData.data.dataList[j].high_seas_name, owner.TrimEnd(',')));
+                            }
+                            offset = limit;
+                            limit += pageSize;
+                        }
+                    }
+                    else
+                    {
+                        CRMEntityResult<CRMEntityData> resultData = GetCustomerData(limit, offset, dicToken);
+                        for (int i = 0; i < resultData.data.dataList.Count; i++)
+                        {
+                            string owner = "";
+                            if (resultData.data.dataList[i].owner != null)
+                            {
+                                for (int n = 0; n < resultData.data.dataList[i].owner.Count; n++)
+                                {
+                                    owner += resultData.data.dataList[i].owner[n] + ",";
+                                }
+                            }
+                            sb.Append(string.Format("insert into CRM_Test values('{0}','{1}','{2}','{3}','');", resultData.data.dataList[i]._id, resultData.data.dataList[i].name, resultData.data.dataList[i].high_seas_name, owner.TrimEnd(',')));
+                        }
+                    }
+                    sb.Append("  update crm_test t set ownername=(select name from crm_user a where a.id=t.owner) where exists(select 1 from crm_user a where a.id = t.owner) ; ");
+                    sb.Append("  end;  ");
+                    //new ComMethod(CommonData.getInstance().dicConnect["OACon"], 3000).ExecuteNonQuery(CommandType.Text, sb.ToString(), null);
+                    sql = sb.ToString();
+                }
+                else
+                {
+                    throw new Exception("错误编码：" + data.errorCode + ",错误信息：" + data.errorMessage + "," + data.errorDescription);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return sql;
+        }
+        public static CRMUserData GetUserData(int pageSize, int pageNumber, Dictionary<string, string> dicToken)
+        {
+            try
+            {
+                //int limit = 1000;
+                Dictionary<string, object> dicParam = new Dictionary<string, object>();
+                string u = "https://open.fxiaoke.com/cgi/user/get/batchByUpdTime";
+                //参数
+                dicParam.Add("corpAccessToken", dicToken["corpAccessToken"]);
+                dicParam.Add("corpId", dicToken["corpId"]);
+                dicParam.Add("currentOpenUserId", "FSUID_D8A6A93A28FDA27BB086C803174AD5E3");
+                dicParam.Add("pageSize", pageSize);
+                dicParam.Add("pageNumber", pageNumber);
+                MyPlatform.Common.HttpHelper http = new MyPlatform.Common.HttpHelper();
+                string result = http.Post(u, dicParam.ToJson());
+                CRMUserData data = JSONUtil.ParseFromJson<CRMUserData>(result);
+                return data;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        public static CRMEntityResult<CRMEntityData> GetCustomerData(int limit, int offset, Dictionary<string, string> dicToken)
+        {
+            try
+            {
+                //int limit = 1000;
+                Dictionary<string, object> dicParam = new Dictionary<string, object>();
+                Dictionary<string, object> dicData = new Dictionary<string, object>();//查询对象
+                Dictionary<string, object> dicSearchInfo = new Dictionary<string, object>();//查询条件
+                dicSearchInfo.Add("limit", limit);
+                dicSearchInfo.Add("offset", offset);
+                dicData.Add("dataObjectApiName", "AccountObj");
+                dicData.Add("search_query_info", dicSearchInfo);
+                dicData.Add("find_explicit_total_num", true);//返回total记录数
+                string u = "https://open.fxiaoke.com/cgi/crm/v2/data/query";
+                //参数
+                dicParam.Add("corpAccessToken", dicToken["corpAccessToken"]);
+                dicParam.Add("corpId", dicToken["corpId"]);
+                dicParam.Add("currentOpenUserId", "FSUID_D8A6A93A28FDA27BB086C803174AD5E3");
+                dicParam.Add("data", dicData);
+                MyPlatform.Common.HttpHelper http = new MyPlatform.Common.HttpHelper();
+                string result = http.Post(u, dicParam.ToJson());
+                CRMEntityResult<CRMEntityData> data = JSONUtil.ParseFromJson<CRMEntityResult<CRMEntityData>>(result);
+                return data;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        /// <summary>
+        /// 获取CRM系统Token
+        /// </summary>
+        /// <returns></returns>
+        public static Dictionary<string, string> GetCRMToken()
+        {
+            Dictionary<string, string> dicResult = new Dictionary<string, string>();
+            try
+            {
+                string url = "https://open.fxiaoke.com/cgi/corpAccessToken/get/V2";
+                Dictionary<string, string> dicAppInfo = new Dictionary<string, string>();
+                dicAppInfo.Add("appId", "FSAID_1319d64");//appId
+                dicAppInfo.Add("appSecret", "1d87829d97114babb6197ae724e4ede9");//appSecret
+                dicAppInfo.Add("permanentCode", "37292998F40B1D6D14B0367B48DDB974");//永久授权码
+                MyPlatform.Common.HttpHelper http = new MyPlatform.Common.HttpHelper();
+                //string result = HttpMethod.DoPost(url, "post", dicAppInfo.ToJson());
+                string result = http.Post(url, dicAppInfo.ToJson());
+                dicResult = JSONUtil.ParseFromJson<Dictionary<string, string>>(result);
+                if (dicResult["errorCode"] != "0")
+                {
+                    if (dicResult["errorCode"] == "-1")//系统繁忙重新发起请求
+                    {
+                        dicResult = GetCRMToken();
+                    }
+                    else
+                    {
+                        throw new Exception("ErrorCode:" + dicResult["errorCode"] + ",ErrorMessage" + dicResult["errorMessage"]);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dicResult;
         }
         public static void Addfund()
         {
@@ -130,7 +317,7 @@ begin
         }
 
         public static void AddAPIInfo(string html)
-        {            
+        {
             List<string> li = new List<string>();//Sqls
             //标题
             Regex regTitle = new Regex("(?<=<h2.*>).*(?=</[\\s\\S]*?h2 >)");
@@ -346,6 +533,42 @@ begin
     {
         public string[] fields { get; set; }
         public List<string[]> items { get; set; }
+
+    }
+
+    public class CRMCustomer
+    {
+        public string name { get; set; }
+        public string _id { get; set; }
+        public string high_seas_name { get; set; }
+        public List<string> owner { get; set; }
+    }
+    public class CRMEntityData
+    {
+        public List<CRMCustomer> dataList { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public int total { get; set; }
+    }
+
+    public class CRMEntityResult<T> where T : class
+    {
+        public string errorDescription { get; set; }
+        public string errorMessage { get; set; }
+        public string errorCode { get; set; }
+        public T data { get; set; }
+    }
+    public class CRMUserData
+    {
+        public string errorDescription { get; set; }
+        public string errorMessage { get; set; }
+        public string errorCode { get; set; }
+        public List<CRMUser> employees { get; set; }
+    }
+    public class CRMUser
+    {
+        public string openUserId { get; set; }
+        public string name { get; set; }
 
     }
 }
