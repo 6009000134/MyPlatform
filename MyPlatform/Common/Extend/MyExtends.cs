@@ -36,6 +36,6 @@ namespace MyPlatform.Common
         public static string ToJson(this string str)
         {
             return JSONUtil.GetJson<string>(str);
-        }
+        }        
     }
 }

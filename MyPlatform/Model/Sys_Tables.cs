@@ -136,11 +136,11 @@ namespace MyPlatform.Model
             set { _remark = value; }
         }
 
-        private string _dbType;
+        private int _dbType;
         /// <summary>
         /// 数据库类型
         /// </summary>
-        public string DBType
+        public int DBType
         {
             get
             {

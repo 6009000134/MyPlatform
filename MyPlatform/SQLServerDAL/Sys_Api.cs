@@ -198,7 +198,7 @@ namespace MyPlatform.SQLServerDAL
             DataSet ds = new DataSet();
             string sql = "select * from sys_apis where ID=@ID;select * from api_input where apiid=@ID;select * from api_output where apiid=@ID;";
             SqlParameter[] pars = { new SqlParameter("@ID", apiID) };
-            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            IDataBase db = DBHelperFactory.Create(defaultCon);
             ds = db.Query(sql, pars);
             return ds;
         }
@@ -212,7 +212,7 @@ namespace MyPlatform.SQLServerDAL
             ReturnData result = new ReturnData();
             try
             {
-                IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+                IDataBase db = DBHelperFactory.Create(defaultCon);
                 //保存API信息
                 string sqlApi = @"insert into sys_apis(Title ,
           ApiName ,
@@ -392,7 +392,7 @@ namespace MyPlatform.SQLServerDAL
             DataSet ds = new DataSet();
             condition = "%" + condition + "%";
             string sql = "select * from Sys_APIs WHERE PATINDEX(@condition,Title+ApiName+Description)>0";
-            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            IDataBase db = DBHelperFactory.Create(defaultCon);
             IDataParameter[] pars = { new SqlParameter("@condition", condition) };
             return db.Query(sql, pars);
 

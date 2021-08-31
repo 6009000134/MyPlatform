@@ -29,7 +29,7 @@ namespace MyPlatform.SQLServerDAL
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select * from Sys_Tables where 1=1 ");
-            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            IDataBase db = DBHelperFactory.Create(defaultCon);
             if (!string.IsNullOrEmpty("DBCon"))
             {
                 strSql.Append(" and DBCon=@DBCon");
@@ -51,7 +51,7 @@ namespace MyPlatform.SQLServerDAL
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select * from Sys_Tables where 1=1 ");
-            IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+            IDataBase db = DBHelperFactory.Create(defaultCon);
             if (!string.IsNullOrEmpty(DBCon))
             {
                 strSql.Append(" and DBCon=@DBCon");
@@ -88,7 +88,7 @@ namespace MyPlatform.SQLServerDAL
             ReturnData result = new ReturnData();
             try
             {
-                IDataBase db = DBHelperFactory.CreateDBInstance(dbCon);
+                IDataBase db = DBHelperFactory.Create(dbCon);
                 Dictionary<string, string> dic = DBInfoCache.GetDBInfo(dbCon);
                 if (dic == null)
                 {
@@ -142,7 +142,7 @@ namespace MyPlatform.SQLServerDAL
         {
             try
             {
-                IDataBase db = DBHelperFactory.CreateDBInstance(dbCon);
+                IDataBase db = DBHelperFactory.Create(dbCon);
                 string sql = "";
                 sql = "select count(1) from @tableName";
                 SqlParameter[] pars = { new SqlParameter("@tableName", SqlDbType.VarChar, 100) };
@@ -178,7 +178,7 @@ namespace MyPlatform.SQLServerDAL
                 SqlCommandData sc = new SqlCommandData();
                 sc.CommandText = string.Format(sql.ToString(), model.TableName);
                 sqlCommands.Add(sc);
-                IDataBase dbCreate = DBHelperFactory.CreateDBInstance(model.DBCon);
+                IDataBase dbCreate = DBHelperFactory.Create(model.DBCon);
                 if (dbCreate.ExecuteTran(sqlCommands))
                 {
 
@@ -212,7 +212,7 @@ namespace MyPlatform.SQLServerDAL
         public bool AddTableInfo(MyPlatform.Model.Sys_Tables model)
         {
             List<SqlCommandData> sqlCommands = new List<SqlCommandData>();//事务参数
-            IDataBase dbDefault = DBHelperFactory.CreateDBInstance(defaultCon);
+            IDataBase dbDefault = DBHelperFactory.Create(defaultCon);
             SqlCommandData sc2 = SqlFactory.CreateInsertSqlByRef<MyPlatform.Model.Sys_Tables>(model);
             sqlCommands.Add(sc2);
             //dbDefault.ExecuteTran(sqlCommands);
@@ -317,7 +317,7 @@ namespace MyPlatform.SQLServerDAL
                 int startIndex = DALUtils.CalStartIndex(page.PageSize, page.PageIndex);
                 int endIndex = DALUtils.CalEndIndex(page.PageSize, page.PageIndex);
                 string sql = "select * from sys_tables where ID=@ID;select * from (select ROW_NUMBER() OVER(ORDER BY orderNO)RN,* from sys_columns where tableID=@ID)t where t.rn>" + startIndex.ToString() + " and t.rn<" + endIndex.ToString() + ";select count(1)TotalCount from sys_columns where tableID=@ID";
-                IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
+                IDataBase db = DBHelperFactory.Create(defaultCon);
                 SqlParameter[] pars = { new SqlParameter("@ID", tableID) };
                 ds = db.Query(sql, pars);
                 result.D = ds;
@@ -346,7 +346,7 @@ namespace MyPlatform.SQLServerDAL
             DataTable dt = db.Query(sql, pars).Tables[0];
             if (dt.Rows.Count > 0)
             {
-                IDataBase db2 = DBHelperFactory.CreateDBInstance(dt.Rows[0]["DBCon"].ToString());
+                IDataBase db2 = DBHelperFactory.Create(dt.Rows[0]["DBCon"].ToString());
                 string sql2 = "select count(1) from " + dt.Rows[0]["TableName"].ToString();
                 IDataParameter[] pars2 = new IDataParameter[1];
                 //TODO:增加多类型数据库操作

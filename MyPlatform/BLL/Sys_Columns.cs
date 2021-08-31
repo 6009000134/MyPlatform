@@ -5,6 +5,8 @@ using MyPlatform.Common;
 using MyPlatform.Model;
 using MyPlatform.DALFactory;
 using MyPlatform.IDAL;
+using MyPlatform.DBUtility;
+
 namespace MyPlatform.BLL
 {
     //Sys_Columns
@@ -18,7 +20,15 @@ namespace MyPlatform.BLL
             ReturnData result = new ReturnData();
             try
             {
-                result.S = true;                
+                //根据tableid获取数据库连接名
+                Sys_Tables t = new Sys_Tables();
+                ReturnData tableInfo = t.GetDetail(model.TableID, new Pagination() { PageSize = 10, PageIndex = 1 });
+                DataSet ds = (DataSet)tableInfo.D;
+                string str = ds.Tables[0].Rows[0].ToJson();
+                MyPlatform.Model.Sys_Tables table = ModelConverter<MyPlatform.Model.Sys_Tables>.ConvertToModelEntity(ds.Tables[0]);
+                model.TableName = table.TableName;
+                IDataBase db = DBHelperFactory.Create(table.DBCon);
+                result=dal.Add(db,model);
             }
             catch (Exception ex)
             {

@@ -245,6 +245,7 @@
     <Compile Include="Areas\Web\Controllers\APIController.cs" />
     <Compile Include="Areas\Web\Controllers\LoginController.cs" />
     <Compile Include="Areas\Web\Controllers\OAController.cs" />
+    <Compile Include="Areas\Web\Controllers\QueryController.cs" />
     <Compile Include="Areas\Web\Controllers\RegisterController.cs" />
     <Compile Include="Areas\Web\WebAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />

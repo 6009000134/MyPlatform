@@ -175,8 +175,22 @@ namespace MyPlatform.Model{
         {   
             get{ return _remark; }
             set{ _remark =value; }
-        } 
-		       
+        }
+
+        public int OrderNo
+        {
+            get
+            {
+                return orderNo;
+            }
+
+            set
+            {
+                orderNo = value;
+            }
+        }
+
+        private int orderNo;
 		   
 	}
 }

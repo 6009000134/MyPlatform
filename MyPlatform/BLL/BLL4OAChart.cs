@@ -17,7 +17,7 @@ namespace MyPlatform.BLL
         public ReturnData GetData(string xmbm, string strTypes)
         {
             ReturnData result = new ReturnData();
-            IDataBase db = DBHelperFactory.CreateDBInstance("OACon");
+            IDataBase db = DBHelperFactory.Create("OACon");
             string[] arr = strTypes.Split(',');
             List<EChartModel> list = new List<EChartModel>();
             for (int i = 0; i < arr.Length; i++)

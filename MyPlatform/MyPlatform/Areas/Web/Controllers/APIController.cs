@@ -92,6 +92,11 @@ namespace MyPlatform.Areas.Web.Controllers
             }
             return input;
         }
+        /// <summary>
+        /// 获取API结果集
+        /// </summary>
+        /// <param name="postData"></param>
+        /// <returns></returns>
         [HttpPost]
         public HttpResponseMessage GetApiResult([FromBody]JObject postData)
         {

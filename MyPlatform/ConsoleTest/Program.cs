@@ -28,30 +28,11 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            MyPlatform.Common.HttpHelper http = new MyPlatform.Common.HttpHelper();
-            http.ContentType = "application/x-www-form-urlencoded";
-            //string result = http.Post("http://192.168.20.46/PLMService4Oa/Service4OA.asmx/Do", "json={\"Action\":\"Modify\",\"DocName\":\"Project\",\"InputData\":\"{\\\"StartDate\\\":\\\"2021-07-16 16:46\\\",\\\"UserName\\\":\\\"伍广晓\\\",\\\"ProjectID\\\":\\\"F00A4C7C-5304-41A3-B199-78120E95F731\\\",\\\"WorkID\\\":\\\"0DE41D73-2351-4EFF-8FBD-0B8D1185A075\\\",\\\"EndDate\\\":\\\"2021-07-16 16:46\\\"}\"}");
-            string result = http.Post("http://192.168.1.7/PLMService4Oa/Service4OA.asmx/Do", "json=123");
-            //string result = http.Get("http://192.168.1.7/PLMService4Oa/Service4OA.asmx/Do?json=123", "");
-            //double d = 12.0;
-            //string tempSql = GetCRMCustomer();
-            //OracleConnection con = new OracleConnection("user id=ecology;password=ecology;data source=192.168.20.29/orclpdb");
-            //con.Open();
-            ////            string sql = @"
-            ////declare v_sql varchar(1000);
-            ////begin
-            //// v_sql:='select * from v_auctus_bugfreeinfo';
-            //// execute immediate v_sql;
-            //// end ;
-            ////";            
-            //string sql = " begin insert into CRM_Test values('1','2','3','4'); end;";
-            //OracleCommand cmd = new OracleCommand(tempSql, con);
-            //cmd.ExecuteNonQuery();
-            ////            //OracleDataReader odr = cmd.ExecuteReader(CommandBehavior.Default);    
-            ////            OracleDataAdapter oda = new OracleDataAdapter(cmd);
-            ////            DataSet ds = new DataSet();
-            ////            oda.Fill(ds);
-            ////            con.Close();
+            decimal a = 0.115m;
+            decimal b = 567;
+            decimal sss = a * b;
+            decimal ss=Math.Round(a*b, 2);
+            decimal ss2=decimal.Round(65.205m, 2, MidpointRounding.AwayFromZero);
             Console.ReadLine();
         }
 

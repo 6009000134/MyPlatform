@@ -48,6 +48,7 @@ namespace MyPlatform.Areas.Basic.Controllers
             ReturnData result = new ReturnData();
             try
             {
+                colBLL.AddColumn(columns);
                 //string s = "";
             }
             catch (Exception ex)

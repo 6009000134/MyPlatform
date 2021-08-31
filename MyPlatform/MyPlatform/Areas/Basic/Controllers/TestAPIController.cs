@@ -15,7 +15,7 @@ namespace MyPlatform.Areas.Basic.Controllers
     /// 学习时编写测试代码
     /// </summary>
     public class TestAPIController : ApiController
-    {
+    {        
         /// <summary>
         /// 
         /// </summary>
