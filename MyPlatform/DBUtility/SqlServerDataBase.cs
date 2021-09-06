@@ -178,6 +178,31 @@ namespace MyPlatform.DBUtility
             }
             return ds;
         }
+        public DataSet Query(List<string> sqls)
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    string sql = "";
+                    for (int i = 0; i < sqls.Count; i++)
+                    {
+                        sql += sqls[i] + ";";
+                    }
+                    SqlCommand cmd = CreateCommand(sql, con);
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                    {
+                        sda.Fill(ds);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+            return ds;
+        }
 
         #endregion
 

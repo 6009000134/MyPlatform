@@ -37,6 +37,7 @@ namespace MyPlatform.DBUtility
         /// <param name="sql"></param>
         /// <returns></returns>
         DataSet Query(string sql);
+        DataSet Query(List<string> sqls);
         #endregion
         #region 执行带参数sql
         /// <summary>

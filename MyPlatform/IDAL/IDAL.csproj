@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IQueryObject.cs" />
     <Compile Include="ISys_Api.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ISys_Columns.cs" />

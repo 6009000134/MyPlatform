@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MyPlatform.Model
 {
+    /// <summary>
+    /// 分页信息
+    /// </summary>
     public class Pagination
     {
         /// <summary>

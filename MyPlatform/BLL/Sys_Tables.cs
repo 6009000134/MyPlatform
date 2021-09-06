@@ -5,19 +5,38 @@ using MyPlatform.Common;
 using MyPlatform.Model;
 using MyPlatform.DALFactory;
 using MyPlatform.IDAL;
+using MyPlatform.DBUtility;
+
 namespace MyPlatform.BLL
 {
     //Sys_Tables
     public partial class Sys_Tables
     {
         private readonly ISys_Tables dal = DataAccess.CreateInstance<ISys_Tables>("Sys_Tables");
+        private string defaultCon = "Default";
         public Sys_Tables()
         {
 
         }
-        #region extend 
+        #region extend
         public bool Delete(int tableID )
         {
+            ////判断是否存在表
+            //IDataBase db = DBUtility.DBHelperFactory.Create(defaultCon);
+            //Model.Sys_Tables tableInfo = dal.GetModel(db);
+            //if (tableInfo==null)
+            //{
+            //    throw new Exception("未找到表信息，无法删除！");
+            //}
+            //ReturnData result = ExistsTable(tableInfo.DBCon, tableInfo.TableName);
+            //if (result.S)
+            //{
+            //    if (tableInfo.DBCon==defaultCon)
+            //    {
+
+            //    }
+            //    IDataBase acDB = DBHelperFactory.Create(tableInfo.DBCon);
+            //}
             return dal.Delete(tableID);
         }
         public DataTable GetListByDBName(string DBName)
@@ -35,9 +54,14 @@ namespace MyPlatform.BLL
         /// <param name="tableName">表名</param>
         /// <param name="dbCon">数据库名</param>
         /// <returns></returns>
-        public ReturnData ExistsTable(string tableName, string dbCon)
+        public ReturnData ExistsTable(string dbCon,string tableName)
         {
-            return dal.ExistsTable(tableName, dbCon);
+            IDataBase db = DBUtility.DBHelperFactory.Create(dbCon);
+            if (db==null)
+            {
+                throw new Exception("数据库"+dbCon+"连接错误！");
+            }
+            return dal.ExistsTable(db, tableName);
         }
         /// <summary>
         /// 新增表信息
@@ -56,11 +80,6 @@ namespace MyPlatform.BLL
         public bool Edit(MyPlatform.Model.Sys_Tables model)
         {
             return dal.Edit(model);
-        }
-        //TODO:分页
-        public DataTable GetDetailListByTID(int tableID, Pagination page)
-        {
-            return dal.GetDetailListByTID(tableID, page);
         }
         /// <summary>
         /// 获取表详情（表信息及列信息）

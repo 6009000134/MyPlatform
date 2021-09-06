@@ -36,10 +36,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MyPlatform\bin\BLL.dll</HintPath>
     </Reference>
-    <Reference Include="Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MyPlatform\bin\Model.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -57,7 +53,10 @@
     <Compile Include="KeyValueData.cs" />
     <Compile Include="Pagination\Pagination.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\QueryCondition.cs" />
+    <Compile Include="Query\QueryObject.cs" />
     <Compile Include="QueryParam.cs" />
+    <Compile Include="Query\QueryView.cs" />
     <Compile Include="ReturnData.cs" />
     <Compile Include="Sys_API.cs" />
     <Compile Include="Sys_Columns.cs" />

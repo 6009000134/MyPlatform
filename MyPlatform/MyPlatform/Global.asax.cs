@@ -46,12 +46,12 @@ namespace MyPlatform
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             MyPlatform.Common.LogHelper.Default.WriteInfo("Application Start ");
             MyPlatform.Common.LogHelper.Default.WriteInfo("AllowedUrls Count: "+AllowedUrls.Count.ToString());
-            System.Timers.Timer cronJob = new System.Timers.Timer(1000);
-            string n = "Timer"+DateTime.Now.ToString();
-            cronJob.Elapsed += new System.Timers.ElapsedEventHandler((s,e)=>CronJob_Elapsed(s,e,n));
-            cronJob.Enabled = true;
-            cronJob.AutoReset = true;
-            cronJob.Start();
+            //System.Timers.Timer cronJob = new System.Timers.Timer(1000);
+            //string n = "Timer"+DateTime.Now.ToString();
+            //cronJob.Elapsed += new System.Timers.ElapsedEventHandler((s,e)=>CronJob_Elapsed(s,e,n));
+            //cronJob.Enabled = true;
+            //cronJob.AutoReset = true;
+            //cronJob.Start();
             DateTime dt = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
         }
         /// <summary>

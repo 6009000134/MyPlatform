@@ -20,6 +20,7 @@ namespace MyPlatform.SQLServerDAL
 
         }
         #region Extend
+
         /// <summary>
         /// 获取
         /// </summary>
@@ -83,46 +84,33 @@ namespace MyPlatform.SQLServerDAL
         /// <param name="dbName">数据库名</param>
         /// <param name="dbTypeCode">数据库类型</param>
         /// <returns></returns>
-        public ReturnData ExistsTable(string tableName, string dbCon)
+        public ReturnData ExistsTable(IDataBase db, string tableName)
         {
             ReturnData result = new ReturnData();
             try
             {
-                IDataBase db = DBHelperFactory.Create(dbCon);
-                Dictionary<string, string> dic = DBInfoCache.GetDBInfo(dbCon);
-                if (dic == null)
+                string sql = "";
+                IDataParameter[] paras = new IDataParameter[1];
+                switch (db.DBType)
                 {
-                    result.SetErrorMsg("找不到对应的数据库配置信息");
+                    case Model.Enum.DBEnum.SqlServer:
+                        sql = " SELECT  1 FROM dbo.SysObjects WHERE ID = object_id(@tableName) AND OBJECTPROPERTY(ID, 'IsTable') = 1 ";
+                        paras = new IDataParameter[1] { new SqlParameter("@tableName", SqlDbType.VarChar, 30) };
+                        paras[0].Value = tableName;
+                        result.S = Convert.ToInt32(db.ExecuteScalar(sql, paras)) > 0;
+                        //if (!result.S)
+                        //{
+                        //    result.M = "数据库已经存在表名为：" + tableName + "的表";
+                        //}
+                        break;
+                    case Model.Enum.DBEnum.MySql:
+                    case Model.Enum.DBEnum.Oracle:
+                    default:
+                        result.SetErrorMsg(db.DBType.ToString() + "数据库未实现！");
+                        break;
                 }
-                else
-                {
-                    string sql = "";
-                    IDataParameter[] paras = new IDataParameter[1];
-                    switch (dic["DBTypeCode"].ToLower())
-                    {
-                        case "sqlserver":
-                            sql = " SELECT  1 FROM dbo.SysObjects WHERE ID = object_id(@tableName) AND OBJECTPROPERTY(ID, 'IsTable') = 1 ";
-                            paras = new IDataParameter[1] { new SqlParameter("@tableName", SqlDbType.VarChar, 30) };
-                            paras[0].Value = tableName;
-                            break;
-                        case "oracle"://TODO:集成oracle
-                            result.SetErrorMsg("oracle数据库未实现！");
-                            return result;
-                            break;
-                        case "mysql"://TODO:集成mysql
-                            result.SetErrorMsg("oracle数据库未实现！");
-                            return result;
-                            break;
-                        default:
-                            break;
-                    }
-                    result.S = Convert.ToInt32(db.ExecuteScalar(sql, paras)) > 0;
-                    if (!result.S)
-                    {
-                        result.M = "数据库已经存在表名为：" + tableName + "的表";
-                    }
-                    result.S = true;
-                }
+
+                result.S = true;
 
             }
             catch (SqlException ex)
@@ -253,14 +241,14 @@ namespace MyPlatform.SQLServerDAL
            ,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "',(SELECT IDENT_CURRENT('Sys_Tables')),'"
            + model.TableName + "','UpdatedDate','UpdatedDate','更新时间','DateTime',0,1,'','')";
             sqlCommands.Add(sc6);
-           // SqlCommandData sc7 = new SqlCommandData();
-           // sc7.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
-           //([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
-           //,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
-           //,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
-           //,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
-           //+ model.TableName + "','Deleted','Deleted','是否已删除','Bit',0,1,0,'')";
-           // sqlCommands.Add(sc7);
+            // SqlCommandData sc7 = new SqlCommandData();
+            // sc7.CommandText = @"INSERT INTO [dbo].[Sys_Columns]
+            //([CreatedBy]           ,[CreatedDate]           ,[UpdatedBy]           ,[UpdatedDate]
+            //,[TableID]           ,[TableName]           ,[ColumnName]           ,[ColumnName_EN]
+            //,[ColumnName_CN]           ,[ColumnType]           ,[Size]           ,[IsNullable]           ,[DefaultValue]
+            //,[Remark])     VALUES ('" + model.CreatedBy + "','" + model.CreatedDate + "','" + model.UpdatedBy + "','" + model.UpdatedDate + "','0',(SELECT IDENT_CURRENT('Sys_Tables')),'"
+            //+ model.TableName + "','Deleted','Deleted','是否已删除','Bit',0,1,0,'')";
+            // sqlCommands.Add(sc7);
             return dbDefault.ExecuteTran(sqlCommands);
         }
         /// <summary>
@@ -292,16 +280,6 @@ namespace MyPlatform.SQLServerDAL
             IDataBase db = new SqlServerDataBase();
             return db.ExecuteNonQuery(sql) > 0 ? true : false;
         }
-        //TODO:分页
-        public DataTable GetDetailListByTID(int tableID, Pagination page)
-        {
-            string sql = "select *from sys_columns a where a.tableID=@tableID";
-            SqlParameter[] pars = { new SqlParameter("@tableID",SqlDbType.Int)
-            };
-            pars[0].Value = tableID;
-            IDataBase db = new SqlServerDataBase();
-            return db.Query(sql, pars).Tables[0];
-        }
         /// <summary>
         /// 
         /// </summary>
@@ -332,7 +310,7 @@ namespace MyPlatform.SQLServerDAL
             return result;
         }
         /// <summary>
-        /// 刪除表以及相关信息
+        /// 刪除表以及相关信息（只是删除表的记录信息，实际表自己手动删除）//TODO:优化-db声明做到BLL中去
         /// </summary>
         /// <param name="tableID"></param>
         /// <param name="dbName"></param>
@@ -391,6 +369,52 @@ namespace MyPlatform.SQLServerDAL
             return true;
         }
 
+        /// <summary>
+		/// 得到一个对象实体
+		/// </summary>
+		public MyPlatform.Model.Sys_Tables GetModel(IDataBase db)
+        {
+
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("select ID, CreatedBy, CreatedDate, UpdatedBy, UpdatedDate, DBName,DBType,DBTypeCode,DBCon, TableName, TableName_EN, TableName_CN, Remark  ");
+            strSql.Append("  from Sys_Tables ");
+            strSql.Append(" where ");
+            SqlParameter[] parameters = {
+            };
+            MyPlatform.Model.Sys_Tables model = new MyPlatform.Model.Sys_Tables();
+            DataSet ds = db.Query(strSql.ToString(), parameters);
+
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                if (ds.Tables[0].Rows[0]["ID"].ToString() != "")
+                {
+                    model.ID = int.Parse(ds.Tables[0].Rows[0]["ID"].ToString());
+                }
+                model.CreatedBy = ds.Tables[0].Rows[0]["CreatedBy"].ToString();
+                if (ds.Tables[0].Rows[0]["CreatedDate"].ToString() != "")
+                {
+                    model.CreatedDate = DateTime.Parse(ds.Tables[0].Rows[0]["CreatedDate"].ToString());
+                }
+                model.UpdatedBy = ds.Tables[0].Rows[0]["UpdatedBy"].ToString();
+                if (ds.Tables[0].Rows[0]["UpdatedDate"].ToString() != "")
+                {
+                    model.UpdatedDate = DateTime.Parse(ds.Tables[0].Rows[0]["UpdatedDate"].ToString());
+                }
+                model.DBName = ds.Tables[0].Rows[0]["TableName"].ToString();
+                model.DBType = Convert.ToInt32(ds.Tables[0].Rows[0]["DBType"]);
+                model.DBTypeCode = ds.Tables[0].Rows[0]["DBTypeCode"].ToString();
+                model.DBCon = ds.Tables[0].Rows[0]["DBCon"].ToString();
+                model.TableName = ds.Tables[0].Rows[0]["TableName"].ToString();
+                model.TableName_EN = ds.Tables[0].Rows[0]["TableName_EN"].ToString();
+                model.TableName_CN = ds.Tables[0].Rows[0]["TableName_CN"].ToString();
+                model.Remark = ds.Tables[0].Rows[0]["Remark"].ToString();
+                return model;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
 
         #endregion

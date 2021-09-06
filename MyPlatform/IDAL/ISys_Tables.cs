@@ -1,4 +1,5 @@
-﻿using MyPlatform.Model;
+﻿using MyPlatform.DBUtility;
+using MyPlatform.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,12 +13,13 @@ namespace MyPlatform.IDAL {
         DataTable GetListByDBName(string DBName);
         DataTable GetListByDBName(Dictionary<string, object> dicCondition);
         bool Exists(string dbName);
-        ReturnData ExistsTable(string tableName,string dbCon);
+        ReturnData ExistsTable(IDataBase dbCon, string tableName);
         ReturnData Add(MyPlatform.Model.Sys_Tables model);
         bool Edit(MyPlatform.Model.Sys_Tables model);
         bool Delete(int tableID );
-        DataTable GetDetailListByTID(int tableID, MyPlatform.Model.Pagination page);
         ReturnData GetDetail(int tableID, MyPlatform.Model.Pagination page);
+        MyPlatform.Model.Sys_Tables GetModel(IDataBase db);
+
         #endregion
-	} 
+    }
 }
