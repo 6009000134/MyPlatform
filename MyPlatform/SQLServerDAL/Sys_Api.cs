@@ -16,6 +16,28 @@ namespace MyPlatform.SQLServerDAL
     {
         string defaultCon = "Default";
         /// <summary>
+        /// 获取以ApiName为表名的表数据
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="apiID"></param>
+        /// <returns></returns>
+        public DataSet GetDataByApiName(IDataBase db, string apiName)
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                string sql = string.Format("select * from {0}", apiName);
+                ds = db.Query(sql);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+     
+            return ds;
+        }
+
+        /// <summary>
         /// 获取股票代码/列表
         /// </summary>
         /// <param name="db"></param>
@@ -38,6 +60,35 @@ namespace MyPlatform.SQLServerDAL
                 ds = db.Query(sql, pars);
             }
             return ds;
+        }
+        public Model.Sys_API GetApiInfo(IDataBase db, int apiID)
+        {
+            MyPlatform.Model.Sys_API api = new Sys_API();
+            try
+            {
+                string sqlSelect = "select * from sys_Apis where ID=@ID";
+                SqlParameter[] pars = { new SqlParameter("@ID", apiID) };
+                DataSet ds = db.Query(sqlSelect, pars);
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    api.ApiName = ds.Tables[0].Rows[0]["ApiName"].ToString();
+                    api.CreatedBy = ds.Tables[0].Rows[0]["CreatedBy"].ToString();
+                    api.CreatedDate = Convert.ToDateTime(ds.Tables[0].Rows[0]["CreatedDate"]);
+                    api.Description = ds.Tables[0].Rows[0]["Description"].ToString();
+                    api.Title = ds.Tables[0].Rows[0]["Title"].ToString();
+                    api.UpdatedBy = ds.Tables[0].Rows[0]["UpdatedBy"].ToString();
+                    api.UpdatedDate = Convert.ToDateTime(ds.Tables[0].Rows[0]["UpdatedDate"]);
+                }
+                else
+                {
+                    throw new Exception("API信息找不到");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return api;
         }
         public ReturnData GetApiResult(IDataBase db, TuShareResult data, int apiID)
         {
@@ -68,7 +119,7 @@ namespace MyPlatform.SQLServerDAL
                         sqlSb.Append("(");
                         foreach (DataRow dr in ds.Tables[1].Rows)
                         {
-                            sqlSb.Append("["+dr["ParamName"].ToString() + "],");
+                            sqlSb.Append("[" + dr["ParamName"].ToString() + "],");
                         }
                         sqlSb.Remove(sqlSb.Length - 1, 1);
                         sqlSb.Append(")");
@@ -125,7 +176,7 @@ namespace MyPlatform.SQLServerDAL
             }
             catch (Exception ex)
             {
-                result.SetErrorMsg(ex.Message);
+                throw ex;
             }
             return result;
         }

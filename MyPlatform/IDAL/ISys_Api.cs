@@ -11,6 +11,14 @@ namespace MyPlatform.IDAL
 {
     public interface ISys_Api
     {
+        Model.Sys_API GetApiInfo(IDataBase db, int apiID);
+        /// <summary>
+        /// 获取以ApiName为表名的表数据
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="apiName"></param>
+        /// <returns></returns>
+        DataSet GetDataByApiName(IDataBase db,string apiName);
         /// <summary>
         /// 获取API详情
         /// </summary>

@@ -9,7 +9,7 @@ using MyPlatform.DBUtility;
 
 namespace MyPlatform.BLL
 {
-    public class Sys_Api:BLLBase
+    public class Sys_Api : BLLBase
     {
         //TODO:做个基类，用来决定使用哪个DBHelper，声明对应dal
         string defaultCon = "Default";
@@ -18,15 +18,45 @@ namespace MyPlatform.BLL
         {
             GetDataBase(defaultCon);
         }
+        //根据apiid，获取相关表的所有数据
+        /// <summary>
+        /// 获取以ApiName为表名的表数据
+        /// </summary>
+        /// <param name="apiID"></param>
+        /// <returns></returns>
+        public DataSet GetApiData(int apiID)
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                Model.Sys_API apiInfo = GetApiInfo(apiID);
+                ds = dal.GetDataByApiName(currentDB,apiInfo.ApiName);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }            
+            return ds;
+        }
+            
         public DataSet GetTsCode(string tsCode)
-        {            
+        {
             //IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);            
             return dal.GetTsCode(currentDB, tsCode);
+        }
+        public Model.Sys_API GetApiInfo(int apiID)
+        {
+            Model.Sys_API apiInfo = dal.GetApiInfo(currentDB, apiID);
+            if (apiInfo == null)
+            {
+                throw new Exception("找不到API信息");
+            }
+            return apiInfo;
         }
         public ReturnData GetApiResult(TuShareResult data, int apiID)
         {
             //IDataBase db = DBHelperFactory.CreateDBInstance(defaultCon);
-            return dal.GetApiResult(currentDB, data,apiID);
+            return dal.GetApiResult(currentDB, data, apiID);
         }
         public ReturnData CreateApiTable(int apiID)
         {

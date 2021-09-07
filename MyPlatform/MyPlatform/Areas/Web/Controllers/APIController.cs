@@ -47,7 +47,7 @@ namespace MyPlatform.Areas.Web.Controllers
                     {
                         foreach (KeyValuePair<string, string> item in dicInput)//校验前端传入的输入参数是否全部存在
                         {
-                            if (!ds.Tables[1].Columns.Contains(item.Key))
+                            if (ds.Tables[1].Select("ParamName='"+item.Key+"'").Count()==0)
                             {
                                 throw new Exception("接口不存在" + item.Key + "输入参数，请核对接口输入参数信息！");
                             }
@@ -92,6 +92,8 @@ namespace MyPlatform.Areas.Web.Controllers
             }
             return input;
         }
+        #region 获取Tushare接口数据
+
         /// <summary>
         /// 获取API结果集
         /// </summary>
@@ -103,16 +105,27 @@ namespace MyPlatform.Areas.Web.Controllers
             ReturnData result = new ReturnData();
             try
             {
-                HttpHelper hh = new HttpHelper();
-                TuShareResult apiResult = JSONUtil.ParseFromJson<TuShareResult>(hh.Post(postData.GetValue("url").ToString(), postData.GetValue("postData").ToJson()));
-                if (apiResult.data == null)//API接口无返回数据
+                int apiID = Convert.ToInt32(postData.GetValue("apiID"));
+                string url = postData.GetValue("url").ToString();
+                string body = postData.GetValue("postData").ToJson();
+                Model.Sys_API apiInfo = bll.GetApiInfo(apiID);
+                TuShareResult apiResult;
+                switch (apiInfo.ApiName)
                 {
-                    result.S = false;
-                    result.M = "API接口无数据返回！";
-                }
-                else
-                {
-                    result = bll.GetApiResult(apiResult, int.Parse(postData.GetValue("apiID").ToString()));
+                    case "index_member"://行业成分股，按行业循环获取
+                        List<TuShareResult> li = GetIndexMember(url, body, 11, apiID);
+                        for (int i = 0; i < li.Count; i++)
+                        {
+                            if (li[i].data.items.Count>0)
+                            {
+                                result.S = InsertApiResult(li[i], apiID);
+                            }
+                        }
+                        break;
+                    default:
+                        apiResult = Post(url, body);
+                        result.S = InsertApiResult(apiResult, apiID);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -121,6 +134,62 @@ namespace MyPlatform.Areas.Web.Controllers
             }
             return MyResponseMessage.SuccessJson(result);
         }
+        public bool InsertApiResult(TuShareResult result, int apiID)
+        {
+            if (result.data == null)
+            {
+                throw new Exception("API接口无数据返回");
+            }
+            else if (result.data.has_more)
+            {
+                throw new Exception("未获取到全部数据");
+            }
+            return bll.GetApiResult(result, apiID).S;
+        }
+        /// <summary>
+        /// 获取行业成分数据
+        /// </summary>
+        /// <param name="url">tushare接口url</param>
+        /// <param name="body">tushare输入参数</param>
+        /// <param name="inputApiID">输入参数数据所属API ID</param>
+        /// <param name="apiID">存放API数据表apiID</param>
+        /// <returns></returns>
+        public List<TuShareResult> GetIndexMember(string url, string body, int inputApiID, int apiID)
+        {
+            DataSet ds = bll.GetApiData(inputApiID);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                throw new Exception("未找到行业数据！");
+            }
+            Dictionary<string, string> dic;
+            List<TuShareResult> li = new List<TuShareResult>();
+            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+            {
+                //TODO:目前只取申万一级行业数据
+                if (ds.Tables[0].Rows[i]["level"].ToString() == "L1")
+                {
+                    //最新
+                    dic = new Dictionary<string, string>();
+                    dic.Add("index_code", ds.Tables[0].Rows[i]["index_code"].ToString());
+                    dic.Add("ts_code", "");
+                    dic.Add("is_new", "Y");
+                    APIInputParam inputParam = CreateInputStr(apiID, dic);
+                    TuShareResult tempResult = Post(url, inputParam.ToJson<APIInputParam>());
+                    li.Add(tempResult);
+                    //非最新
+                    dic = new Dictionary<string, string>();
+                    dic.Add("index_code", ds.Tables[0].Rows[i]["index_code"].ToString());
+                    dic.Add("ts_code", "");
+                    dic.Add("is_new", "N");
+                    APIInputParam inputParamN = CreateInputStr(apiID, dic);
+                    TuShareResult tempResultN = Post(url, inputParamN.ToJson<APIInputParam>());
+                    li.Add(tempResultN);
+                }
+            }
+            return li;
+        }
+
+
         private object lockObj = new object();
         public void GetDividend(object obj)
         {
@@ -304,6 +373,9 @@ namespace MyPlatform.Areas.Web.Controllers
             }
             return MyResponseMessage.SuccessJson(result);
         }
+        #endregion
+
+        #region API信息增删改查及相关操作
         /// <summary>
         /// 根据API信息，创建表
         /// </summary>
@@ -430,5 +502,22 @@ namespace MyPlatform.Areas.Web.Controllers
             }
             return MyResponseMessage.SuccessJson(result);
         }
+        #endregion
+
+
+        #region Http Request
+        /// <summary>
+        /// 请求Tushare获取数据
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        public TuShareResult Post(string url, string body)
+        {
+            HttpHelper hh = new HttpHelper();
+            TuShareResult apiResult = JSONUtil.ParseFromJson<TuShareResult>(hh.Post(url, body));
+            return apiResult;
+        }
+        #endregion
     }
 }
