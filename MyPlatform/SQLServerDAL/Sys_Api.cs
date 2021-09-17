@@ -448,5 +448,16 @@ namespace MyPlatform.SQLServerDAL
             return db.Query(sql, pars);
 
         }
+        /// <summary>
+        /// 获取未同步每日指标的日期
+        /// </summary>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public DataTable GetNoDataCalendar(IDataBase db)
+        {
+            string sql = @"SELECT a.* FROM dbo.trade_cal a LEFT JOIN dbo.daily_basic b ON a.cal_date=b.trade_date 
+WHERE b.trade_date IS NULL";
+            return db.Query(sql).Tables[0];
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace MyPlatform.Areas.Web.Controllers
                     {
                         foreach (KeyValuePair<string, string> item in dicInput)//校验前端传入的输入参数是否全部存在
                         {
-                            if (ds.Tables[1].Select("ParamName='"+item.Key+"'").Count()==0)
+                            if (ds.Tables[1].Select("ParamName='" + item.Key + "'").Count() == 0)
                             {
                                 throw new Exception("接口不存在" + item.Key + "输入参数，请核对接口输入参数信息！");
                             }
@@ -93,6 +93,7 @@ namespace MyPlatform.Areas.Web.Controllers
             return input;
         }
         #region 获取Tushare接口数据
+        
 
         /// <summary>
         /// 获取API结果集
@@ -116,9 +117,31 @@ namespace MyPlatform.Areas.Web.Controllers
                         List<TuShareResult> li = GetIndexMember(url, body, 11, apiID);
                         for (int i = 0; i < li.Count; i++)
                         {
-                            if (li[i].data.items.Count>0)
+                            if (li[i].data.items.Count > 0)
                             {
                                 result.S = InsertApiResult(li[i], apiID);
+                            }
+                        }
+                        break;
+                    case "daily_basic":
+                    case "daily":
+                        //按日期获取信息
+                        BLL.QueryBLL queryBLL = new BLL.QueryBLL();
+                        DataSet ds = queryBLL.Query(3003);//交易日历
+                        DataRow[] drs = ds.Tables[0].Select("is_open=1");
+                        DataTable dt = bll.GetNoDataCalendar();
+                        for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            Dictionary<string, string> dic = new Dictionary<string, string>();
+                            dic.Add("trade_date", dt.Rows[i]["cal_date"].ToString());
+                            dic.Add("ts_code", "");
+                            dic.Add("start_date", "");
+                            dic.Add("end_date", "");
+                            APIInputParam inputParam = CreateInputStr(apiID, dic);
+                            TuShareResult tempResult = Post(url, inputParam.ToJson<APIInputParam>());
+                            if (tempResult.data.items.Count > 0)
+                            {
+                                result.S = InsertApiResult(tempResult, apiID);
                             }
                         }
                         break;

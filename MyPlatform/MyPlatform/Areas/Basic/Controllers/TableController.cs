@@ -85,8 +85,8 @@ namespace MyPlatform.Areas.Basic.Controllers
         /// </summary>
         /// <param name="tableID"></param>
         /// <returns></returns>
-        [HttpPost]
-        public HttpResponseMessage Delete([FromBody]int tableID)
+        [HttpGet]
+        public HttpResponseMessage Delete(int tableID)
         {
             ReturnData result = new ReturnData();
             if (tableBLL.Delete(tableID))
@@ -103,36 +103,14 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
-        ///// <summary>
-        ///// 获取表列表
-        ///// </summary>
-        ///// <param name="DBName">数据库名</param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public HttpResponseMessage List([FromBody]string DBName)
-        //{
-        //    ReturnData result = new ReturnData();
-        //    try
-        //    {
-        //        result.D = tableBLL.GetListByDBName(DBName);
-        //        result.S = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result.S = false;
-        //        result.SetErrorMsg("获取数据失败：" + ex.Message);
-        //        LogHelper.Default.WriteError("获取数据失败：" + ex.Message);
-        //    }
-        //    return MyResponseMessage.SuccessJson<ReturnData>(result);
-        //}
         /// <summary>
         /// ss
         /// </summary>
         /// <param name="qp"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        [HttpPost]
-        public HttpResponseMessage List([FromBody]List<QueryParam> qp)
+        [HttpGet]
+        public HttpResponseMessage List([FromUri]List<QueryParam> qp)
         {
             ReturnData result = new ReturnData();
             try
@@ -149,8 +127,8 @@ namespace MyPlatform.Areas.Basic.Controllers
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
 
-        [HttpPost]
-        public HttpResponseMessage GetDetail([FromBody]Dictionary<string, object> dic)
+        [HttpGet]
+        public HttpResponseMessage GetDetail(Dictionary<string, object> dic)
         {
             ReturnData result = new ReturnData();
             try
@@ -170,5 +148,69 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
+        /// <summary>
+        /// 查询数据库表信息
+        /// </summary>
+        /// <param name="dbCon">数据库名</param>
+        /// <returns></returns>
+        [HttpGet]
+        public HttpResponseMessage GetSysTableList(string dbCon)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                result.S = true;
+                result.D = tableBLL.GetSysTableList(dbCon).Tables[0];
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return MyResponseMessage.SuccessJson<ReturnData>(result);
+        }
+        /// <summary>
+        /// 同步表信息
+        /// </summary>
+        /// <param name="dbCon"></param>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpResponseMessage SyncTableInfo([FromBody]Dictionary<string,string> dic)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                string dbCon="";
+                string tableName="";
+                foreach (string key in dic.Keys)
+                {
+                    switch (key)
+                    {
+                        case "dbCon":
+                            dbCon = dic["dbCon"];
+                            break;
+                        case "tableName":
+                            tableName = dic["tableName"];
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (string.IsNullOrEmpty(dbCon) || string.IsNullOrEmpty(tableName))
+                {
+                    result.SetErrorMsg("参数名不对！");
+                }
+                else
+                {
+                    result = tableBLL.SyncTableInfo(dbCon, tableName);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return MyResponseMessage.SuccessJson<ReturnData>(result);
+        }
+
     }
 }

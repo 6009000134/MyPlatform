@@ -19,7 +19,8 @@ namespace MyPlatform.BLL
 
         }
         #region extend
-        public bool Delete(int tableID )
+
+        public bool Delete(int tableID)
         {
             ////判断是否存在表
             //IDataBase db = DBUtility.DBHelperFactory.Create(defaultCon);
@@ -54,12 +55,12 @@ namespace MyPlatform.BLL
         /// <param name="tableName">表名</param>
         /// <param name="dbCon">数据库名</param>
         /// <returns></returns>
-        public ReturnData ExistsTable(string dbCon,string tableName)
+        public ReturnData ExistsTable(string dbCon, string tableName)
         {
             IDataBase db = DBUtility.DBHelperFactory.Create(dbCon);
-            if (db==null)
+            if (db == null)
             {
-                throw new Exception("数据库"+dbCon+"连接错误！");
+                throw new Exception("数据库" + dbCon + "连接错误！");
             }
             return dal.ExistsTable(db, tableName);
         }
@@ -89,7 +90,41 @@ namespace MyPlatform.BLL
         /// <returns></returns>
         public ReturnData GetDetail(int tableID, Pagination page)
         {
-            return dal.GetDetail(tableID,page);
+            return dal.GetDetail(tableID, page);
+        }
+        /// <summary>
+        /// 获取数据库sysobjects信息
+        /// </summary>
+        /// <param name="dbCon"></param>
+        /// <returns></returns>
+        public DataSet GetSysTableList(string dbCon)
+        {
+            IDataBase db = DBHelperFactory.Create(dbCon);
+            return dal.GetSysTableList(db);
+        }
+        public ReturnData SyncTableInfo(string dbCon, string tableName)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                //获取数据库表信息
+                IDataBase db = DBHelperFactory.Create(dbCon);
+                DataSet ds=dal.GetSysTableByName(db, tableName);
+                if (ds.Tables[0].Rows.Count == 0)
+                {
+                    result.SetErrorMsg("数据库找不到名为[" + tableName + "]的表");
+                }
+                else
+                {
+                    DBUtility.DBHelperBase d = new DBHelperBase();
+                    result.S=dal.SyncTaleInfo(db, d.GetDBInfo(dbCon), ds);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
         }
         #endregion
     }

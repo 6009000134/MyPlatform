@@ -85,5 +85,9 @@ namespace MyPlatform.BLL
         {
             return dal.Add(dic);
         }
+        public DataTable GetNoDataCalendar()
+        {
+            return dal.GetNoDataCalendar(currentDB);
+        }
     }
 }

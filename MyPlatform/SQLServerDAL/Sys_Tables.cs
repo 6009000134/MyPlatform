@@ -20,7 +20,85 @@ namespace MyPlatform.SQLServerDAL
 
         }
         #region Extend
+        public bool SyncTaleInfo(IDataBase db,Dictionary<string,string> dbInfo, DataSet ds)
+        {
+            SqlServerDataBase s = (SqlServerDataBase)db;
+            string tableName = ds.Tables[0].Rows[0]["name"].ToString();
+            string sqlAddTable = string.Format(@"insert into sys_tables(
+CreatedBy ,
+          CreatedDate ,
+          UpdatedBy ,
+          UpdatedDate ,
+          DBName ,
+          DBType ,
+          DBTypeCode ,
+          TableName ,
+          TableName_EN ,
+          TableName_CN ,
+          Remark ,
+          DBCon
+)
+values(null,getdate(),null,getdate(),'{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}')", dbInfo["DBName"], dbInfo["DBType"], dbInfo["DBTypeCode"],tableName, tableName, tableName, "",dbInfo["DBCon"]);
+            List<string> liSqls = new List<string>();
+            liSqls.Add(sqlAddTable);
+            string sqlAddColumn = "";
+            for (int i = 0; i < ds.Tables[1].Rows.Count; i++)
+            {
+                sqlAddColumn = string.Format(@"INSERT INTO dbo.Sys_Columns
+        ( CreatedBy ,
+          CreatedDate ,
+          UpdatedBy ,
+          UpdatedDate ,
+          TableID ,
+          TableName ,
+          ColumnName ,
+          ColumnName_EN ,
+          ColumnName_CN ,
+          ColumnType ,
+          Size ,
+          IsNullable ,
+          DefaultValue ,
+          Remark ,
+          OrderNo
+        )
+VALUES  ( N'' ,
+          GETDATE() ,
+          N'' ,
+          GETDATE() ,
+          (SELECT IDENT_CURRENT('Sys_Tables')) , 
+          '{0}' ,
+          '{1}' , -- ColumnName - varchar(50)
+          '{2}' , -- ColumnName_EN - varchar(50)
+          N'{3}' , -- ColumnName_CN - nvarchar(30)
+          '{4}' , -- ColumnType - varchar(50)
+          {5}, -- Size - int
+          {6} , -- IsNullable - bit
+          '' , -- DefaultValue - nvarchar(20)
+          N'' , -- Remark - nvarchar(500)
+          {7} 
+        )",tableName, ds.Tables[1].Rows[i]["Column_Name"].ToString(), ds.Tables[1].Rows[i]["Column_Name"].ToString(), ds.Tables[1].Rows[i]["Column_Name"].ToString(), ds.Tables[1].Rows[i]["Data_Type"].ToString()
+        , Convert.ToInt32(ds.Tables[1].Rows[i]["Length"]==DBNull.Value?0:ds.Tables[1].Rows[i]["Length"]), ds.Tables[1].Rows[i]["Is_Nullable"].ToString().ToUpper()=="YES"?1:0, Convert.ToInt32(ds.Tables[1].Rows[i]["Ordinal_Position"])*10);
+                liSqls.Add(sqlAddColumn);
+            }
+            return db.ExecuteTran(liSqls);
+        }
+        public DataSet GetSysTableByName(IDataBase db, string tableName)
+        {
 
+            string sql = string.Format(" select * from sys.objects  a WHERE type = 'U' and name='{0}'", tableName);
+            string sql2 = string.Format(" SELECT Table_Name,Column_Name,Ordinal_Position,Is_Nullable,Data_Type,Character_Maximum_Length Length  FROM information_schema.columns where table_name='{0}' order by Ordinal_Position", tableName);
+            return db.Query(sql+";"+sql2);
+        }
+        /// <summary>
+        /// 获取数据库sysobjects信息
+        /// </summary>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public DataSet GetSysTableList(IDataBase db)
+        {
+            string sql = " select * from sys.objects  a WHERE type = 'U'";
+            return db.Query(sql);
+        }
         /// <summary>
         /// 获取
         /// </summary>
@@ -416,6 +494,7 @@ namespace MyPlatform.SQLServerDAL
             }
         }
 
+   
 
         #endregion
         #region 辅助方法

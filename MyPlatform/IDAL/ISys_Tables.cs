@@ -19,7 +19,9 @@ namespace MyPlatform.IDAL {
         bool Delete(int tableID );
         ReturnData GetDetail(int tableID, MyPlatform.Model.Pagination page);
         MyPlatform.Model.Sys_Tables GetModel(IDataBase db);
-
+        DataSet GetSysTableList(IDataBase db);
+        DataSet GetSysTableByName(IDataBase db,string tableName);
+        bool SyncTaleInfo(IDataBase db, Dictionary<string, string> dbInfo, DataSet ds);
         #endregion
     }
 }

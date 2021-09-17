@@ -23,7 +23,7 @@ namespace MyPlatform.Areas.Basic.Controllers
         /// 获取数据库列表
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         public HttpResponseMessage List()
         {
             ReturnData result = new ReturnData();

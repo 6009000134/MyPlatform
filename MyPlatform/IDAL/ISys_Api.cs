@@ -52,5 +52,6 @@ namespace MyPlatform.IDAL
         ReturnData CreateApiTable(IDataBase db, int apiID);
         ReturnData GetApiResult(IDataBase db, TuShareResult data, int apiID);
         DataSet GetTsCode(IDataBase db, string tsCode);
+        DataTable GetNoDataCalendar(IDataBase db);
     }
 }
