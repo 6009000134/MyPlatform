@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using System.Web;
 using System.Web.Http;
 
 namespace MyPlatform.Areas.Web.Controllers
@@ -93,7 +94,7 @@ namespace MyPlatform.Areas.Web.Controllers
             return input;
         }
         #region 获取Tushare接口数据
-        
+
 
         /// <summary>
         /// 获取API结果集
@@ -113,7 +114,7 @@ namespace MyPlatform.Areas.Web.Controllers
                 TuShareResult apiResult;
                 switch (apiInfo.ApiName)
                 {
-                    case "index_member"://行业成分股，按行业循环获取
+                    case "index_member":// 行业成分股，按行业循环获取
                         List<TuShareResult> li = GetIndexMember(url, body, 11, apiID);
                         for (int i = 0; i < li.Count; i++)
                         {
@@ -125,25 +126,32 @@ namespace MyPlatform.Areas.Web.Controllers
                         break;
                     case "daily_basic":
                     case "daily":
-                        //按日期获取信息
-                        BLL.QueryBLL queryBLL = new BLL.QueryBLL();
-                        DataSet ds = queryBLL.Query(3003);//交易日历
-                        DataRow[] drs = ds.Tables[0].Select("is_open=1");
-                        DataTable dt = bll.GetNoDataCalendar();
-                        for (int i = 0; i < dt.Rows.Count; i++)
+                        DataTable dt = bll.GetNoDataCalendar("SSE");
+                        int colNum = 2000;
+                        DataSet ds=SplitDataTable(dt, colNum);
+                        int tableNum = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(dt.Rows.Count) / Convert.ToDouble(colNum)));
+                        ThreadPool.SetMaxThreads(5, 20);
+                        object o = new object();
+                        for (int i = 0; i < ds.Tables.Count; i++)
                         {
-                            Dictionary<string, string> dic = new Dictionary<string, string>();
-                            dic.Add("trade_date", dt.Rows[i]["cal_date"].ToString());
-                            dic.Add("ts_code", "");
-                            dic.Add("start_date", "");
-                            dic.Add("end_date", "");
-                            APIInputParam inputParam = CreateInputStr(apiID, dic);
-                            TuShareResult tempResult = Post(url, inputParam.ToJson<APIInputParam>());
-                            if (tempResult.data.items.Count > 0)
-                            {
-                                result.S = InsertApiResult(tempResult, apiID);
-                            }
+                            Dictionary<string, object> dicObj = new Dictionary<string, object>();
+                            dicObj.Add("dt",ds.Tables[i]);
+                            dicObj.Add("apiID",apiID);
+                            dicObj.Add("url", url);
+                            dicObj.Add("ID", "Thread-2021-"+i.ToString());
+                            //if (i==0)
+                            //{
+                            //    InsertDailyList(dicObj);
+                            //}
+                            ThreadPool.QueueUserWorkItem(new WaitCallback(InsertDailyList), dicObj);
+                            //System.Threading.Tasks.Task task = new System.Threading.Tasks.Task();
                         }
+                        //InsertDailyList
+                        //按日期获取信息
+                        //BLL.QueryBLL queryBLL = new BLL.QueryBLL();
+                        //DataSet ds = queryBLL.Query(3003);//交易日历
+                        //DataRow[] drs = ds.Tables[0].Select("is_open=1");
+
                         break;
                     default:
                         apiResult = Post(url, body);
@@ -156,6 +164,63 @@ namespace MyPlatform.Areas.Web.Controllers
                 result.SetErrorMsg(ex.Message);
             }
             return MyResponseMessage.SuccessJson(result);
+        }
+        public DataSet SplitDataTable(DataTable dt, int colNum)
+        {
+            DataSet ds = new DataSet();
+            if (dt.Rows.Count > 0)
+            {
+                int tableNum = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(dt.Rows.Count) / Convert.ToDouble(colNum)));
+                DataTable[] dtArr = new DataTable[tableNum];
+                for (int i = 0; i < tableNum; i++)
+                {
+                    dtArr[i] = dt.Clone();
+                    dtArr[i].TableName = "Table" + i.ToString();
+                    if (i != tableNum - 1)
+                    {
+                        for (int j = i * colNum; j < (i + 1) * colNum; j++)
+                        {
+                            dtArr[i].ImportRow(dt.Rows[j]);
+                        }                      
+                    }
+                    else
+                    {
+                        for (int j = i * colNum; j < dt.Rows.Count; j++)
+                        {
+                            dtArr[i].ImportRow(dt.Rows[j]);
+                        }
+                    }
+                    ds.Tables.Add(dtArr[i]);
+                }
+            }
+            return ds;
+        }
+        public void InsertDailyList(object o)
+        {
+            //DataTable dt, int apiID, string url;
+            //dt = o.dt;
+            Dictionary<string, object> dicObj = (Dictionary<string, object>)o;
+            DataTable dt = (DataTable)dicObj["dt"];
+            int apiID = (int)dicObj["apiID"];
+            string url = (string)dicObj["url"];
+            string threadID = (string)dicObj["ID"];
+            ReturnData result = new ReturnData();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+                dic.Add("trade_date", dt.Rows[i]["cal_date"].ToString());
+                dic.Add("ts_code", "");
+                dic.Add("start_date", "");
+                dic.Add("end_date", "");
+                Common.LogHelper.Default.WriteInfo("Thread:"+threadID);
+                APIInputParam inputParam = CreateInputStr(apiID, dic);
+                TuShareResult tempResult = MultiPost(url, inputParam.ToJson<APIInputParam>(),threadID);
+                if (tempResult.data.items.Count > 0)
+                {
+                    result.S = InsertApiResult(tempResult, apiID);
+                }
+            }
+            //return result;
         }
         public bool InsertApiResult(TuShareResult result, int apiID)
         {
@@ -538,7 +603,43 @@ namespace MyPlatform.Areas.Web.Controllers
         public TuShareResult Post(string url, string body)
         {
             HttpHelper hh = new HttpHelper();
-            TuShareResult apiResult = JSONUtil.ParseFromJson<TuShareResult>(hh.Post(url, body));
+            string result = HttpUtility.UrlDecode(hh.Post(url, body));          
+            TuShareResult apiResult = JSONUtil.ParseFromJson<TuShareResult>(result);
+            if (apiResult.code == "40203")
+            {
+                Common.LogHelper.Default.WriteError("111111");
+                Common.LogHelper.Default.WriteError("Result:" + result);
+                apiResult = Post(url, body);
+            }
+            else
+            {
+                Common.LogHelper.Default.WriteError("222222:" + body);
+            }
+            return apiResult;
+        }
+        /// <summary>
+        /// 请求Tushare获取数据
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="body"></param>
+        /// <param name="threadID"></param>
+        /// <returns></returns>
+        public TuShareResult MultiPost(string url, string body,string threadID)
+        {
+            HttpHelper hh = new HttpHelper();
+            string result = HttpUtility.UrlDecode(hh.Post(url, body));
+            TuShareResult apiResult = JSONUtil.ParseFromJson<TuShareResult>(result);
+            if (apiResult.code == "40203")
+            {
+                Common.LogHelper.Default.WriteError("Thread:" + threadID);
+                Common.LogHelper.Default.WriteError("Fail:"+ result);
+                apiResult = Post(url, body);
+            }
+            else
+            {
+                Common.LogHelper.Default.WriteError("Thread:" + threadID);
+                Common.LogHelper.Default.WriteError("Success:" + result);
+            }
             return apiResult;
         }
         #endregion

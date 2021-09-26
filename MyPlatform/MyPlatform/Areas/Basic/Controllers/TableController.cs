@@ -31,7 +31,7 @@ namespace MyPlatform.Areas.Basic.Controllers
             try
             {
                 //校验是否存在同名表
-                result = tableBLL.ExistsTable(model.TableName, model.DBCon);
+                result = tableBLL.ExistsTable(model.DBCon, model.TableName);
                 if (result.S)
                 {
                     if (model.CreatedDate == null)
@@ -126,19 +126,37 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
-
+        /// <summary>
+        /// 获取表详情，参数{tableID:xxx,page:{PageSize:1,PageIndex:10,TotalCount:123,PageCount:1}}
+        /// </summary>
+        /// <param name="queryString"></param>
+        /// <returns></returns>
         [HttpGet]
-        public HttpResponseMessage GetDetail(Dictionary<string, object> dic)
+        //public HttpResponseMessage GetDetail([FromUri]Dictionary<string, object> dic)        
+        public HttpResponseMessage GetDetail([FromUri]string queryString)
         {
+            Dictionary<string, object> dic = new Dictionary<string, object>();            
+            dic = JSONUtil.ParseFromJson<Dictionary<string, object>>(queryString);
+            if (dic.Count == 0)
+            {
+                throw new Exception("传入参数["+queryString+"]反序列化失败!");
+            }
             ReturnData result = new ReturnData();
             try
             {
                 //Pagination page=JSONUtil.ParseFromJson<>
-                int tableID = Convert.ToInt32(dic["tableID"]);
-                string s = dic["page"].ToJson();
-                Pagination page=JSONUtil.ParseFromJson<Pagination>(dic["page"].ToJson());
+                if (!dic.ContainsKey("tableID"))
+                {
+                    throw new Exception("tableID未传入!");
+                }
+                int tableID = Convert.ToInt32(dic["tableID"]);//表ID
+                if (!dic.ContainsKey("page"))
+                {
+                    throw new Exception("分页信息page未传入!");
+                }
+                Pagination page = JSONUtil.ParseFromJson<Pagination>(dic["page"].ToJson());
                 BLL.Sys_Columns columnBLL = new BLL.Sys_Columns();
-                result = tableBLL.GetDetail(Convert.ToInt32(dic["tableID"]),page);
+                result = tableBLL.GetDetail(Convert.ToInt32(dic["tableID"]), page);
             }
             catch (Exception ex)
             {

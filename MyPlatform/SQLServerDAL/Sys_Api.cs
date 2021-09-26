@@ -215,6 +215,9 @@ namespace MyPlatform.SQLServerDAL
                             case "float":
                                 sqlTable += " float ,";
                                 break;
+                            case "int":
+                                sqlTable += " int ,";
+                                break;
                             default:
                                 break;
                         }
@@ -452,11 +455,12 @@ namespace MyPlatform.SQLServerDAL
         /// 获取未同步每日指标的日期
         /// </summary>
         /// <param name="db"></param>
+        /// <param name="exchange">交易所代码</param>
         /// <returns></returns>
-        public DataTable GetNoDataCalendar(IDataBase db)
+        public DataTable GetNoDataCalendar(IDataBase db,string exchange)
         {
-            string sql = @"SELECT a.* FROM dbo.trade_cal a LEFT JOIN dbo.daily_basic b ON a.cal_date=b.trade_date 
-WHERE b.trade_date IS NULL";
+            string sql =string.Format(@"SELECT a.* FROM dbo.trade_cal a LEFT JOIN dbo.daily_basic b ON a.cal_date=b.trade_date 
+WHERE b.trade_date IS NULL and a.is_open='1' and a.exchange='{0}'",exchange);
             return db.Query(sql).Tables[0];
         }
     }

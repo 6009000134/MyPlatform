@@ -52,8 +52,8 @@ namespace MyPlatform.BLL
         /// <summary>
         /// 判断数据库中是否存在同名表
         /// </summary>
-        /// <param name="tableName">表名</param>
         /// <param name="dbCon">数据库名</param>
+        /// <param name="tableName">表名</param>
         /// <returns></returns>
         public ReturnData ExistsTable(string dbCon, string tableName)
         {
