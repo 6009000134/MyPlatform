@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyPlatform.Model.Query
+namespace MyPlatform.Model
 {
     /// <summary>
     /// 查询页面
@@ -48,6 +48,9 @@ namespace MyPlatform.Model.Query
         /// </summary>
         public string Name { get; set; }
     }
+    /// <summary>
+    /// 查询视图详细信息（列名）
+    /// </summary>
     public class QueryViewDetail
     {
         /// <summary>
@@ -83,26 +86,15 @@ namespace MyPlatform.Model.Query
         /// </summary>
         public string DisplayName { get; set; }
         /// <summary>
-        /// 数据库类型
+        /// 数据库链接
         /// </summary>
-        public string Type { get; set; }
-    }
-    public class SqlServerDBType
-    {
+        public string DBCon { get; set; }
         /// <summary>
-        /// ColID
-        /// </summary>
-        public string ID { get; set; }
-        /// <summary>
-        /// ColID
-        /// </summary>
-        public string ColID { get; set; }
-        /// <summary>
-        /// 列名
+        /// 字段类型
         /// </summary>
         public string Type { get; set; }
         /// <summary>
-        /// 显示名称
+        /// 长度
         /// </summary>
         public int Size { get; set; }
         /// <summary>
@@ -110,5 +102,4 @@ namespace MyPlatform.Model.Query
         /// </summary>
         public int Precision { get; set; }
     }
-
 }

@@ -20,6 +20,7 @@ using UFIDA.U9.CBO.PubBE.YYC;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 using Oracle.ManagedDataAccess.Client;
+using System.DirectoryServices;
 
 namespace ConsoleTest
 {
@@ -28,11 +29,39 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
+            //域登录
+            string userAccount = "liufei";
+            DirectoryEntry du = new DirectoryEntry(@"LDAP://auctus.cn", userAccount, "Qwelsy@123");
+            DirectorySearcher src = new DirectorySearcher(du);
+            src.Filter = "(&(&(objectCategory=person)(objectClass=user))(sAMAccountName=" + userAccount + "))";
+            src.PropertiesToLoad.Add("cn");
+            src.SearchRoot = du;
+            src.SearchScope = SearchScope.Subtree;
+            SearchResult result = src.FindOne();
+
+
+            Console.ReadLine();
             decimal a = 0.115m;
             decimal b = 567;
             decimal sss = a * b;
             decimal ss=Math.Round(a*b, 2);
             decimal ss2=decimal.Round(65.205m, 2, MidpointRounding.AwayFromZero);
+
+            Type t = a.GetType();
+            Console.WriteLine(t.FullName);
+            Console.WriteLine(t.Name);
+            Console.WriteLine(t.Namespace);
+            Console.WriteLine(t.GetProperties());
+
+            Console.WriteLine(t.Assembly.FullName);
+            Console.WriteLine(t.Assembly.CodeBase);
+            Console.WriteLine(t.Assembly.Location);
+            AssemblyName an = t.Assembly.GetName();
+            Console.WriteLine(an.CultureName);
+            Console.WriteLine(an.FullName);
+            Console.WriteLine(an.Name);
+            Console.WriteLine(an.Version);
+            Activator.CreateInstance(t);
             Console.ReadLine();
         }
 

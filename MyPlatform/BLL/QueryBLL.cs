@@ -13,6 +13,11 @@ namespace MyPlatform.BLL
     public class QueryBLL
     {
         IQueryObject dal = DALFactory.DataAccess.CreateInstance<IQueryObject>("QueryObject");
+        /// <summary>
+        /// 查询“查询视图”数据集
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public DataSet GetList(QueryObject o)
         {
             DataSet ds = new DataSet();
@@ -21,7 +26,7 @@ namespace MyPlatform.BLL
                 //获取查询对象信息
                 IDataBase db = DBUtility.DBHelperFactory.Create("Default");
                 //获取查询结果
-                ds = GetQueryList(o);
+                ds = GetDataList(o);
             }
             catch (Exception ex)
             {
@@ -29,6 +34,11 @@ namespace MyPlatform.BLL
             }
             return ds;
         }
+        /// <summary>
+        /// 获取查询视图对象信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public QueryObject GetQueryObjectData(int id)
         {
             QueryObject o;
@@ -47,14 +57,19 @@ namespace MyPlatform.BLL
             }
             return o;
         }
-        private DataSet GetQueryList(QueryObject o)
+        /// <summary>
+        /// 查询查询视图数据集
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        private DataSet GetDataList(QueryObject o)
         {
             //查询数据
             DataSet ds = new DataSet();
             try
             {
-                IDataBase db = DBUtility.DBHelperFactory.Create(o.TableInfo.DBCon);
-                ds = dal.GetQueryList(db, o);
+                IDataBase db = DBUtility.DBHelperFactory.Create(o.DBCon);
+                ds = dal.GetList(db, o);
             }
             catch (Exception ex)
             {

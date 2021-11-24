@@ -64,6 +64,7 @@ namespace MyPlatform.Areas.Web.Controllers
             }
             return rep;
         }
+        //TODO:校验token过期时，通过refresh_token刷新是否存在bug
         public HttpResponseMessage ValidateToken()
         {
             ReturnData result = new ReturnData();

@@ -24,33 +24,39 @@ namespace MyPlatform.SQLServerDAL
             try
             {
                 DataSet ds = new DataSet();
-                string sql = string.Format("select * from sys_tables where id={0}", id);
-                string sql2 = string.Format("select * from sys_columns where tableid={0}", id);
+                string sql = string.Format("select * from Sys_Query where id={0}", id);
+                string sql2 = string.Format("select * from Sys_QueryDetail where tableid={0}", id);
                 List<string> liSqls = new List<string>();
                 liSqls.Add(sql);
                 liSqls.Add(sql2);
                 ds = db.Query(liSqls);
                 if (ds.Tables.Count == 2 && ds.Tables[0].Rows.Count > 0 && ds.Tables[1].Rows.Count > 0)
                 {
-                    o.TableInfo = new Model.Sys_Tables();
-                    o.ColumnInfo = new List<Model.Sys_Columns>();
                     //表信息
-                    o.TableInfo.TableName = ds.Tables[0].Rows[0]["TableName"].ToString();
-                    o.TableInfo.DBCon = ds.Tables[0].Rows[0]["DBCon"].ToString();                    
+                    o.Name = ds.Tables[0].Rows[0]["Name"].ToString();
+                    o.ShortName = ds.Tables[0].Rows[0]["ShortName"].ToString();
+                    o.DBCon = ds.Tables[0].Rows[0]["DBCon"].ToString();
+                    o.DisplayName = ds.Tables[0].Rows[0]["DisplayName"].ToString();
+                    o.Name = ds.Tables[0].Rows[0]["Name"].ToString();
+                    o.Type = ds.Tables[0].Rows[0]["Type"].ToString();
                     //列信息
                     for (int i = 0; i < ds.Tables[1].Rows.Count; i++)
                     {
-                        MyPlatform.Model.Sys_Columns col = new Model.Sys_Columns();
-                        col.ColumnName = ds.Tables[1].Rows[i]["ColumnName"].ToString();
-                        col.ColumnName_CN = ds.Tables[1].Rows[i]["ColumnName"].ToString();
-                        col.ColumnName_EN = ds.Tables[1].Rows[i]["ColumnName"].ToString();
-                        col.ColumnType = ds.Tables[1].Rows[i]["ColumnName"].ToString();
-                        col.CreatedBy = ds.Tables[1].Rows[i]["CreatedBy"].ToString();
-                        col.CreatedDate = Convert.ToDateTime(ds.Tables[1].Rows[i]["CreatedDate"].ToString());
-                        col.IsNullable = Convert.ToBoolean(ds.Tables[1].Rows[i]["IsNullable"]);
-                        col.OrderNo = Convert.ToInt32(ds.Tables[1].Rows[i]["OrderNo"]);
-                        col.Size =Convert.ToInt32(ds.Tables[1].Rows[i]["Size"]);
-                        o.ColumnInfo.Add(col);
+
+                        MyPlatform.Model.QueryObjectDetail detail = new QueryObjectDetail();
+                        detail.CreatedBy = ds.Tables[1].Rows[i]["QueryID"].ToString();
+                        detail.CreatedDate = Convert.ToDateTime(ds.Tables[1].Rows[i]["CreatedDate"].ToString());
+                        detail.DBCon = ds.Tables[1].Rows[i]["DBCon"].ToString();
+                        detail.DisplayName = ds.Tables[1].Rows[i]["DisplayName"].ToString();
+                        detail.ID = Convert.ToInt32(ds.Tables[1].Rows[i]["ID"]);
+                        detail.Name = ds.Tables[1].Rows[i]["Name"].ToString();
+                        detail.Precision = Convert.ToInt32(ds.Tables[1].Rows[i]["Precision"]);
+                        detail.QueryID = ds.Tables[1].Rows[i]["QueryID"].ToString();
+                        detail.Size = Convert.ToInt32(ds.Tables[1].Rows[i]["Size"]);
+                        detail.Type = ds.Tables[1].Rows[i]["Type"].ToString();
+                        detail.UpdatedBy = ds.Tables[1].Rows[i]["UpdatedBy"].ToString();
+                        detail.UpdatedDate = Convert.ToDateTime(ds.Tables[1].Rows[i]["UpdatedDate"].ToString());
+                        o.Detail.Add(detail);
                     }
                 }
                 else
@@ -71,7 +77,7 @@ namespace MyPlatform.SQLServerDAL
         /// <param name="db"></param>
         /// <param name="objectInfo"></param>
         /// <returns></returns>
-        public DataSet GetQueryList(IDataBase db, MyPlatform.Model.QueryObject objectInfo)
+        public DataSet GetList(IDataBase db, MyPlatform.Model.QueryObject objectInfo)
         {
             DataSet ds = new DataSet();
             try
@@ -81,11 +87,11 @@ namespace MyPlatform.SQLServerDAL
                 {
                     case Model.Enum.DBEnum.SqlServer:
                         sql = "select ";
-                        for (int i = 0; i < objectInfo.ColumnInfo.Count; i++)
+                        for (int i = 0; i < objectInfo.Detail.Count; i++)
                         {
-                            sql += objectInfo.ColumnInfo[i].ColumnName + ",";
+                            sql += objectInfo.Detail[i].Name + ",";
                         }
-                        sql = sql.TrimEnd(',') + " from " + objectInfo.TableInfo.TableName;
+                        sql = sql.TrimEnd(',') + " from " + objectInfo.Name;
                         break;
                     case Model.Enum.DBEnum.MySql:
                         break;

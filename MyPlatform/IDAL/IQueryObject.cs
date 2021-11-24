@@ -12,6 +12,6 @@ namespace MyPlatform.IDAL
     public interface IQueryObject
     {
         QueryObject GetQueryObjectData(IDataBase db,int id);
-        DataSet GetQueryList(IDataBase db, MyPlatform.Model.QueryObject objectInfo);
+        DataSet GetList(IDataBase db, MyPlatform.Model.QueryObject objectInfo);
     }
 }
