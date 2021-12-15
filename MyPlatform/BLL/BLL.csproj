@@ -52,8 +52,12 @@
     <Compile Include="Sys_Api.cs" />
     <Compile Include="Sys_Columns.cs" />
     <Compile Include="Sys_DB.cs" />
+    <Compile Include="Sys_DicGroup.cs" />
+    <Compile Include="Sys_Dictionary.cs" />
+    <Compile Include="Sys_Menu.cs" />
     <Compile Include="Sys_Tables.cs" />
     <Compile Include="Sys_Users.cs" />
+    <Compile Include="Sys_VueRouter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using MyPlatform.Common;
+using MyPlatform.Model;
+using MyPlatform.Utils;
+
+namespace MyPlatform.Areas.Basic.Controllers
+{
+    /// <summary>
+    /// 菜单
+    /// </summary>
+    public class MenuController : ApiController
+    {
+        MyPlatform.BLL.Sys_Menu menuBLL = new MyPlatform.BLL.Sys_Menu();
+        /// <summary>
+        /// 新增菜单
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public HttpResponseMessage Add(MyPlatform.Model.Sys_Menu model)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                result.S = menuBLL.Add(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("添加菜单失败：" + ex.Message);
+            }
+            return MyResponseMessage.SuccessJson(result);
+        }
+    }
+}

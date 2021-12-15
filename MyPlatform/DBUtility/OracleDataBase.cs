@@ -179,5 +179,15 @@ namespace MyPlatform.DBUtility
             }
             return ds;
         }
+
+        public DataSet Query(string sql, List<IDataParameter> paras)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DataSet Query(List<SqlCommandData> list)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -30,5 +30,21 @@ namespace MyPlatform.BLL
         {
             return dal.Add(model);
         }
+
+        public DataSet GetList(List<Dictionary<string, string>> condition, Pagination page)
+        {
+            return dal.GetList(condition,page);
+        }
+        public void Validate(Model.Sys_Users model)
+        {
+            if (string.IsNullOrEmpty(model.Account))
+            {
+                throw new Exception("账号不能为空！");
+            }
+            if (string.IsNullOrEmpty(model.Password))
+            {
+                throw new Exception("密码不能为空！");                
+            }
+        }
     }
 }

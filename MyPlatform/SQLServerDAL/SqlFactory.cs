@@ -97,7 +97,7 @@ namespace MyPlatform.SQLServerDAL
                 }
             }
             scd.CommandText = sql.ToString();
-            scd.Paras = paras.ToArray();
+            scd.Paras = paras;
             return scd;
         }
     }

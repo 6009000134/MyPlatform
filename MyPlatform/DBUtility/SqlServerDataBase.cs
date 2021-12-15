@@ -32,7 +32,7 @@ namespace MyPlatform.DBUtility
         public SqlServerDataBase(string dbCon)
         {
             DBType = DBEnum.SqlServer;
-            ConnectionString=GetConStr(dbCon);
+            ConnectionString = GetConStr(dbCon);
         }
         #endregion
 
@@ -43,7 +43,7 @@ namespace MyPlatform.DBUtility
         /// <param name="con"></param>
         public void Open(SqlConnection con)
         {
-            if (con==null)
+            if (con == null)
             {
                 throw new Exception("数据库连接为空，请确认数据库配置信息！");
             }
@@ -72,6 +72,48 @@ namespace MyPlatform.DBUtility
         /// <param name="con"></param>
         /// <returns></returns>
         public SqlCommand CreateCommand(string sql, IDataParameter[] paras, SqlConnection con)
+        {
+            SqlCommand cmd = new SqlCommand(sql, con);
+            foreach (SqlParameter item in paras)
+            {
+                if ((item.Direction == ParameterDirection.Input || item.Direction == ParameterDirection.InputOutput) && (item.Value == null))
+                {
+                    item.Value = DBNull.Value;
+                }
+                cmd.Parameters.Add(item);
+            }
+            Open(con);
+            return cmd;
+        }
+        /// <summary>
+        /// 创建SqlCommand
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="paras"></param>
+        /// <param name="con"></param>
+        /// <returns></returns>
+        public SqlCommand CreateCommand(string sql, List<SqlParameter> paras, SqlConnection con)
+        {
+            SqlCommand cmd = new SqlCommand(sql, con);
+            foreach (SqlParameter item in paras)
+            {
+                if ((item.Direction == ParameterDirection.Input || item.Direction == ParameterDirection.InputOutput) && (item.Value == null))
+                {
+                    item.Value = DBNull.Value;
+                }
+                cmd.Parameters.Add(item);
+            }
+            Open(con);
+            return cmd;
+        }
+        /// <summary>
+        /// 创建SqlCommand
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="paras"></param>
+        /// <param name="con"></param>
+        /// <returns></returns>
+        public SqlCommand CreateCommand(string sql, List<IDataParameter> paras, SqlConnection con)
         {
             SqlCommand cmd = new SqlCommand(sql, con);
             foreach (SqlParameter item in paras)
@@ -230,6 +272,8 @@ namespace MyPlatform.DBUtility
                 throw ex;
             }
         }
+
+
         public object ExecuteScalar(string sql, IDataParameter[] paras)
         {
             try
@@ -274,6 +318,99 @@ namespace MyPlatform.DBUtility
             }
             return ds;
         }
+        /// <summary>
+        /// 执行sql并返回查询结果集合
+        /// </summary>
+        /// <param name="sql">sql</param>
+        /// <param name="paras">参数</param>
+        /// <returns></returns>
+        public DataSet Query(string sql, List<IDataParameter> paras)
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    SqlCommand cmd = CreateCommand(sql, paras, con);
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                    {
+                        sda.Fill(ds);
+                    }
+                    cmd.Parameters.Clear();
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+            return ds;
+        }
+        public DataSet Query(List<SqlCommandData> list)
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    SqlCommand cmd = new SqlCommand();
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        cmd.Parameters.Clear();
+                        cmd = CreateCommand(list[i].CommandText, list[i].Paras, con);
+                        DataTable dt = new DataTable();
+                        dt.TableName = "data" + (i == 0 ? "" : i.ToString());
+                        switch (list[i].CommandBehavior)
+                        {
+                            case SqlServerCommandBehavior.ExecuteNonQuery:
+                                int m = cmd.ExecuteNonQuery();
+                                DataColumn dc = new DataColumn("TotalCount");
+                                dt.Columns.Add(dc);
+                                DataRow dr = dt.NewRow();
+                                dr[0] = m;
+                                dt.Rows.Add(dr);
+                                break;
+                            case SqlServerCommandBehavior.ExecuteSclar:
+                                DataColumn dcSclar = new DataColumn("TotalCount");
+                                dt.Columns.Add(dcSclar);
+                                DataRow dr3 = dt.NewRow();
+                                dr3[0]= cmd.ExecuteScalar();
+                                dt.Rows.Add(dr3);
+                                break;
+                            case SqlServerCommandBehavior.ExecuteReader:
+                                using (SqlDataReader sdr = cmd.ExecuteReader())
+                                {
+                                    List<string> names = new List<string>();
+                                    for (int j = 0; j < sdr.FieldCount; j++)
+                                    {
+                                        //names.Add(sdr.GetName(j));
+                                        DataColumn cn = new DataColumn(sdr.GetName(j));
+                                        dt.Columns.Add(cn);
+                                    }
+                                    while (sdr.Read())
+                                    {
+                                        DataRow dr2 = dt.NewRow();
+                                        for (int k = 0; k < sdr.FieldCount; k++)
+                                        {
+                                            dr2[k] = sdr[k];
+                                        }
+                                        dt.Rows.Add(dr2);
+                                    }
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        ds.Tables.Add(dt);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+            return ds;
+        }
+
         #endregion
         #region 执行存储过程
         public DataSet ExecProcedure(string procedureName)

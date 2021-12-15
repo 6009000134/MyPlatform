@@ -6,6 +6,7 @@ using System.Data;
 using MyPlatform.DBUtility;
 using MyPlatform.IDAL;
 using MyPlatform.Common;
+using MyPlatform.Model;
 
 namespace MyPlatform.SQLServerDAL
 {
@@ -13,6 +14,55 @@ namespace MyPlatform.SQLServerDAL
     public partial class Sys_Users : ISys_Users
     {
         string dbCon = "Default";
+
+        public DataSet GetList(List<Dictionary<string, string>> condition, Pagination page)
+        {
+            DataSet ds = new DataSet();
+            int beginIndex = DALUtils.CalStartIndex(page);
+            int endIndex = DALUtils.CalEndIndex(page);
+            List<SqlParameter> pars = new List<SqlParameter>();
+            string sql = @"SELECT *FROM (
+SELECT *,ROW_NUMBER()OVER(ORDER BY a.CreatedDate DESC)RN
+FROM dbo.Sys_Users a Where 1=1 ";
+            string sqlCondition = "";
+            foreach (Dictionary<string, string> item in condition)
+            {
+                if (item.ContainsKey("UserName"))
+                {
+                    sqlCondition += " AND UserName=@UserName";
+                    SqlParameter par = new SqlParameter("@UserName", item["UserName"]);
+                    pars.Add(par);
+                }
+                if (item.ContainsKey("Account"))
+                {
+                    sqlCondition += " AND Account=@Account";
+                    SqlParameter par = new SqlParameter("@Account", item["Account"]);
+                    pars.Add(par);
+                }
+            }
+            
+            sql += sqlCondition+" ) t WHERE t.RN>" + beginIndex.ToString() + " AND t.RN<" + endIndex.ToString();
+
+            string sqlCount = @"SELECT Count(1)TotalCount 
+FROM dbo.Sys_Users a Where 1=1 "+sqlCondition;
+            
+            IDataBase db = new SqlServerDataBase(dbCon);
+            SqlCommandData scd = new SqlCommandData();
+            scd.CommandBehavior = SqlServerCommandBehavior.ExecuteReader;
+            scd.CommandText = sql;
+            scd.Paras = pars;
+            SqlCommandData scd2 = new SqlCommandData();
+            scd2.CommandBehavior = SqlServerCommandBehavior.ExecuteSclar;
+            scd2.CommandText = sqlCount;
+            scd2.Paras = pars;
+            //scd.CommandBehavior = SqlServerCommandBehavior.ExecuteSclar;
+            List<SqlCommandData> liParam = new List<SqlCommandData>();
+            liParam.Add(scd);
+            liParam.Add(scd2);
+            ds = db.Query(liParam);
+            //ds.Tables[0].TableName = "data";
+            return ds;
+        }
         public MyPlatform.Model.Sys_Users GetModelByAccount(string account)
         {
             try
@@ -45,7 +95,7 @@ namespace MyPlatform.SQLServerDAL
             SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30), new SqlParameter("@Password", SqlDbType.VarChar, 30) };
             parameters[0].Value = model.Account;
             parameters[1].Value = model.Password;
-            IDataBase db = new SqlServerDataBase(dbCon);            
+            IDataBase db = new SqlServerDataBase(dbCon);
             return Convert.ToInt32(db.ExecuteScalar(strSql.ToString(), parameters)) == 0 ? false : true;
         }
         /// <summary>
@@ -61,7 +111,7 @@ namespace MyPlatform.SQLServerDAL
             strSql.Append(" deleted=0 and Account=@Account ");
             SqlParameter[] parameters = { new SqlParameter("@Account", SqlDbType.VarChar, 30) };
             parameters[0].Value = Account;
-            IDataBase db = new SqlServerDataBase(dbCon);            
+            IDataBase db = new SqlServerDataBase(dbCon);
             return Convert.ToInt32(db.ExecuteScalar(strSql.ToString(), parameters)) == 0 ? false : true;
 
         }
@@ -76,7 +126,7 @@ namespace MyPlatform.SQLServerDAL
                     new SqlParameter("@ID", SqlDbType.Int,4)
             };
             parameters[0].Value = ID;
-            IDataBase db = new SqlServerDataBase(dbCon);            
+            IDataBase db = new SqlServerDataBase(dbCon);
             return Convert.ToInt32(db.ExecuteScalar(strSql.ToString(), parameters)) == 0 ? false : true;
         }
 

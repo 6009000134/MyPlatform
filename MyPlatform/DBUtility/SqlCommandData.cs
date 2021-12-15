@@ -10,6 +10,10 @@ namespace MyPlatform.DBUtility
 {
     public class SqlCommandData
     {
+        public SqlCommandData()
+        {
+            Paras = new List<SqlParameter>();
+        }
         /// <summary>
         /// sql命令
         /// </summary>
@@ -24,7 +28,7 @@ namespace MyPlatform.DBUtility
         /// <summary>
         /// 参数集合
         /// </summary>
-        public SqlParameter[] Paras { get; set; }
+        public List<SqlParameter> Paras { get; set; }
         /// <summary>
         /// 操作类型 ExecuteNonQuery\ExecuteSclar\ExecuteReader
         /// </summary>

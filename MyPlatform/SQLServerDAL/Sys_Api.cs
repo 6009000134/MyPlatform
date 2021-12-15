@@ -277,7 +277,7 @@ namespace MyPlatform.SQLServerDAL
                 List<SqlCommandData> liSql = new List<SqlCommandData>();
                 SqlCommandData cmdApi = new SqlCommandData();
                 cmdApi.CommandText = sqlApi;
-                cmdApi.Paras = new SqlParameter[]{
+                cmdApi.Paras = new List<SqlParameter>{
                     new SqlParameter("@title", dic["title"]),
                 new SqlParameter("@apiName", dic["apiName"]),
                 new SqlParameter("@description", dic["description"])
@@ -286,7 +286,7 @@ namespace MyPlatform.SQLServerDAL
                 //保存输入参数信息
                 string sqlInput = "";
                 string[] arrInput = (string[])dic["inputParam"];
-                SqlParameter[] parInput = new SqlParameter[4];
+                List<SqlParameter> parInput = new List<SqlParameter>();
                 for (int i = 0; i < arrInput.Length; i++)
                 {
                     if (i % 4 == 0)
@@ -306,13 +306,13 @@ namespace MyPlatform.SQLServerDAL
                     {
                         sqlInput += ",@input" + i.ToString() + "," + (i * 40).ToString() + ",'',getdate())";
                         SqlParameter param = new SqlParameter("@input" + i.ToString(), arrInput[i]);
-                        parInput[i % 4] = param;
+                        parInput.Add(param);
                         SqlCommandData cmdInput = new SqlCommandData();
                         cmdInput.CommandText = sqlInput;
                         cmdInput.Paras = parInput;
                         liSql.Add(cmdInput);
                         //重新声明新的输入参数信息
-                        parInput = new SqlParameter[4];
+                        parInput = new List<SqlParameter>() ;
                         sqlInput = "";
                     }
                     else
@@ -326,7 +326,7 @@ namespace MyPlatform.SQLServerDAL
                 string sqlOutput = "";
                 string[] arrOutput = (string[])dic["outputParam"];
                 int outputColumns = Convert.ToInt32(dic["outputColumns"]);
-                SqlParameter[] parOutput = new SqlParameter[outputColumns];
+                List<SqlParameter> parOutput = new List<SqlParameter>();
                 if (outputColumns == 4)
                 {
                     for (int i = 0; i < arrOutput.Length; i++)
@@ -348,13 +348,13 @@ namespace MyPlatform.SQLServerDAL
                         {
                             sqlOutput += ",@output" + i.ToString() + "," + (i * 40).ToString() + ",'',getdate())";
                             SqlParameter param = new SqlParameter("@output" + i.ToString(), arrOutput[i]);
-                            parOutput[i % 4] = param;
+                            parOutput.Add(param);
                             SqlCommandData cmdOutput = new SqlCommandData();
                             cmdOutput.CommandText = sqlOutput;
                             cmdOutput.Paras = parOutput;
                             liSql.Add(cmdOutput);
                             //重新声明新的输入参数信息
-                            parOutput = new SqlParameter[4];
+                            parOutput = new List<SqlParameter>();
                             sqlOutput = "";
                         }
                         else
@@ -392,7 +392,7 @@ namespace MyPlatform.SQLServerDAL
                             cmdOutput.Paras = parOutput;
                             liSql.Add(cmdOutput);
                             //重新声明新的输入参数信息
-                            parOutput = new SqlParameter[3];
+                            parOutput = new List<SqlParameter>();
                             sqlOutput = "";
                         }
                         else

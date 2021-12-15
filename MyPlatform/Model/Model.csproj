@@ -61,12 +61,15 @@
     <Compile Include="Sys_API.cs" />
     <Compile Include="Sys_Columns.cs" />
     <Compile Include="Sys_DB.cs" />
+    <Compile Include="Sys_DicGroup.cs" />
+    <Compile Include="Sys_Dictionary.cs" />
     <Compile Include="Sys_Menu.cs" />
     <Compile Include="Sys_Role.cs" />
     <Compile Include="Sys_Role_Right.cs" />
     <Compile Include="Sys_Tables.cs" />
     <Compile Include="Sys_Users.cs" />
     <Compile Include="Sys_User_Rights.cs" />
+    <Compile Include="Sys_VueRouter.cs" />
     <Compile Include="TuShareResult.cs" />
     <Compile Include="TuShareResultData.cs" />
   </ItemGroup>

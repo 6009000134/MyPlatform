@@ -29,42 +29,38 @@ namespace MyPlatform.Areas.Web.Controllers
         public HttpResponseMessage Register(MyPlatform.Model.Sys_Users model)
         {
         //    MyPlatform.Model.Sys_Users model = MyPlatform.Common.JSONUtil.ParseFromJson<MyPlatform.Model.Sys_Users>(json);
-            ReturnData returnData = new ReturnData();//返回数据
-            #region 验证数据
-            if (string.IsNullOrEmpty(model.Account))
+            ReturnData returnData = new ReturnData();//返回数据            
+            try
             {
-                returnData.SetErrorMsg("账号不能为空！");
-            }
-            if (string.IsNullOrEmpty(model.Password))
-            {
-                returnData.SetErrorMsg("密码不能为空！");
-            }
-            if (string.IsNullOrEmpty(model.CreatedBy))
-            {
-                model.CreatedBy = model.UserName;
-            }
-            if (!string.IsNullOrEmpty(returnData.M))//数据校验不通过，返回校验结果
-            {
-                return MyResponseMessage.SuccessJson<ReturnData>(returnData);
-            }
-            #endregion
-            model.CreatedDate = DateTime.Now;            
-            if (userBLL.Exists(model.Account))//判断账号是否已注册
-            {
-                returnData.SetErrorMsg("账号已被注册");
-            }
-            else//账号未被注册，进行新增操作
-            {
-                if (userBLL.Add(model) > 0)
-                {
-                    returnData.SetSuccessMsg("创建成功!");
-                }
-                else
-                {
-                    returnData.SetErrorMsg("创建失败!");
-                }
-            }
+                
 
+                userBLL.Validate(model);//数据校验
+                string pinyin=Common.PinYinConverter.GetPinYin(model.UserName);
+                if (string.IsNullOrEmpty(model.CreatedBy))
+                {
+                    model.CreatedBy = model.UserName;
+                }
+                model.CreatedDate = DateTime.Now;
+                if (userBLL.Exists(model.Account))//判断账号是否已注册
+                {
+                    returnData.SetErrorMsg("账号已被注册");
+                }
+                else//账号未被注册，进行新增操作
+                {
+                    if (userBLL.Add(model) > 0)
+                    {
+                        returnData.SetSuccessMsg("创建成功!");
+                    }
+                    else
+                    {
+                        returnData.SetErrorMsg("创建失败!");
+                    }                    
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             return MyResponseMessage.SuccessJson<ReturnData>(returnData);
         }
     }

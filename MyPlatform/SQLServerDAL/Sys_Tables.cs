@@ -430,11 +430,11 @@ VALUES  ( N'' ,
                     List<SqlCommandData> li = new List<SqlCommandData>();
                     SqlCommandData scd = new SqlCommandData();
                     scd.CommandText = "delete from  sys_tables  where id=@tableID";
-                    scd.Paras = new SqlParameter[1] { new SqlParameter("@tableID", tableID) };
+                    scd.Paras = new List<SqlParameter> { new SqlParameter("@tableID", tableID) };
                     li.Add(scd);
                     SqlCommandData scd2 = new SqlCommandData();
                     scd2.CommandText = "delete from   sys_columns  where tableid=@tableID";
-                    scd2.Paras = new SqlParameter[1] { new SqlParameter("@tableID", tableID) };
+                    scd2.Paras = new List<SqlParameter> { new SqlParameter("@tableID", tableID) };
                     li.Add(scd2);
                     return db.ExecuteTran(li);
                 }

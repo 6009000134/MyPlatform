@@ -61,6 +61,8 @@ namespace MyPlatform.DBUtility
         /// <param name="paras">参数</param>
         /// <returns></returns>
         DataSet Query(string sql,IDataParameter[] paras);
+        DataSet Query(string sql,List<IDataParameter> paras);
+        DataSet Query(List<SqlCommandData> list);
         #endregion
         #region 执行存储过程
         /// <summary>

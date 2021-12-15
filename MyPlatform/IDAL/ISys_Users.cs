@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data;
 using MyPlatform.Model;
+using System.Collections.Generic;
+
 namespace MyPlatform.IDAL
 {
     /// <summary>
@@ -31,6 +33,7 @@ namespace MyPlatform.IDAL
         /// 增加一条数据
         /// </summary>
         int Add(MyPlatform.Model.Sys_Users model);
+        DataSet GetList(List<Dictionary<string, string>> condition, Pagination page);
         #endregion
     }
 }

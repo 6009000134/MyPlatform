@@ -52,6 +52,10 @@
     <Compile Include="ISys_DB.cs" />
     <Compile Include="ISys_Tables.cs" />
     <Compile Include="ISys_Users.cs" />
+    <Compile Include="Sys_DicGroup.cs" />
+    <Compile Include="Sys_Dictionary.cs" />
+    <Compile Include="Sys_Menu.cs" />
+    <Compile Include="Sys_VueRouter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DBUtility\DBUtility.csproj">
