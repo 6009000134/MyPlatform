@@ -21,7 +21,8 @@ namespace MyPlatform.Areas.Basic.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public HttpResponseMessage Add(MyPlatform.Model.Sys_Menu model)
+        [HttpPost]
+        public HttpResponseMessage Add([FromBody]MyPlatform.Model.Sys_Menu model)
         {
             ReturnData result = new ReturnData();
             try

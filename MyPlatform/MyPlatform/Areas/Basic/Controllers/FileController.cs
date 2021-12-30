@@ -1,4 +1,5 @@
-﻿using MyPlatform.Model;
+﻿using MyPlatform.Common;
+using MyPlatform.Model;
 using MyPlatform.Utils;
 using System;
 using System.Collections.Generic;
@@ -75,6 +76,34 @@ namespace MyPlatform.Areas.Basic.Controllers
             //FileInfoBLL
             //string sql="Insert into sys_fileInfo "
             file.SaveAs(newFileName);
+        }
+        /// <summary>
+        /// 获取指定目录下文件列表
+        /// </summary>
+        /// <param name="basicpath"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        public HttpResponseMessage GetListByPath([FromBody]string basicpath)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                DirectoryHelper dirHelper = new DirectoryHelper();
+                //List<string> dirs= dirHelper.GetAllDirectories(basicpath);
+                List<string> allFiles = dirHelper.GetAllFiles(basicpath);
+                for (int i = 0; i < allFiles.Count; i++)
+                {
+                    allFiles[i]=allFiles[i].Replace(basicpath, "@").Replace("\\","/");
+                }
+                result.D = allFiles;
+                result.S = true;                
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return MyResponseMessage.SuccessJson<ReturnData>(result);
         }
     }
 }

@@ -39,10 +39,10 @@ VALUES  ( @CreatedBy , -- CreatedBy - nvarchar(20)
         )";
             List<SqlParameter> liMenuParas = new List<SqlParameter> {
                 new SqlParameter("@CreatedBy",model.CreatedBy),
-                new SqlParameter("@UpdatedBy",model.CreatedBy),
-                new SqlParameter("@MenuName",model.CreatedBy),
-                new SqlParameter("@Uri",model.CreatedBy),
-                new SqlParameter("@ParentID",model.CreatedBy)
+                new SqlParameter("@UpdatedBy",model.UpdatedBy),
+                new SqlParameter("@MenuName",model.MenuName),
+                new SqlParameter("@Uri",model.Uri),
+                new SqlParameter("@ParentID",model.ParentID)
             };
             scdMenu.CommandBehavior = SqlServerCommandBehavior.ExecuteNonQuery;
             scdMenu.CommandText = sql;
@@ -54,7 +54,7 @@ VALUES  ( @CreatedBy , -- CreatedBy - nvarchar(20)
 		          @Name, -- Name - varchar(200)
 		         @Meta, -- Meta - nvarchar(1000)
 		          @Component, -- Component - varchar(500)
-		          (select SCOPE_IDENTITY())  -- MenuID - int
+		          (select IDENT_CURRENT('sys_menu'))  -- MenuID - int
 		          )";
             List<SqlParameter> liRouterParas = new List<SqlParameter> {
                 new SqlParameter("@Path",model.Router.Path),

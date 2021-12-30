@@ -69,6 +69,7 @@
     <Compile Include="DEncrypt\DESEncrypt.cs" />
     <Compile Include="DEncrypt\HashEncode.cs" />
     <Compile Include="DEncrypt\RSACryption.cs" />
+    <Compile Include="DirectoryHelper.cs" />
     <Compile Include="Enum\Encoding.cs" />
     <Compile Include="Extend\MyExtends.cs" />
     <Compile Include="HttpHelper.cs" />
