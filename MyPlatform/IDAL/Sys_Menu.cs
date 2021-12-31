@@ -16,5 +16,7 @@ namespace MyPlatform.IDAL
         /// <returns></returns>
         bool Add(MyPlatform.Model.Sys_Menu model, IDataBase db);
 
+        DataSet GetMenuTree(IDataBase db);
+
     }
 }

@@ -10,6 +10,7 @@ namespace MyPlatform.SQLServerDAL
     //Sys_Menu
     public partial class Sys_Menu : ISys_Menu
     {
+
         /// <summary>
         /// 添加菜单
         /// </summary>
@@ -69,6 +70,22 @@ VALUES  ( @CreatedBy , -- CreatedBy - nvarchar(20)
             liSql.Add(scdMenu);
             liSql.Add(scdRouuter);
             return db.ExecuteTran(liSql);
+        }
+        public DataSet GetMenuTree(IDataBase db)
+        {
+            string sql = @"
+WITH menu(ID,MenuName,ParentID,FullMenuPath) AS
+(
+SELECT a.ID,a.MenuName,a.ParentID,CAST(a.MenuName  AS VARCHAR(8000))
+FROM dbo.Sys_Menu a WHERE a.ParentID=0
+UNION ALL 
+SELECT b.ID,b.MenuName,b.ParentID,cast (CONVERT(varchar(100),a.FullMenuPath)+'/'+CONVERT(VARCHAR(100),b.MenuName) AS varchar(8000))--,CONVERT(NVARCHAR(MAX),a.FullMenuPath+b.MenuName)
+FROM menu a INNER JOIN dbo.Sys_Menu b ON a.ID=b.ParentID
+)
+SELECT * FROM menu
+order by FullMenuPath
+";
+            return db.Query(sql);
         }
     }
 }

@@ -21,6 +21,24 @@ namespace MyPlatform.BLL {
             IDataBase db = DBUtility.DBHelperFactory.Create(defaultCon);
             return dal.Add(model, db);
         }
+
+        public ReturnData GetMenuTree()
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                IDataBase db = DBUtility.DBHelperFactory.Create(defaultCon);
+                DataSet ds = dal.GetMenuTree(db);
+                result.S = true;
+                result.D = ds;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                throw;
+            }
+            return result;
+        }
    
 	}
 }

@@ -35,5 +35,23 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson(result);
         }
+        /// <summary>
+        /// 获取菜单树
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public HttpResponseMessage GetMenuTree()
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                result = menuBLL.GetMenuTree();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return MyResponseMessage.SuccessJson(result);
+        }
     }
 }
