@@ -10,7 +10,65 @@ namespace MyPlatform.SQLServerDAL
     //Sys_Menu
     public partial class Sys_Menu : ISys_Menu
     {
+        //public MyPlatform.Model.Sys_Menu GetDetailByID(int id)
+        //{
+        //}
 
+        /// <summary>
+        /// 修改菜单
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public bool Edit(MyPlatform.Model.Sys_Menu model, IDataBase db)
+        {
+            List<SqlCommandData> liSql = new List<SqlCommandData>();
+            SqlCommandData scdMenu = new SqlCommandData();
+            string sql = @"UPDATE dbo.Sys_Menu SET CreatedBy=@CreatedBy,
+CreatedDate=@CreatedDate,
+UpdatedBy=@UpdatedBy,
+UpdatedDate=@UpdatedDate,
+MenuName=@MenuName,
+Uri=@Uri,
+ParentID=@ParentID
+WHERE ID=@ID";
+            List<SqlParameter> liMenuParas = new List<SqlParameter> {
+                new SqlParameter("@CreatedBy",model.CreatedBy),
+                new SqlParameter("@CreatedDate",model.CreatedDate),
+                new SqlParameter("@UpdatedBy",model.UpdatedBy),
+                new SqlParameter("@UpdatedDate",model.UpdatedDate),
+                new SqlParameter("@MenuName",model.MenuName),
+                new SqlParameter("@Uri",model.Uri),
+                new SqlParameter("@MenuName",model.MenuName),
+                new SqlParameter("@ParentID",model.ParentID),
+                new SqlParameter("@ID",model.ID)
+            };
+            scdMenu.CommandBehavior = SqlServerCommandBehavior.ExecuteNonQuery;
+            scdMenu.CommandText = sql;
+            scdMenu.Paras.AddRange(liMenuParas);
+
+            string sqlRouter = @"	UPDATE dbo.Sys_VueRouter SET Path=@Path,
+Name=@Name,
+Meta=@Meta,
+Component=@Component,
+MenuID=@MenuID
+WHERE ID=@ID";
+            List<SqlParameter> liRouterParas = new List<SqlParameter> {
+                new SqlParameter("@Path",model.Router.Path),
+                new SqlParameter("@Name",model.Router.Name),
+                new SqlParameter("@Meta",model.Router.Meta),
+                new SqlParameter("@Component",model.Router.Component),
+                new SqlParameter("@MenuID",model.Router.MenuID),
+                new SqlParameter("@ID",model.Router.ID),
+            };
+            SqlCommandData scdRouuter = new SqlCommandData();
+            scdRouuter.CommandBehavior = SqlServerCommandBehavior.ExecuteNonQuery;
+            scdRouuter.CommandText = sqlRouter;
+            scdRouuter.Paras.AddRange(liRouterParas);
+            liSql.Add(scdMenu);
+            liSql.Add(scdRouuter);
+            return db.ExecuteTran(liSql);
+        }
         /// <summary>
         /// 添加菜单
         /// </summary>

@@ -35,6 +35,19 @@ namespace MyPlatform.Areas.Basic.Controllers
             }
             return MyResponseMessage.SuccessJson(result);
         }
+        public HttpResponseMessage Edit([FromBody]MyPlatform.Model.Sys_Menu model)
+        {
+            ReturnData result = new ReturnData();
+            try
+            {
+                result.S = true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("修改菜单失败："+ex.Message);
+            }
+            return MyResponseMessage.SuccessJson(result);
+        }
         /// <summary>
         /// 获取菜单树
         /// </summary>
